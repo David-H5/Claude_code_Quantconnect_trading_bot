@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/ui/charts/evolution_chart.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.01, 0.02, 0.3, 0.4, 0.5, 0.7, 0.98, 1.5, 2.5, 100, '#2196F3', '#4CAF50', '#9E9E9E', '#F44336', '-', '--', 'Evolution Cycle', 'Evolution Progress', 'Improvement %', 'No evolution data', 'Not enough cycles', 'Score %', 'Still improving', 'axes fraction', 'baseline', 'best_cycle', 'best_score', 'bold', 'center', 'convergence_reason', 'current_score', 'gray', 'green', 'improvement_negative', 'improvement_positive', 'is_converged', 'num_cycles', 'o', 'offset points', 'red', 'right', 'round,pad=0.3', 'score', 'total_improvement', 'upper left', 'white', 'y']

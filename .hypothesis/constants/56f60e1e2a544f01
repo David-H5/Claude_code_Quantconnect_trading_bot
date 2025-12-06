@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/metrics.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.0, 2.5, 5.0, 10.0, 30.0, 100, 200, 'Current cash balance', 'Daily profit/loss', 'Total LLM API calls', 'agent', 'buckets', 'cash_balance', 'count', 'counter', 'counters', 'daily_pnl', 'decision_latency', 'decision_type', 'decisions_total', 'exported_at', 'fill_latency', 'gauge', 'gauges', 'histogram', 'histograms', 'inf', 'llm_calls_total', 'llm_tokens_total', 'max', 'max_drawdown', 'mean', 'min', 'model', 'order_type', 'orders_cancelled', 'orders_filled', 'orders_total', 'portfolio_value', 'positions_count', 'reason', 'side', 'slippage', 'stddev', 'sum', 'symbol', 'timer', 'timers', 'type', 'values', 'w']

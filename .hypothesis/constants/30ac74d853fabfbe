@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/evaluation/component_evaluation.py
+# hypothesis_version: 6.148.3
+
+[0.024, 0.027, 0.03, 0.05, 0.1, 0.12, 0.2, 0.58, 0.62, 0.68, 0.7, 0.9, 2.1, -125, 1000, '## Failed Tests\n', '## Test Results\n', 'POS_001', 'RISK_001', 'SIG_001', 'SentimentAnalyst', 'TOOL_001', 'TechnicalAnalyst', 'analyze_earnings', 'available_analysts', 'avg_loss', 'avg_win', 'bull_flag', 'bullish', 'confidence', 'context_retention', 'decision_making', 'delta', 'error_recovery', 'fractional_kelly', 'gamma', 'greeks_valid', 'in_sample_win_rate', 'output_present', 'pattern_type', 'position_size_pct', 'position_sizing', 'risk_management', 'selected_analyst', 'signal', 'signal_generation', 'success', 'task', 'theta_per_day', 'tool_selection', 'value_match', 'value_range', 'volume_confirmation', 'win_rate']

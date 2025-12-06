@@ -1,0 +1,17 @@
+{
+  "upgrade_id": "UPGRADE-019",
+  "iteration": 1,
+  "phase": 0,
+  "doc_updates": [
+    {
+      "timestamp": 1764928743.2273805,
+      "file_path": "/home/dshooter/projects/Claude_code_Quantconnect_trading_bot/docs/research/UPGRADE-019-TRADING-UI-THINKORSWIM-STYLE.md",
+      "phase": 0,
+      "iteration": 1
+    }
+  ],
+  "last_update_time": 1764928743.2273808,
+  "updates_per_phase": {
+    "0": 1
+  }
+}

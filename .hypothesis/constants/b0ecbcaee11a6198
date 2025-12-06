@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/utils/error_handling.py
+# hypothesis_version: 6.148.5
+
+[0.5, 1.0, 2.0, 60.0, 'ErrorAccumulator', 'No errors', 'fallback', 'retry', 'warning', 'with_retry']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/api/routes/health.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.03, 0.1, 0.25, 400, 503, '/circuit-breaker', '/config', '/health', '/health/live', '/health/ready', '/system', '/websocket/clients', '1.0.0', 'Health status', '_daily_loss_pct', 'algorithm_connected', 'alive', 'authorized_by', 'bot_manager', 'circuit_breaker', 'clients', 'count', 'degraded', 'healthy', 'manual_executor', 'message', 'option_symbols', 'options_executor', 'order_queue', 'ready', 'recurring_manager', 'risk_limits', 'risk_manager', 'state', 'status', 'timestamp', 'unhealthy', 'unknown', 'websocket_manager']

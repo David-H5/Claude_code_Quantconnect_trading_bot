@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/agents/traders.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.3, 0.5, 8000.0, 1000, '=', 'CONSERVATIVE_TRADER', 'ConservativeTrader', 'YOUR STRATEGY', 'active', 'confidence', 'content', 'cost', 'current_price', 'error', 'exception', 'input_tokens', 'iv_percentile', 'market_outlook', 'output_tokens', 'raw_response', 'role', 'sentiment_analysis', 'symbol', 'technical_analysis', 'usage', 'user']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/audit_logger.py
+# hypothesis_version: 6.148.5
+
+[365, 1000, 100000, ' AND timestamp <= ?', ' AND timestamp >= ?', ',', '?', 'AuditRecord', 'access_denied', 'action', 'actor', 'agent_decision', 'agent_error', 'agent_started', 'agent_stopped', 'audit_accessed', 'audit_exported', 'audit_log.db', 'authentication', 'authorization', 'blocked', 'confidence', 'config_changed', 'critical', 'decision', 'details', 'error', 'event_type', 'failed', 'fallback_activated', 'guardrail_violation', 'info', 'order_cancelled', 'order_filled', 'order_rejected', 'order_submitted', 'order_type', 'outcome', 'partial', 'position_closed', 'position_opened', 'previous_hash', 'price', 'quantity', 'reasoning', 'record_hash', 'record_id', 'resource', 'severity', 'success', 'system:audit_logger', 'system_error', 'tags', 'timestamp', 'trading_system', 'w', 'warning']

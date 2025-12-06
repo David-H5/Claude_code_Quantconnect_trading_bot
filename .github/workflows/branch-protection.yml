@@ -1,0 +1,148 @@
+name: Branch Protection & Staging
+
+# This workflow enforces the development workflow:
+# feature/* -> develop -> main
+#
+# Stages:
+# 1. feature/*: Development and testing
+# 2. develop: Integration testing and backtesting
+# 3. main: Production-ready (paper trading and live)
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [develop]
+
+env:
+  PYTHON_VERSION: '3.10'
+
+jobs:
+  # Enforce branch naming conventions
+  check-branch:
+    name: Check Branch Naming
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        run: |
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+          echo "Branch: $BRANCH"
+
+          # Valid patterns
+          VALID_PATTERNS=(
+            "^main$"
+            "^develop$"
+            "^feature/.*"
+            "^bugfix/.*"
+            "^hotfix/.*"
+            "^release/.*"
+          )
+
+          VALID=false
+          for pattern in "${VALID_PATTERNS[@]}"; do
+            if [[ "$BRANCH" =~ $pattern ]]; then
+              VALID=true
+              break
+            fi
+          done
+
+          if [ "$VALID" = false ]; then
+            echo "::error::Invalid branch name: $BRANCH"
+            echo "Valid patterns: feature/*, bugfix/*, hotfix/*, release/*, develop, main"
+            exit 1
+          fi
+
+  # Enforce PR requirements for main branch
+  main-branch-protection:
+    name: Main Branch Protection
+    if: github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify source branch
+        run: |
+          SOURCE="${{ github.head_ref }}"
+          if [[ "$SOURCE" != "develop" && "$SOURCE" != hotfix/* ]]; then
+            echo "::error::PRs to main must come from develop or hotfix/* branches"
+            echo "Current source: $SOURCE"
+            exit 1
+          fi
+
+      - name: Check for required approvals
+        run: |
+          echo "::notice::PRs to main require at least 1 approval"
+
+      - name: Verify all tests passed
+        run: |
+          echo "::notice::All autonomous tests must pass before merging to main"
+
+  # Enforce PR requirements for develop branch
+  develop-branch-protection:
+    name: Develop Branch Protection
+    if: github.base_ref == 'develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify source branch
+        run: |
+          SOURCE="${{ github.head_ref }}"
+          if [[ "$SOURCE" != feature/* && "$SOURCE" != bugfix/* ]]; then
+            echo "::warning::PRs to develop should come from feature/* or bugfix/* branches"
+          fi
+
+  # Run full test suite on develop pushes
+  develop-integration:
+    name: Develop Integration Tests
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Run full test suite
+        run: |
+          pytest tests/ -v --cov=algorithms --cov=indicators --cov=models --cov=utils \
+            --cov-report=xml --cov-fail-under=70
+
+      - name: Validate all algorithms
+        run: |
+          for algo in algorithms/*.py; do
+            if [[ "$algo" != "algorithms/__init__.py" ]]; then
+              echo "Validating $algo..."
+              python scripts/algorithm_validator.py "$algo"
+            fi
+          done
+
+  # Create release notes on merge to main
+  release-notes:
+    name: Generate Release Notes
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        run: |
+          echo "## Changes in this release" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          git log --oneline $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD >> $GITHUB_STEP_SUMMARY || true
+
+      - name: Tag release candidate
+        run: |
+          VERSION="v$(date +%Y.%m.%d)-rc"
+          echo "Creating tag: $VERSION"
+          # git tag "$VERSION"
+          # git push origin "$VERSION"

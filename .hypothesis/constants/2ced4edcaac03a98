@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/metrics/collectors/token.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.00015, 0.00025, 0.0005, 0.0006, 0.0008, 0.001, 0.00125, 0.0015, 0.002, 0.0025, 0.003, 0.004, 0.01, 0.015, 0.03, 0.06, 0.075, 100, 1000, 1440, 100000, 'agent_name', 'avg_cost_per_call', 'avg_tokens_per_call', 'by_agent', 'by_model', 'calls', 'claude-3-haiku', 'claude-3-opus', 'claude-3-sonnet', 'claude-3.5-haiku', 'claude-3.5-sonnet', 'cost', 'cost_per_minute', 'default', 'gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo', 'gpt-4o', 'gpt-4o-mini', 'input', 'input_cost', 'input_tokens', 'model', 'operation', 'output', 'output_cost', 'output_tokens', 'period_end', 'period_start', 'rate_1m', 'rate_5m', 'summary_1h', 'summary_24h', 'timestamp', 'tokens', 'tokens_per_minute', 'total_cost', 'total_input_tokens', 'total_output_tokens', 'total_records', 'total_tokens', 'totals', 'trace_id']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/infrastructure/timeseries.py
+# hypothesis_version: 6.148.5
+
+[0.0, 168, 100000, '*', '-inf', '1m', 'DataPoint', 'OHLCVBar', 'avg', 'close', 'count', 'high', 'low', 'max', 'metadata', 'min', 'open', 'params', 'sum', 'timestamp', 'ts', 'value', 'volume']

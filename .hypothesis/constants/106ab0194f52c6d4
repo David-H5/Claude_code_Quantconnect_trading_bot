@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/agents/base_agent.py
+# hypothesis_version: 6.148.5
+
+[1000, 'AgentMessage', 'INFO', 'agent_id', 'base', 'correlation_id', 'created', 'created_at', 'enabled', 'error', 'error_count', 'exit_signal', 'heartbeat', 'initializing', 'last_heartbeat', 'log', 'market_data', 'message_id', 'message_type', 'name', 'order_cancel', 'order_confirmation', 'order_fill', 'order_request', 'pause', 'paused', 'payload', 'price_update', 'priority', 'processed_count', 'queue_size', 'quote_update', 'ready', 'receiver_id', 'resume', 'risk_alert', 'risk_approval', 'risk_check', 'risk_rejection', 'running', 'sender_id', 'signal', 'start', 'state', 'status_request', 'status_response', 'stop', 'stopped', 'stopping', 'timestamp', 'trade_signal', 'type', 'uptime_seconds']

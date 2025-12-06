@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/api/order_queue_api.py
+# hypothesis_version: 6.148.3
+
+[100, 1000, '%Y-%m-%d %H:%M:%S', 'Debug', 'Order not found', 'Order queue is full', 'QueuedOrder', 'Symbol is required', 'butterfly_call', 'butterfly_put', 'by_status', 'call_spread', 'cancelled', 'error', 'executing', 'failed', 'filled', 'info', 'iron_condor', 'limit', 'manual_legs', 'market', 'message', 'option_strategy', 'order', 'order_id', 'order_type', 'order_update', 'partially_filled', 'pending', 'priority', 'put_spread', 'quantity', 'queue_size', 'queued', 'rejected', 'request', 'status', 'straddle', 'strangle', 'submitted_at', 'success', 'symbol', 'total_cancelled', 'total_filled', 'total_orders', 'total_rejected', 'total_submitted', 'type', 'updated_at', 'valid', 'validating', 'warning']

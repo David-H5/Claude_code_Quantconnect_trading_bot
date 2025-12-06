@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/evaluation/feedback_loop.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.01, 0.02, 0.5, 0.7, 0.8, 1.0, '-', '=', 'CATEGORY BREAKDOWN', 'CYCLE HISTORY', 'SCORE IMPROVEMENT', 'accuracy', 'actual', 'category', 'confidence', 'consistency', 'converged', 'cycle_count', 'duration_seconds', 'error', 'expected', 'final_aggregate', 'final_scores', 'format', 'hallucination', 'id', 'initial_aggregate', 'initial_scores', 'iterations_completed', 'max_iterations', 'name', 'no_improvement', 'overall', 'reason', 'reasoning', 'response_format', 'risk', 'risk_assessment', 'score_converged', 'scores', 'severity', 'system_prompt', 'target_reached', 'total_improvement', 'update_system_prompt']

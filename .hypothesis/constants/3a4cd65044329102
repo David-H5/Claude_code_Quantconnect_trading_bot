@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/pnl_attribution.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.5, 365.25, 100, 252, 365, 3600, 'GreeksSnapshot', 'PnLAttributor', 'PnLBreakdown', 'breakdown', 'delta', 'delta_pct', 'delta_pnl', 'gamma', 'gamma_pct', 'gamma_pnl', 'iv', 'option_price', 'percentages', 'portfolio', 'positions', 'quantity', 'rho_pct', 'rho_pnl', 'symbol', 'theta', 'theta_pct', 'theta_pnl', 'timestamp', 'total_pnl', 'underlying_price', 'unexplained', 'unexplained_pct', 'vega', 'vega_pct', 'vega_pnl']

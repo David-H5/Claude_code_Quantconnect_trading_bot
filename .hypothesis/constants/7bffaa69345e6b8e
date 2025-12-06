@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/exceptions/agent.py
+# hypothesis_version: 6.148.5
+
+['AgentError', 'AgentRateLimitError', 'AgentTimeoutError', 'ConsensusFailedError', 'PromptVersionError']

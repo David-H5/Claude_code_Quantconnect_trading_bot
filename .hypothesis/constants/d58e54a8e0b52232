@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/execution/smart_execution.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.01, 'ExecutionOrder', 'ExecutionResult', 'OrderStatus', 'OrderType', 'SmartExecutionModel', 'active_orders', 'age_seconds', 'average_fill_price', 'average_slippage', 'buy', 'cancel_replace_count', 'cancel_replaces', 'cancelled', 'execution_time_ms', 'fill_rate', 'filled', 'filled_quantity', 'limit', 'limit_price', 'market', 'message', 'order', 'order_id', 'order_type', 'partially_filled', 'pending', 'quantity', 'rejected', 'replaced', 'sell', 'side', 'slippage', 'status', 'stop', 'stop_limit', 'submitted', 'success', 'successful_fills', 'symbol', 'total_orders', 'total_slippage']

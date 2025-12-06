@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/scripts/algorithm_validator.py
+# hypothesis_version: 6.148.5
+
+[120, '\nWARNINGS:', ' -> ', '"""', '#', "'''", '*.py', 'ContainsKey', 'ERRORS:', 'File does not exist', 'Initialize', 'IsReady', 'IsWarmingUp', 'Liquidate\\s*\\(\\s*\\)', 'No docstrings found', 'OnData', 'OnEndOfAlgorithm', 'OnOrderEvent', 'SetWarmUp', '__init__.py', '__main__', 'algorithms', 'blank_lines', 'class\\s+\\w+', 'code_lines', 'comment_lines', 'data\\[', 'def\\s+\\w+\\s*\\(', 'error', 'info', 'input\\s*\\(', 'num_classes', 'num_methods', 'print\\s*\\(', 'r', 'self\\.BB\\s*\\(', 'self\\.EMA\\s*\\(', 'self\\.MACD\\s*\\(', 'self\\.RSI\\s*\\(', 'self\\.SMA\\s*\\(', 'stop_loss', 'stoplimitorder', 'stoploss', 'stopmarketorder', 'time\\.sleep', 'total_lines', 'warning', 'while\\s+True:']

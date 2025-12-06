@@ -1,0 +1,83 @@
+{
+    "name": "QuantConnect Trading Bot with Claude Code",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "20"
+        },
+        "ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "version": "latest",
+            "moby": true,
+            "enableNonRootDocker": true
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "charliermarsh.ruff",
+                "ms-python.mypy-type-checker",
+                "ms-toolsai.jupyter",
+                "GitHub.copilot",
+                "GitHub.copilot-chat",
+                "redhat.vscode-yaml",
+                "eamodio.gitlens"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "[python]": {
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "editor.formatOnSave": true
+                },
+                "ruff.lint.args": ["--config=/workspace/ruff.toml"],
+                "ruff.format.args": ["--config=/workspace/ruff.toml"],
+                "editor.formatOnSave": true,
+                "files.autoSave": "afterDelay",
+                "terminal.integrated.defaultProfile.linux": "zsh"
+            }
+        }
+    },
+    "remoteUser": "node",
+    "mounts": [
+        "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
+        "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume",
+        "source=dind-var-lib-docker-${devcontainerId},target=/var/lib/docker,type=volume",
+        "source=${localWorkspaceFolder}/results,target=/workspace/results,type=bind",
+        "source=${localWorkspaceFolder}/.backups,target=/workspace/.backups,type=bind"
+    ],
+    "containerEnv": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONUNBUFFERED": "1",
+        "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+        "NODE_OPTIONS": "--max-old-space-size=4096",
+        "HISTFILE": "/commandhistory/.bash_history"
+    },
+    "runArgs": [
+        "--cap-add=NET_ADMIN",
+        "--memory=4g",
+        "--cpus=2",
+        "--pids-limit=200",
+        "--security-opt=no-new-privileges:true"
+    ],
+    "privileged": true,
+    "postCreateCommand": "bash .devcontainer/init-firewall.sh && pip install -e . && pre-commit install || true",
+    "postStartCommand": "echo 'Container ready. Run claude in terminal to start Claude Code.'",
+    "forwardPorts": [8888],
+    "portsAttributes": {
+        "8888": {
+            "label": "Jupyter",
+            "onAutoForward": "notify"
+        }
+    },
+    "hostRequirements": {
+        "cpus": 4,
+        "memory": "8gb"
+    }
+}

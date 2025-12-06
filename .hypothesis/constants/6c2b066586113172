@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/infrastructure/market_stream.py
+# hypothesis_version: 6.148.5
+
+[0.01, 100, 1000, 10000, '+', '-', '0', '>', 'BUSYGROUP', 'MarketTick', 'api', 'ask', 'bid', 'consumer_1', 'first-entry', 'first_entry', 'groups', 'last-entry', 'last_entry', 'length', 'market:data', 'pending', 'price', 'source', 'symbol', 'timestamp', 'trading_bot', 'unknown', 'volume']

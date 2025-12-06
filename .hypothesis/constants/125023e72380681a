@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/ppo_weight_optimizer.py
+# hypothesis_version: 6.148.3
+
+[-1.0, 0.0, 1e-08, 0.001, 0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.9, 0.95, 0.99, 1.0, 2.0, -1000, -100, 100, 1000, '-inf', 'WeightState', 'accuracy', 'avg_reward', 'avg_reward_100', 'avg_weights', 'avg_weights_history', 'clip_epsilon', 'combined', 'config', 'current_avg_weights', 'entropy', 'error', 'gamma', 'inf', 'learning_rate', 'model_names', 'neutral', 'num_experiences', 'policy_loss', 'policy_params', 'returns', 'returns_history', 'sharpe', 'total_outcomes', 'total_rewards', 'training_step', 'training_steps', 'value_loss', 'value_params']

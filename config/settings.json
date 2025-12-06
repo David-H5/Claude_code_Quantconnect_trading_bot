@@ -1,0 +1,396 @@
+{
+  "brokerage": {
+    "provider": "schwab",
+    "api_base_url": "https://api.schwabapi.com/trader/v1",
+    "oauth_url": "https://api.schwabapi.com/v1/oauth/authorize",
+    "token_url": "https://api.schwabapi.com/v1/oauth/token",
+    "account_number": "${SCHWAB_ACCOUNT_NUMBER}",
+    "client_id": "${SCHWAB_CLIENT_ID}",
+    "client_secret": "${SCHWAB_CLIENT_SECRET}",
+    "paper_trading": true
+  },
+  "risk_management": {
+    "max_position_size_pct": 0.25,
+    "max_daily_loss_pct": 0.03,
+    "max_drawdown_pct": 0.10,
+    "max_risk_per_trade_pct": 0.02,
+    "max_consecutive_losses": 5,
+    "require_human_reset": true
+  },
+  "profit_taking": {
+    "enabled": true,
+    "thresholds": [
+      {"gain_pct": 1.00, "sell_pct": 0.50, "description": "Sell 50% at +100%"},
+      {"gain_pct": 2.00, "sell_pct": 0.25, "description": "Sell 25% at +200%"},
+      {"gain_pct": 4.00, "sell_pct": 0.15, "description": "Sell 15% at +400%"},
+      {"gain_pct": 10.00, "sell_pct": 1.00, "description": "Sell remaining at +1000%"}
+    ],
+    "trailing_stop_enabled": true,
+    "trailing_stop_pct": 0.25
+  },
+  "order_execution": {
+    "cancel_replace_enabled": true,
+    "max_bid_increase_pct": 1.00,
+    "bid_increment_pct": 0.10,
+    "cancel_after_seconds": 30,
+    "max_cancel_replace_attempts": 10,
+    "use_mid_price": true
+  },
+  "movement_scanner": {
+    "enabled": true,
+    "min_movement_pct": 0.02,
+    "max_movement_pct": 0.04,
+    "scan_interval_seconds": 60,
+    "require_news_corroboration": true,
+    "volume_surge_threshold": 2.0
+  },
+  "options_scanner": {
+    "enabled": true,
+    "target_delta_range": [0.20, 0.40],
+    "min_delta": 0.25,
+    "max_delta": 0.35,
+    "max_days_to_expiry": 45,
+    "min_days_to_expiry": 7,
+    "min_open_interest": 100,
+    "min_volume": 50,
+    "min_implied_volatility": 0.20,
+    "iv_percentile_threshold": 0.30,
+    "underpriced_threshold": 0.10
+  },
+  "news_alerts": {
+    "enabled": true,
+    "sources": ["reuters", "bloomberg", "sec_filings", "twitter"],
+    "keywords": [],
+    "watchlist": [],
+    "sentiment_threshold": 0.7,
+    "refresh_interval_seconds": 30
+  },
+  "llm_integration": {
+    "enabled": true,
+    "providers": {
+      "openai": {
+        "model": "gpt-4o",
+        "api_key": "${OPENAI_API_KEY}",
+        "max_tokens": 1000,
+        "temperature": 0.3
+      },
+      "anthropic": {
+        "model": "claude-sonnet-4-20250514",
+        "api_key": "${ANTHROPIC_API_KEY}",
+        "max_tokens": 1000,
+        "temperature": 0.3
+      },
+      "finbert": {
+        "model": "ProsusAI/finbert",
+        "local": true
+      }
+    },
+    "ensemble_strategy": "weighted_average",
+    "weights": {
+      "finbert": 0.4,
+      "openai": 0.3,
+      "anthropic": 0.3
+    },
+    "enable_dynamic_weights": true,
+    "dynamic_weighting": {
+      "learning_rate": 0.1,
+      "min_weight": 0.05,
+      "max_weight": 0.6,
+      "decay_factor": 0.95,
+      "enable_boosting": true,
+      "boost_correct_factor": 1.1,
+      "penalize_incorrect_factor": 0.9,
+      "rebalance_interval_hours": 24,
+      "min_samples_for_adjustment": 10
+    }
+  },
+  "sentiment_filter": {
+    "enabled": true,
+    "min_sentiment_for_long": 0.0,
+    "max_sentiment_for_short": 0.0,
+    "min_confidence": 0.5,
+    "lookback_hours": 24,
+    "require_positive_trend": false,
+    "trend_window_size": 3,
+    "max_history_per_symbol": 100,
+    "block_on_low_confidence": true,
+    "confidence_threshold_for_review": 0.4
+  },
+  "sentiment_circuit_breaker": {
+    "enabled": true,
+    "sentiment_halt_threshold": -0.7,
+    "consecutive_negative_sentiment": 5,
+    "critical_news_keywords": [
+      "bankruptcy", "fraud", "investigation", "SEC probe",
+      "delisting", "default", "halt", "suspended"
+    ],
+    "enable_sentiment_triggers": true,
+    "divergence_threshold": 0.5
+  },
+  "llm_guardrails": {
+    "enabled": true,
+    "max_position_size": 0.25,
+    "min_confidence_for_trade": 0.5,
+    "confidence_scaling": {
+      "enabled": true,
+      "low_confidence_threshold": 0.4,
+      "high_confidence_threshold": 0.8,
+      "low_confidence_size_multiplier": 0.5,
+      "high_confidence_size_multiplier": 1.0
+    },
+    "blocked_symbols": [],
+    "allowed_strategies": ["long_call", "long_put", "covered_call", "cash_secured_put", "iron_condor", "butterfly"],
+    "max_daily_trades": 50,
+    "require_sentiment_alignment": true,
+    "sentiment_alignment_threshold": 0.3,
+    "input_validation": {
+      "max_text_length": 10000,
+      "prohibited_patterns": [],
+      "require_symbol": true
+    },
+    "output_validation": {
+      "require_reasoning": true,
+      "min_confidence": 0.1,
+      "max_confidence": 1.0
+    }
+  },
+  "news_alert_manager": {
+    "enabled": true,
+    "impact_thresholds": {
+      "critical": 0.8,
+      "high": 0.6,
+      "medium": 0.4,
+      "low": 0.2
+    },
+    "trigger_circuit_breaker_on_critical": true,
+    "alert_channels": ["console", "log"],
+    "max_alerts_per_minute": 20,
+    "dedupe_window_seconds": 300,
+    "event_types_to_track": [
+      "earnings", "merger", "lawsuit", "fda_approval",
+      "regulatory", "guidance", "analyst", "insider_trading"
+    ]
+  },
+  "debate_mechanism": {
+    "enabled": true,
+    "min_confidence_for_debate": 0.4,
+    "max_confidence_for_debate": 0.7,
+    "min_agreement_for_high_confidence": 0.8,
+    "use_structured_rounds": true,
+    "round_phases": ["opening", "rebuttal", "closing", "summary"],
+    "sentiment_integration": {
+      "enabled": true,
+      "weight_by_sentiment_alignment": true,
+      "sentiment_alignment_bonus": 0.1
+    }
+  },
+  "technical_indicators": {
+    "vwap": {"enabled": true, "anchor": "session"},
+    "rsi": {"enabled": true, "period": 14, "overbought": 70, "oversold": 30},
+    "macd": {"enabled": true, "fast": 12, "slow": 26, "signal": 9},
+    "cci": {"enabled": true, "period": 20, "overbought": 100, "oversold": -100},
+    "bollinger": {"enabled": true, "period": 20, "std_dev": 2.0},
+    "bbw": {"enabled": true, "period": 20},
+    "obv": {"enabled": true},
+    "ichimoku": {
+      "enabled": true,
+      "tenkan": 9,
+      "kijun": 26,
+      "senkou_b": 52
+    },
+    "volume": {"enabled": true, "ma_period": 20}
+  },
+  "ui": {
+    "theme": "dark",
+    "default_layout": "tabs",
+    "refresh_rate_ms": 1000,
+    "popup_alerts": true,
+    "sound_alerts": true,
+    "partitions": {
+      "positions": {"visible": true, "order": 1},
+      "scanner": {"visible": true, "order": 2},
+      "news": {"visible": true, "order": 3},
+      "charts": {"visible": true, "order": 4},
+      "orders": {"visible": true, "order": 5}
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/trading_bot.log",
+    "max_size_mb": 100,
+    "backup_count": 5,
+    "audit_trades": true
+  },
+  "structured_logging": {
+    "enabled": true,
+    "level": "INFO",
+    "console_enabled": true,
+    "file_enabled": true,
+    "file_path": "logs/trading_bot.jsonl",
+    "max_file_size_mb": 50,
+    "backup_count": 10,
+    "compress_rotated": true,
+    "object_store_enabled": false,
+    "object_store_buffer_size": 100,
+    "object_store_flush_interval": 60,
+    "categories": {
+      "execution": "INFO",
+      "risk": "WARNING",
+      "strategy": "INFO",
+      "system": "DEBUG",
+      "audit": "INFO"
+    }
+  },
+  "performance_tracker": {
+    "enabled": true,
+    "starting_equity": 100000.0,
+    "track_sessions": true,
+    "session_types": ["daily", "weekly", "monthly"],
+    "persist_to_object_store": true,
+    "persist_interval_minutes": 15,
+    "max_trade_history": 10000
+  },
+  "api_server": {
+    "enabled": true,
+    "host": "127.0.0.1",
+    "port": 8080,
+    "cors_origins": ["http://localhost:3000", "http://localhost:5173"],
+    "websocket_enabled": true,
+    "rate_limit_per_minute": 100,
+    "api_key_required": false,
+    "api_key": "${API_SERVER_KEY}"
+  },
+  "alerting": {
+    "enabled": true,
+    "console_alerts": true,
+    "email_enabled": false,
+    "email_recipients": [],
+    "smtp_host": "",
+    "smtp_port": 587,
+    "smtp_username": "${SMTP_USERNAME}",
+    "smtp_password": "${SMTP_PASSWORD}",
+    "discord_enabled": false,
+    "discord_webhook_url": "${DISCORD_WEBHOOK_URL}",
+    "slack_enabled": false,
+    "slack_webhook_url": "${SLACK_WEBHOOK_URL}",
+    "min_severity": "WARNING",
+    "rate_limit_per_minute": 10,
+    "aggregate_similar": true,
+    "aggregation_window_seconds": 60,
+    "alert_on_circuit_breaker": true,
+    "alert_on_large_loss": true,
+    "large_loss_threshold_pct": 0.02,
+    "alert_on_error_spike": true,
+    "error_spike_threshold": 10,
+    "alert_on_service_degradation": true
+  },
+  "error_handling": {
+    "enabled": true,
+    "max_history": 1000,
+    "default_max_retries": 3,
+    "default_base_delay": 1.0,
+    "default_max_delay": 60.0,
+    "exponential_backoff": true,
+    "jitter_enabled": true,
+    "auto_recovery_enabled": true,
+    "recovery_check_interval_seconds": 30,
+    "max_recovery_attempts": 3,
+    "health_check_interval_seconds": 60,
+    "degraded_threshold_errors": 5,
+    "failed_threshold_errors": 10,
+    "recovery_success_threshold": 3
+  },
+  "quantconnect": {
+    "user_id": "${QC_USER_ID}",
+    "api_token": "${QC_API_TOKEN}",
+    "project_id": null,
+    "organization_id": null,
+    "object_store": {
+      "enabled": true,
+      "tier": "5GB",
+      "max_storage_gb": 5,
+      "max_files": 50000,
+      "max_file_size_mb": 45,
+      "monthly_cost": 20,
+      "compression_enabled": true,
+      "auto_cleanup": {
+        "enabled": true,
+        "keep_days": 90,
+        "archive_before_delete": true
+      },
+      "storage_allocation": {
+        "trading_state": 0.5,
+        "options_greeks": 1.5,
+        "llm_cache": 0.3,
+        "backtest_results": 0.5,
+        "ml_models": 1.5,
+        "monitoring_data": 0.3,
+        "research_data": 0.4
+      },
+      "usage_monitoring": {
+        "enabled": true,
+        "alert_threshold_pct": 80,
+        "critical_threshold_pct": 90,
+        "check_interval_hours": 6
+      }
+    },
+    "compute_nodes": {
+      "backtesting": {
+        "model": "B8-16",
+        "cores": 8,
+        "speed_ghz": 4.9,
+        "ram_gb": 16,
+        "gpu": false,
+        "monthly_cost": 28,
+        "use_cases": ["options_data", "multi_chain_spreads", "long_backtests"],
+        "recommended_for": "Options trading with Greeks, large universes"
+      },
+      "research": {
+        "model": "R8-16",
+        "cores": 8,
+        "speed_ghz": 2.4,
+        "ram_gb": 16,
+        "gpu": false,
+        "monthly_cost": 14,
+        "use_cases": ["llm_analysis", "volatility_modeling", "monte_carlo"],
+        "recommended_for": "LLM ensemble, strategy exploration, ML research"
+      },
+      "live_trading": {
+        "model": "L2-4",
+        "cores": 2,
+        "speed_ghz": 2.6,
+        "ram_gb": 4,
+        "gpu": false,
+        "monthly_cost": 50,
+        "colocated": true,
+        "max_latency_ms": 100,
+        "use_cases": ["autonomous_execution", "options_chains", "real_time_analysis"],
+        "recommended_for": "Two-part spread execution, live options trading"
+      }
+    },
+    "resource_limits": {
+      "max_option_chains": 5,
+      "max_contracts_per_chain": 100,
+      "max_concurrent_positions": 20,
+      "memory_warning_pct": 80,
+      "memory_critical_pct": 90,
+      "cpu_warning_pct": 75,
+      "cpu_critical_pct": 85,
+      "ram_per_security_mb": 5,
+      "ram_overhead_mb": 1100
+    },
+    "monitoring": {
+      "enabled": true,
+      "check_interval_seconds": 30,
+      "log_metrics": true,
+      "alert_on_high_usage": true,
+      "metrics_to_track": [
+        "memory_usage_pct",
+        "cpu_usage_pct",
+        "broker_latency_ms",
+        "active_securities",
+        "order_throughput"
+      ]
+    }
+  }
+}

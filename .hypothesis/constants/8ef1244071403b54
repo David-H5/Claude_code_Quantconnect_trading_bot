@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/alerting/base.py
+# hypothesis_version: 6.148.5
+
+['%Y-%m-%d %H:%M:%S', '*Details*:', 'AlertSeverity', 'alert_id', 'anomaly', 'category', 'circuit_breaker', 'critical', 'data', 'debug', 'enabled', 'error', 'failures', 'info', 'last_send', 'message', 'name', 'performance', 'resource', 'risk', 'send_count', 'service_health', 'severity', 'source', 'storage', 'system', 'timestamp', 'title', 'trading', 'warning', 'ℹ️', '⚠️', '❌', '📢', '🔍', '🚨']

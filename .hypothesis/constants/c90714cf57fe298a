@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/circuit_breaker.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.03, 0.1, 0.25, 3.0, 'can_trade', 'closed', 'config', 'consecutive_losses', 'current_equity', 'daily_loss_exceeded', 'daily_pnl_pct', 'details', 'drawdown', 'half_open', 'human_alert', 'limit', 'manual halt', 'manual_halt', 'max_daily_loss_pct', 'max_drawdown_pct', 'open', 'peak_equity', 'r', 'reason', 'require_human_reset', 'resolved', 'resolved_by', 'state', 'system_error', 'timestamp', 'trip_reason', 'trip_time', 'type', 'volatility_spike', 'w']

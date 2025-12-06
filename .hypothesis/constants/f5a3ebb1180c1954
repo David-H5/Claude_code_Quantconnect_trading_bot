@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/agents/bear_researcher.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.05, 0.07, 0.08, 0.1, 0.12, 0.5, 0.55, 0.6, 0.68, 0.85, 0.9, '. ', ': ', ';', '; ', 'Complacency risk', 'Fundamental risks: ', 'Macro risks: ', 'Risk-off potential', 'SPY', 'Sentiment warnings: ', 'Unknown', 'analysis', 'analyst_downgrades', 'bear_researcher', 'bearish', 'bearish_divergence', 'bull_argument', 'competitive_threats', 'confidence', 'crowded_long', 'declining_volume', 'earnings', 'elevated_put_volume', 'extended_from_sma', 'fed meeting', 'fed_hawkish', 'fundamentals', 'high_debt', 'macro', 'margin_compression', 'market_trend', 'near_resistance', 'neutral', 'news_sentiment', 'opportunity', 'pe_ratio', 'rsi', 'seasonality_negative', 'sector_rotation_out', 'sentiment', 'symbol', 'technicals', 'upcoming_events', 'vix_elevated']

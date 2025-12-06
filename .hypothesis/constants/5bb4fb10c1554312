@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/agents/risk_managers.py
+# hypothesis_version: 6.148.3
+
+[0.3, 1.0, 5000.0, 1000, '=', 'PositionRiskManager', 'REJECT', 'TRADE PROPOSAL', 'YOUR DECISION', 'active', 'confidence', 'content', 'cost', 'decision', 'error', 'exception', 'input_tokens', 'option_data', 'output_tokens', 'portfolio_state', 'raw_response', 'reasoning', 'role', 'strategy', 'strategy_type', 'symbol', 'usage', 'user']

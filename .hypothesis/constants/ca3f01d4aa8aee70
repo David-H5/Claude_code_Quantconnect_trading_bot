@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/agents/__init__.py
+# hypothesis_version: 6.148.3
+
+['AgentResponse', 'AgentRole', 'AgentThought', 'AuditRecord', 'BearResearcher', 'BullBearDebate', 'BullResearcher', 'ConservativeTrader', 'DebateConfig', 'DebateOutcome', 'DebateResult', 'DebateRound', 'DebateTrigger', 'DebateTriggerReason', 'PositionRiskManager', 'RiskTier', 'RiskTierConfig', 'SafeAgentWrapper', 'SafetyCheckResult', 'SentimentAnalyst', 'SupervisorAgent', 'TechnicalAnalyst', 'ThoughtType', 'TradingAgent']

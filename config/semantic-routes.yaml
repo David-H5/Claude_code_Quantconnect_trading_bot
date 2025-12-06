@@ -1,0 +1,184 @@
+# Semantic Routes Configuration (UPGRADE-012.2)
+# Used for hybrid keyword+semantic task routing fallback
+#
+# Reference: Signal-Decision Architecture (vLLM Blog, Nov 2025)
+# https://blog.vllm.ai/2025/11/19/signal-decision.html
+
+version: "1.0.0"
+updated: "2025-12-03"
+
+# =============================================================================
+# EMBEDDING MODEL CONFIGURATION
+# =============================================================================
+# Lightweight model for fast inference
+# Options: all-MiniLM-L6-v2 (22MB), all-mpnet-base-v2 (438MB), bge-small-en-v1.5 (130MB)
+
+embedding:
+  model: "sentence-transformers/all-MiniLM-L6-v2"
+  cache_embeddings: true
+  cache_path: "logs/semantic-embeddings-cache.json"
+
+# =============================================================================
+# ROUTING THRESHOLDS
+# =============================================================================
+# Hybrid routing: keyword (fast) → semantic (if low confidence) → fallback
+
+thresholds:
+  # Minimum keyword score confidence to skip semantic routing
+  keyword_confidence_threshold: 0.8
+
+  # Minimum semantic similarity to use semantic result
+  semantic_similarity_threshold: 0.70
+
+  # If both keyword and semantic are low, use this level
+  fallback_level: "L1_moderate"
+
+# =============================================================================
+# COMPLEXITY CANDIDATES
+# =============================================================================
+# Example task descriptions for each complexity level
+# Embeddings are pre-computed and cached for fast similarity lookup
+
+complexity_candidates:
+  L1_complex:
+    description: "Tasks requiring full RIC loop, research, multi-component changes"
+    examples:
+      - "implement new authentication system with OAuth integration"
+      - "refactor entire module architecture across multiple files"
+      - "create multi-step workflow with dependencies between components"
+      - "integrate multiple external services and APIs"
+      - "design database schema with migrations and data validation"
+      - "build new trading strategy with backtesting and risk management"
+      - "implement LLM ensemble with multiple providers and fallbacks"
+      - "create evaluation framework with metrics and reporting"
+      - "research and implement new algorithm based on paper findings"
+      - "full stack feature from database to UI with tests"
+      - "implement circuit breaker with recovery and monitoring"
+      - "create autonomous agent system with self-improvement"
+
+  L1_moderate:
+    description: "Tasks requiring planning, multiple steps, but clear approach"
+    examples:
+      - "add new feature to existing module with tests"
+      - "create unit tests for existing functionality"
+      - "update API endpoint with validation and error handling"
+      - "fix bug that affects multiple files"
+      - "implement new indicator based on existing pattern"
+      - "add configuration option with validation"
+      - "create new scanner component following existing patterns"
+      - "update documentation with new examples"
+      - "refactor single module for better organization"
+      - "add logging and monitoring to existing service"
+      - "implement webhook notifications for events"
+      - "create CLI command with argument parsing"
+
+  L1_simple:
+    description: "Quick tasks, single file, obvious solution"
+    examples:
+      - "fix typo in documentation"
+      - "update configuration value"
+      - "rename variable for clarity"
+      - "add comment to explain complex logic"
+      - "update import statement"
+      - "fix linting error"
+      - "update version number"
+      - "add entry to gitignore"
+      - "fix broken link in readme"
+      - "update copyright year"
+      - "remove unused import"
+      - "fix indentation issue"
+
+# =============================================================================
+# DOMAIN CANDIDATES
+# =============================================================================
+# Example task descriptions for each domain
+
+domain_candidates:
+  algorithm:
+    description: "Trading algorithms, strategies, backtesting"
+    examples:
+      - "trading strategy implementation for options"
+      - "backtest performance analysis and optimization"
+      - "options pricing model with Greeks"
+      - "position sizing and risk calculation"
+      - "entry and exit signal generation"
+      - "portfolio rebalancing logic"
+      - "order execution algorithm"
+      - "profit taking strategy implementation"
+
+  llm:
+    description: "LLM integration, sentiment analysis, agents"
+    examples:
+      - "sentiment analysis prompt engineering"
+      - "agent ensemble configuration and weighting"
+      - "LLM provider integration with fallbacks"
+      - "prompt optimization for trading decisions"
+      - "multi-agent debate mechanism"
+      - "self-evolving agent implementation"
+      - "decision logging and analysis"
+      - "news analysis and alert generation"
+
+  infrastructure:
+    description: "Deployment, CI/CD, monitoring"
+    examples:
+      - "deployment pipeline setup and configuration"
+      - "docker container configuration and optimization"
+      - "CI/CD workflow with automated testing"
+      - "monitoring and alerting setup"
+      - "log aggregation and analysis"
+      - "environment configuration management"
+      - "secrets management and security"
+      - "resource monitoring and scaling"
+
+  evaluation:
+    description: "Testing, metrics, evaluation frameworks"
+    examples:
+      - "unit test creation and coverage"
+      - "integration test implementation"
+      - "performance metrics and benchmarking"
+      - "evaluation framework design"
+      - "test data generation and validation"
+      - "regression test suite maintenance"
+      - "coverage reporting and analysis"
+      - "mutation testing setup"
+
+  ui:
+    description: "Dashboard, visualization, user interface"
+    examples:
+      - "dashboard widget implementation"
+      - "chart and visualization component"
+      - "user interface layout and styling"
+      - "real-time data display"
+      - "form validation and input handling"
+      - "notification and alert display"
+      - "responsive design implementation"
+      - "accessibility improvements"
+
+  general:
+    description: "General development tasks"
+    examples:
+      - "code refactoring and cleanup"
+      - "documentation updates"
+      - "dependency management"
+      - "configuration changes"
+      - "bug investigation and fixing"
+      - "code review and feedback"
+
+# =============================================================================
+# SIGNAL COMBINATION RULES
+# =============================================================================
+# How to combine keyword and semantic signals (per Signal-Decision Architecture)
+
+signal_combination:
+  # When keyword confidence is high, trust keyword alone
+  keyword_priority_threshold: 0.85
+
+  # When semantic similarity is very high, can override lower keyword confidence
+  semantic_override_threshold: 0.90
+
+  # Weight for combining signals (keyword_weight + semantic_weight = 1.0)
+  keyword_weight: 0.6
+  semantic_weight: 0.4
+
+  # Minimum combined confidence to avoid fallback
+  combined_confidence_threshold: 0.65

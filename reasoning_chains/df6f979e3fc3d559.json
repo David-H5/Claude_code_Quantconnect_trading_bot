@@ -1,0 +1,14 @@
+{
+  "chain_id": "df6f979e3fc3d559",
+  "agent_name": "agent",
+  "task": "analysis",
+  "started_at": "2025-12-03T06:59:43.561327",
+  "completed_at": "2025-12-03T06:59:43.561338",
+  "status": "completed",
+  "steps": [],
+  "final_decision": "HOLD",
+  "final_confidence": 0.8,
+  "duration_ms": 0.011,
+  "average_confidence": 0.0,
+  "metadata": {}
+}

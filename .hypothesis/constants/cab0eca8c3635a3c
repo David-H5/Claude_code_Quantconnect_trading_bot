@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/api/routes/positions.py
+# hypothesis_version: 6.148.5
+
+[0.0, 100, 404, 500, 503, '/pnl', '/positions', '/positions/summary', '/positions/{symbol}', 'C', 'CALL', 'Cash', 'Filter by source', 'MarginRemaining', 'P', 'PUT', 'Portfolio', '_daily_pnl', '_daily_pnl_pct', '_starting_equity', 'algorithm', 'all', 'autonomous', 'bot', 'manual']

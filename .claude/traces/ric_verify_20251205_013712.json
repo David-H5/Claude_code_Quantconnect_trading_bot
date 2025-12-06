@@ -1,0 +1,42 @@
+{
+  "trace_id": "ric_verify_20251205_013712",
+  "workflow_name": "ric_verify",
+  "started_at": "2025-12-05T01:37:12.203115",
+  "ended_at": "2025-12-05T01:37:12.507013",
+  "duration_ms": 303.898,
+  "spans": [
+    {
+      "span_id": "test_analyzer_0",
+      "agent_name": "test_analyzer",
+      "started_at": "2025-12-05T01:37:12.203129",
+      "ended_at": "2025-12-05T01:37:12.305634",
+      "status": "success",
+      "duration_ms": 102.505,
+      "tokens_in": 545,
+      "tokens_out": 1045,
+      "error": null
+    },
+    {
+      "span_id": "type_checker_1",
+      "agent_name": "type_checker",
+      "started_at": "2025-12-05T01:37:12.305984",
+      "ended_at": "2025-12-05T01:37:12.406330",
+      "status": "success",
+      "duration_ms": 100.346,
+      "tokens_in": 533,
+      "tokens_out": 1533,
+      "error": null
+    },
+    {
+      "span_id": "security_scanner_2",
+      "agent_name": "security_scanner",
+      "started_at": "2025-12-05T01:37:12.406526",
+      "ended_at": "2025-12-05T01:37:12.506727",
+      "status": "success",
+      "duration_ms": 100.201,
+      "tokens_in": 973,
+      "tokens_out": 1473,
+      "error": null
+    }
+  ]
+}

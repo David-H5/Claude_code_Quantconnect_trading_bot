@@ -1,0 +1,4 @@
+# file: /home/dshooter/.vscode-server/extensions/ms-python.debugpy-2025.16.0/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/../debugpy/public_api.py
+# hypothesis_version: 6.148.5
+
+['code', 'connect', 'file', 'listen', 'module', 'pid', 'version']

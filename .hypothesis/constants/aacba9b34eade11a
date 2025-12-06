@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/decision_logger.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.5, 100, 10000, ' -> ', '-', '.json', '=', 'AgentDecisionLog', 'DECISIONS BY AGENT', 'DECISIONS BY OUTCOME', 'DECISIONS BY TYPE', 'agent_name', 'agent_role', 'alert', 'analysis', 'cancelled', 'confidence', 'context', 'critical', 'decision', 'decision_logs', 'decision_type', 'description', 'directory', 'evidence', 'executed', 'execution_time_ms', 'exit_signal', 'factors', 'file', 'final_reasoning', 'high', 'log_id', 'low', 'max_size', 'medium', 'memory', 'metadata', 'mitigation_steps', 'other', 'outcome', 'overall_level', 'pending', 'position_sizing', 'probability_of_loss', 'query', 'r', 'reason_rejected', 'reasoning_chain', 'rejected', 'risk_assessment', 'risk_level', 'step_number', 'strategy_selection', 'thought', 'timed_out', 'timestamp', 'trade', 'w', 'worst_case_scenario']

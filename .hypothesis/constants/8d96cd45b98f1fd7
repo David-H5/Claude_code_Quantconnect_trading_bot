@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/execution/liquidity_scorer.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0, 20.0, 30.0, 40.0, 50.0, 70.0, 80.0, 100.0, 100, 500, 1000, 2000, 5000, 'acceptable', 'acceptable_count', 'acceptable_oi', 'acceptable_volume', 'avg_oi', 'avg_score', 'avg_spread_pct', 'avg_volume', 'avoid', 'avoid_count', 'best_call_strike', 'best_put_strike', 'bid_ask_score', 'excellent', 'excellent_count', 'excellent_oi', 'excellent_spread_pct', 'excellent_volume', 'good', 'good_count', 'good_oi', 'good_spread_pct', 'good_volume', 'is_tradeable', 'max_spread_pct', 'min_oi', 'min_tradeable_score', 'min_volume', 'oi_score', 'oi_weight', 'poor', 'poor_count', 'rating', 'recommendation', 'score', 'spread_weight', 'symbol', 'target_score', 'timestamp', 'total_contracts', 'tradeable_contracts', 'underlying', 'volume_score', 'volume_weight']

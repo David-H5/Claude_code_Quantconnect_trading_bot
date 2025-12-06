@@ -1,0 +1,39 @@
+{
+  "mcpServers": {
+    "market-data": {
+      "command": "python3",
+      "args": ["./mcp/market_data_server.py"],
+      "env": {
+        "SCHWAB_API_KEY": "${SCHWAB_API_KEY}",
+        "SCHWAB_SECRET": "${SCHWAB_SECRET}",
+        "DATA_CACHE_TTL": "60"
+      }
+    },
+    "backtest": {
+      "command": "python3",
+      "args": ["./mcp/backtest_server.py"],
+      "env": {
+        "LEAN_DATA_PATH": "./data/lean",
+        "BACKTEST_OUTPUT_PATH": "./backtests"
+      }
+    },
+    "broker": {
+      "command": "python3",
+      "args": ["./mcp/broker_server.py"],
+      "env": {
+        "SCHWAB_API_KEY": "${SCHWAB_API_KEY}",
+        "SCHWAB_SECRET": "${SCHWAB_SECRET}",
+        "SCHWAB_ACCOUNT_ID": "${SCHWAB_ACCOUNT_ID}",
+        "TRADING_MODE": "${TRADING_MODE:-paper}"
+      }
+    },
+    "portfolio": {
+      "command": "python3",
+      "args": ["./mcp/portfolio_server.py"],
+      "env": {
+        "DATABASE_URL": "${DATABASE_URL}",
+        "REDIS_URL": "${REDIS_URL}"
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/multi_leg_strategy.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.16, 0.2, 0.5, 1.5, 100, 1000, 'MultiLegStrategy', 'OptionLeg', 'PortfolioGreeks', 'StrategyBuilder', 'StrategyType', 'bear_call_spread', 'bear_put_spread', 'breakevens', 'bull_call_spread', 'bull_put_spread', 'calendar_spread', 'call', 'cash_secured_put', 'covered_call', 'current_price', 'delta', 'diagonal_spread', 'entry_price', 'expiry', 'find_delta_strikes', 'gamma', 'greeks', 'iron_butterfly', 'iron_condor', 'legs', 'long_butterfly', 'long_call', 'long_put', 'long_straddle', 'long_strangle', 'margin_requirement', 'max_loss', 'max_profit', 'name', 'net_premium', 'pnl', 'put', 'quantity', 'rho', 'risk_reward', 'risk_reward_ratio', 'short_butterfly', 'short_call', 'short_put', 'short_straddle', 'short_strangle', 'strike', 'symbol', 'the_wheel', 'theta', 'total_pnl', 'type', 'underlying', 'underlying_price', 'vega']

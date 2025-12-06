@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/backtesting/monte_carlo.py
+# hypothesis_version: 6.148.5
+
+[-0.2, -0.1, 0.0, 0.5, 0.95, 1.0, 100000.0, 100, 252, 10000, 'block', 'cumulative_return', 'cvar_95', 'cvar_99', 'final_equity', 'initial_equity', 'max_drawdown', 'mean_max_drawdown', 'mean_return', 'median_return', 'num_periods', 'num_simulations', 'path_id', 'prob_profit', 'return_ci_lower', 'return_ci_upper', 'return_percentiles', 'sharpe_ratio', 'simple', 'stationary', 'std_return', 'var_95', 'var_99']

@@ -1,0 +1,55 @@
+[flake8]
+# Flake8 configuration for QuantConnect Trading Bot
+# Aligned with Black formatter and project conventions
+
+max-line-length = 100
+max-complexity = 15
+
+# Exclude directories
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    .backups,
+    .eggs,
+    *.egg,
+    build,
+    dist,
+    htmlcov,
+    .mypy_cache,
+    .pytest_cache,
+    research
+
+# Ignore rules that conflict with Black or are too strict
+ignore =
+    # E203: whitespace before ':' (conflicts with Black)
+    E203,
+    # W503: line break before binary operator (conflicts with Black)
+    W503,
+    # E501: line too long (handled by Black)
+    E501,
+    # D100: Missing docstring in public module (too strict for trading)
+    D100,
+    # D104: Missing docstring in public package
+    D104
+
+# Per-file ignores
+per-file-ignores =
+    # Allow unused imports in __init__.py (re-exports)
+    __init__.py:F401,F403
+    # Relax docstring requirements in tests
+    tests/*:D100,D101,D102,D103,D104
+    # QuantConnect algorithms use wildcard imports
+    algorithms/*:F403,F405
+    # Research notebooks are exploratory
+    research/*:D100,D101,D102,D103
+
+# Docstring convention
+docstring-convention = google
+
+# Show source code for errors
+show-source = true
+
+# Count errors by type
+statistics = true

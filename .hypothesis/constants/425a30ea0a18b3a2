@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/news_analyzer.py
+# hypothesis_version: 6.148.3
+
+[-0.7, -0.3, 0.3, 0.5, 0.7, 'NewsAlert', 'NewsAnalyzer', '\\$([A-Z]{1,5})\\b', '\\(([A-Z]{1,5})\\)', '\\b([A-Z]{1,5}):', 'bloomberg', 'create_news_analyzer', 'enabled', 'headline', 'high', 'keywords', 'low', 'medium', 'options_suggestions', 'published_at', 'reuters', 'sec_filings', 'sentiment', 'sentiment_threshold', 'source', 'sources', 'suggested_action', 'symbol', 'twitter', 'urgency', 'watchlist']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/evaluation/tca_evaluation.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.01, 0.05, 1.0, 2.0, 3.0, 5.0, 8.0, 10.0, 11.0, 14.0, 15.0, 15.5, 20.0, 25.0, 30.0, 50.0, 100.0, 100, 1000, 10000, '## Recommendations\n', 'ALERT', 'OK', 'acceptable', 'afternoon', 'best_execution_score', 'buy', 'close', 'compliant', 'critical', 'critical_issues', 'equity', 'excellent', 'execution_quality', 'fair', 'good', 'large', 'large_order', 'limit', 'market_impact_bps', 'medium', 'medium_order', 'midday', 'mifid_compliant', 'morning', 'poor', 'recommendations', 'small', 'small_order', 'total_cost_bps', 'vwap_deviation_bps', 'warning', 'warnings']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/retry_handler.py
+# hypothesis_version: 6.148.3
+
+[0.5, 1.0, 1.5, 2.0, 60.0, 'T', 'attempt', 'connection', 'delay', 'failed_operations', 'max_retries', 'rate limit', 'retry', 'success_rate', 'successful_retries', 'temporary', 'timeout', 'too many requests', 'total_retries', 'transient', 'unavailable']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/otel_tracer.py
+# hypothesis_version: 6.148.5
+
+[0.0, 100, 1000, 10000, 'agent.name', 'agent.role', 'anthropic', 'attributes', 'avg_duration_ms', 'aws_bedrock', 'azure_openai', 'by_agent', 'client', 'completion_tokens', 'custom', 'duration_ms', 'end_time', 'error', 'error.message', 'error.type', 'error_count', 'error_rate', 'errors', 'events', 'exception', 'exception.message', 'exception.type', 'gen_ai.request.model', 'gen_ai.request.top_p', 'gen_ai.response.id', 'gen_ai.system', 'google_vertex', 'input_tokens', 'internal', 'kind', 'name', 'ok', 'openai', 'operation.name', 'output_tokens', 'parent_span_id', 'prompt_tokens', 'server', 'span_id', 'spans', 'start_time', 'status', 'status_message', 'timestamp', 'tokens', 'total_input_tokens', 'total_output_tokens', 'total_spans', 'total_tokens', 'trace_id', 'trading-agents', 'unknown', 'unset', 'usage']

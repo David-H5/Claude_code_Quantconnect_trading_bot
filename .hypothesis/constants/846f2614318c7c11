@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/monitoring/base.py
+# hypothesis_version: 6.148.5
+
+['MonitorSeverity', 'alert_id', 'anomaly', 'category', 'child_states', 'consecutive_failures', 'critical', 'current_value', 'data', 'debug', 'degraded', 'error', 'error_message', 'healthy', 'info', 'last_check', 'last_failure', 'last_success', 'message', 'metadata', 'metric_name', 'monitor_name', 'name', 'network', 'performance', 'resource', 'service', 'severity', 'status', 'storage', 'system', 'threshold_value', 'timestamp', 'total_checks', 'total_failures', 'trading', 'unhealthy', 'unknown', 'values', 'warning']

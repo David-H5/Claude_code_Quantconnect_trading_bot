@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/analytics/term_structure.py
+# hypothesis_version: 6.148.5
+
+[0.02, 365.0, 120, 180, 365, 'avg_iv', 'backwardation', 'contango', 'curvature', 'expiry_days', 'flat', 'forward_iv', 'humped', 'iv', 'last_updated', 'long_dte', 'long_iv', 'max_dte', 'max_iv', 'min_dte', 'min_iv', 'num_points', 'points', 'shape', 'short_dte', 'short_iv', 'slope', 'type', 'uncertain', 'underlying', 'vix_30d']

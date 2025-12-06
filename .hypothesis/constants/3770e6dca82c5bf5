@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/utils/node_optimizer.py
+# hypothesis_version: 6.148.3
+
+[0.5, 2.4, 2.6, 3.0, 3.1, 3.3, 4.9, 100, 365, 400, 500, 1000, 1024, 1100, '=', 'B-MICRO', 'B2-8', 'B4-12', 'B4-16-GPU', 'B8-16', 'L-MICRO', 'L1-1', 'L1-2', 'L2-4', 'L8-16-GPU', 'R1-4', 'R2-8', 'R4-12', 'R4-16-GPU', 'R8-16', 'backtesting', 'colocated', 'cores', 'estimated_memory_gb', 'gpu', 'live_trading', 'max_latency_ms', 'model', 'monthly_cost', 'node', 'ram_gb', 'reason', 'research', 'speed_ghz', 'total_monthly_cost']

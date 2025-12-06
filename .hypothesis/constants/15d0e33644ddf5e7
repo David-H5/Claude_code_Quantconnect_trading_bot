@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/ui/widgets.py
+# hypothesis_version: 6.148.5
+
+[10000, '#17a2b8', '#28a745', '#6c757d', '#dc3545', '#ffc107', '+', '--', '<b>Settings</b>', 'Action', 'AlertData', 'AlertPopup', 'DataTable', 'PYSIDE_AVAILABLE', 'PriceDisplay', 'Save Settings', 'SettingsPanel', 'StatusIndicator', 'StyledButton', 'active', 'callback', 'color: #6c757d;', 'color: #e0e0e0;', 'danger', 'default', 'error', 'green', 'high', 'label', 'low', 'medium', 'neutral', 'primary', 'red', 'success', 'type', 'warning', 'yellow', '×', '●']

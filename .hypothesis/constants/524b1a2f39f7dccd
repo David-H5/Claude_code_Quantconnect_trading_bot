@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/agents/__init__.py
+# hypothesis_version: 6.148.3
+
+['AgentOpinion', 'AgentResponse', 'AgentRole', 'AgentThought', 'AgentType', 'AuditRecord', 'BearResearcher', 'BullBearDebate', 'BullResearcher', 'ConsensusConfig', 'ConsensusResult', 'ConsensusSignal', 'ConservativeTrader', 'DebateConfig', 'DebateOutcome', 'DebateResult', 'DebateRound', 'DebateTrigger', 'DebateTriggerReason', 'MultiAgentConsensus', 'NewsAnalysis', 'NewsAnalyst', 'NewsAnalystResult', 'NewsEventType', 'NewsImpactLevel', 'NewsTimeRelevance', 'PositionRiskManager', 'RiskTier', 'RiskTierConfig', 'SafeAgentWrapper', 'SafetyCheckResult', 'SentimentAnalyst', 'SupervisorAgent', 'TechnicalAnalyst', 'ThoughtType', 'TradingAgent', 'create_news_analyst']

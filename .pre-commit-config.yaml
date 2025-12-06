@@ -1,0 +1,136 @@
+# Pre-commit hooks configuration for QuantConnect Trading Bot
+# Install: pip install pre-commit && pre-commit install
+#
+# Updated 2025-12-01: Migrated to Ruff (200x faster than Flake8/Black/isort)
+# See ADR-0007 for workflow decisions
+
+repos:
+  # Standard pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: check-ast
+        name: Check Python syntax
+
+  # Ruff - Fast Python linter and formatter (replaces Black, Flake8, isort)
+  # 200x faster than alternatives, single tool for all linting/formatting
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.4
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+
+  # GitLeaks - Prevent secrets from being committed
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks
+
+  # MyPy type checker
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        args: ['--config-file=mypy.ini']
+        additional_dependencies: []
+        pass_filenames: false
+        entry: mypy algorithms/ indicators/ models/ utils/ execution/ scanners/
+
+  # pydocstyle - Docstring style checker (Google style)
+  # Ensures consistent documentation quality
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.3.0
+    hooks:
+      - id: pydocstyle
+        args: ["--convention=google", "--add-ignore=D100,D104,D105,D107"]
+        files: ^(llm|execution|models|observability|evaluation)/.*\.py$
+        exclude: ^tests/
+
+  # Custom algorithm validation hook
+  - repo: local
+    hooks:
+      - id: validate-algorithms
+        name: Validate trading algorithms
+        entry: python scripts/algorithm_validator.py
+        language: python
+        files: ^algorithms/.*\.py$
+        exclude: ^algorithms/__init__\.py$
+        pass_filenames: true
+
+      - id: backup-before-commit
+        name: Create backup before commit
+        entry: python -c "from scripts.backup_manager import BackupManager; BackupManager().backup_algorithms('pre-commit')"
+        language: python
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: run-tests
+        name: Run unit tests
+        entry: pytest tests/ -v -m unit --tb=short -q
+        language: python
+        pass_filenames: false
+        stages: [pre-push]
+
+      - id: validate-research-docs
+        name: Validate research documents
+        entry: python scripts/validate_research_docs.py
+        language: python
+        pass_filenames: false
+        files: ^docs/research/.*\.md$
+        stages: [pre-commit]
+
+      # NOTE: If overnight session is running, use SKIP=qa-validator git commit
+      # because background processes may modify files during hook execution
+      - id: qa-validator
+        name: QA validation checks
+        entry: python scripts/qa_validator.py --check debug --check integrity
+        language: python
+        pass_filenames: false
+        stages: [pre-commit]
+        always_run: true
+
+      - id: check-layer-violations
+        name: Check module layer violations
+        entry: python scripts/check_layer_violations.py --strict
+        language: python
+        pass_filenames: false
+        files: ^(utils|observability|infrastructure|config|models|compliance|execution|llm|evaluation|scanners|indicators|algorithms|api|ui)/.*\.py$
+        stages: [pre-commit]
+
+      # TODO/FIXME scanner - updates technical debt report
+      # Run manually with: pre-commit run scan-todos --all-files
+      - id: scan-todos
+        name: Scan TODOs and update debt report
+        entry: python scripts/scan_todos.py --quiet
+        language: python
+        pass_filenames: false
+        stages: [manual]
+        always_run: true
+
+# Configuration for specific file types
+default_language_version:
+  python: python3
+
+# Files to exclude from all hooks
+exclude: |
+  (?x)^(
+    \.git/|
+    \.backups/|
+    __pycache__/|
+    \.pytest_cache/|
+    \.mypy_cache/|
+    venv/|
+    \.venv/|
+    research/.*\.ipynb|
+    \.hypothesis/|
+    llm/prompts/registry\.json
+  )$

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/mcp/base_server.py
+# hypothesis_version: 6.148.5
+
+[0.0, 30.0, 1000, '1.0.0', '2.0', '2024-11-05', 'EXECUTION_ERROR', 'SERVER_NOT_RUNNING', 'TIMEOUT', 'TOOL_NOT_FOUND', 'analysis', 'arguments', 'backtest', 'broker', 'capabilities', 'category', 'content', 'data', 'description', 'error', 'error_code', 'error_count', 'error_rate', 'execution', 'execution_time_ms', 'id', 'initialize', 'initializing', 'inputSchema', 'isError', 'is_healthy', 'jsonrpc', 'listChanged', 'market_data', 'metadata', 'method', 'name', 'object', 'params', 'ping', 'portfolio', 'properties', 'protocolVersion', 'required', 'result', 'risk', 'running', 'sentiment', 'server', 'serverInfo', 'shutting_down', 'state', 'stopped', 'success', 'system', 'text', 'timestamp', 'tool', 'tools', 'tools/call', 'tools/list', 'tools_registered', 'total_calls', 'type', 'uptime_seconds', 'version']

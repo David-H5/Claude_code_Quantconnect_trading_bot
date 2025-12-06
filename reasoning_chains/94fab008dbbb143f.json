@@ -1,0 +1,14 @@
+{
+  "chain_id": "94fab008dbbb143f",
+  "agent_name": "agent",
+  "task": "analysis",
+  "started_at": "2025-12-03T08:30:29.870258",
+  "completed_at": "2025-12-03T08:30:29.870264",
+  "status": "completed",
+  "steps": [],
+  "final_decision": "HOLD",
+  "final_confidence": 0.8,
+  "duration_ms": 0.006,
+  "average_confidence": 0.0,
+  "metadata": {}
+}

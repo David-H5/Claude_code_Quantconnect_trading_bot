@@ -1,0 +1,4 @@
+# file: /home/dshooter/.vscode-server/extensions/ms-python.debugpy-2025.16.0/bundled/libs/debugpy/_vendored/pydevd/pydevd_plugins/extensions/types/pydevd_plugins_django_form_str.py
+# hypothesis_version: 6.148.5
+
+['%s: %r', 'Form', 'django.forms', 'java']

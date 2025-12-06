@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/metrics/base.py
+# hypothesis_version: 6.148.5
+
+[0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 0.95, 0.99, 1.0, 2.5, 5.0, 10.0, 100, 250, 500, 1000, 2500, 5000, 10000, 'TimerContext', 'avg', 'bps', 'bytes', 'count', 'counter', 'description', 'dollars', 'gauge', 'histogram', 'labels', 'max', 'metric', 'min', 'ms', 'name', 'p50', 'p95', 'p99', 'percent', 'rate', 'ratio', 'seconds', 'statistics', 'sum', 'timer', 'timestamp', 'type', 'unit', 'value', 'values']

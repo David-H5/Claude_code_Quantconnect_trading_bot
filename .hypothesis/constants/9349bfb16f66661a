@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/exceptions/__init__.py
+# hypothesis_version: 6.148.5
+
+['AgentError', 'AgentRateLimitError', 'AgentTimeoutError', 'BacktestError', 'CacheError', 'ConfigurationError', 'ConsecutiveLossError', 'ConsensusFailedError', 'DailyLossLimitError', 'DataError', 'DataFeedError', 'DataMissingError', 'DataParseError', 'DataStaleError', 'DataValidationError', 'ErrorContext', 'ExecutionError', 'ExposureLimitError', 'IndicatorError', 'InfrastructureError', 'InsufficientFunds', 'InvalidPositionSize', 'LegBalanceError', 'MarketClosedError', 'MarketDataError', 'MessageQueueError', 'OptionPricingError', 'OrderFillError', 'OrderRejected', 'OrderRejectedError', 'OrderSubmissionError', 'OrderTimeoutError', 'PromptVersionError', 'RedisError', 'RiskError', 'RiskLimitExceeded', 'ServiceTimeoutError', 'StrategyError', 'TimeSeriesError', 'TradingError', 'WebSocketError']

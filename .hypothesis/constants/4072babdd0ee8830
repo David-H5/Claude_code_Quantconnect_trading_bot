@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/ui/charts/base_chart.py
+# hypothesis_version: 6.148.3
+
+[0.3, 111, 'Chart', 'Qt5Agg', 'best']

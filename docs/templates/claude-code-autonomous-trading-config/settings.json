@@ -1,0 +1,117 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Grep(*)",
+      "Glob(*)",
+      "Bash(make *)",
+      "Bash(pytest *)",
+      "Bash(python -m pytest *)",
+      "Bash(lean backtest *)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git branch *)",
+      "Bash(docker compose *)",
+      "Bash(docker logs *)",
+      "Bash(ruff *)",
+      "Bash(black *)",
+      "Bash(mypy *)",
+      "mcp__market-data__*",
+      "mcp__backtest__*"
+    ],
+    "ask": [
+      "Write(*)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(lean cloud *)",
+      "Bash(lean live *)",
+      "mcp__broker__*"
+    ],
+    "deny": [
+      "Read(.env*)",
+      "Read(**/secrets/**)",
+      "Write(.env*)",
+      "Write(algorithms/production/**)",
+      "Bash(rm -rf *)",
+      "Bash(curl * | *)",
+      "Bash(wget * | *)",
+      "mcp__broker__execute*:live=true"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__broker__place*|mcp__broker__execute*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/risk_validator.py\"",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "matcher": "Write(algorithms/**)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/algo_change_guard.py\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "mcp__broker__*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/log_trade.py\"",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Bash(lean backtest *)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/parse_backtest.py\"",
+            "timeout": 30000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/session_checkpoint.py\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/load_context.py\"",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "TRADING_MODE": "paper",
+    "LOG_LEVEL": "INFO",
+    "RISK_CHECKS_ENABLED": "true"
+  }
+}

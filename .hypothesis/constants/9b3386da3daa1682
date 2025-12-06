@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/evaluation/metrics.py
+# hypothesis_version: 6.148.3
+
+[0.0001, 0.5, 0.55, 0.6, 0.65, 1.0, 50000, 'AggressiveTrader', 'ConservativeTrader', 'ModerateTrader', 'PortfolioRiskManager', 'PositionRiskManager', 'SentimentAnalyst', 'Supervisor', 'TechnicalAnalyst', 'accuracy', 'calmar_ratio', 'confidence', 'confidence_rmse', 'cumulative_return', 'edge', 'failure', 'false_positive_rate', 'greeks_exceeded', 'maximum_drawdown', 'meets_target', 'neutral', 'pnl', 'position_size_pct', 'profit_factor', 'result', 'signal', 'sortino_ratio', 'stop_loss_triggered', 'success', 'target_win_rate', 'task_allocation', 'token_budget', 'tokens_used', 'veto_accuracy', 'veto_triggered', 'violations', 'win', 'win_rate', 'zero_violations_rate']

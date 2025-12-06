@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/prompts/analyst_prompts.py
+# hypothesis_version: 6.148.3
+
+[0.3, 0.4, 0.5, 0.6, 1000, 1500, 2000, 2500, 3000, 'claude_code_agent', 'opus-4', 'sonnet-4', 'v1.0', 'v2.0', 'v3.0', 'v4.0', 'v5.0', 'v6.0']

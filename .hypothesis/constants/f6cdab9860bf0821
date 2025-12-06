@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/risk_manager.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.02, 0.03, 0.1, 0.25, 0.75, 1.0, 'OK', 'allow', 'block', 'close', 'current_equity', 'daily_loss_limit', 'daily_pnl', 'drawdown', 'drawdown_limit', 'exposure_limit', 'peak_equity', 'positions', 'reduce', 'total_exposure', 'trade_limit', 'trades_today']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/compliance/retention_policy.py
+# hypothesis_version: 6.148.5
+
+[365, 1825, 2190, 2555, 'FINRA Rule 4511', 'Internal policy', 'N/A', 'SOX Section 802', 'account_records', 'action', 'active', 'active_holds', 'anonymize', 'archive', 'archive_location', 'audit_logs', 'by_category', 'can_delete', 'categories', 'category', 'communications', 'configuration', 'created_at', 'created_by', 'default', 'delete', 'description', 'encrypt', 'end_date', 'expired', 'hold_id', 'last_updated', 'legal_holds', 'loaded_policy', 'market_data', 'name', 'none', 'policy_name', 'regulatory_basis', 'released', 'released_at', 'released_by', 'retention_days', 'retention_years', 'risk_data', 'rule_count', 'rules', 'start_date', 'status', 'symbols', 'system', 'temporary', 'total', 'total_checked', 'trading_records', 'under_hold', 'updated_by', 'w']

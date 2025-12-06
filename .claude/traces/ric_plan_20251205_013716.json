@@ -1,0 +1,20 @@
+{
+  "trace_id": "ric_plan_20251205_013716",
+  "workflow_name": "ric_plan",
+  "started_at": "2025-12-05T01:37:16.726162",
+  "ended_at": "2025-12-05T01:37:16.827012",
+  "duration_ms": 100.85,
+  "spans": [
+    {
+      "span_id": "architect_0",
+      "agent_name": "architect",
+      "started_at": "2025-12-05T01:37:16.726168",
+      "ended_at": "2025-12-05T01:37:16.826813",
+      "status": "success",
+      "duration_ms": 100.645,
+      "tokens_in": 736,
+      "tokens_out": 2236,
+      "error": null
+    }
+  ]
+}

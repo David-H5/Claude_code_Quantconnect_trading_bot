@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/metrics/collectors/agent.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.5, 0.7, 0.95, 1.0, 100, 10000, '  ACCURACY:', '  CONFIDENCE:', '  EFFICIENCY:', '%Y-%m-%d', '-', '=', 'accuracy', 'accuracy_rate', 'actual_outcome', 'agent_name', 'agents', 'average_confidence', 'avg_confidence', 'best_agent', 'calibration', 'calibration_error', 'change_pct', 'confidence', 'confidence_std', 'decision', 'decision_id', 'decision_type', 'decisions', 'decisions_evaluated', 'declining', 'efficiency', 'execution_time', 'execution_time_ms', 'improving', 'insufficient_data', 'metadata', 'metric_name', 'overconfidence_rate', 'quality', 'reasoning_steps', 'reliability', 'spread', 'stable', 'time_period_end', 'time_period_start', 'timestamp', 'timestamps', 'total_agents', 'total_decisions', 'trend_direction', 'underconfidence_rate', 'values', 'was_correct', 'worst_agent']

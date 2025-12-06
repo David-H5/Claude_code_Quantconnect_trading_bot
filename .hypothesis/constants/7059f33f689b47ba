@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/execution/spread_analysis.py
+# hypothesis_version: 6.148.3
+
+[-0.5, 0.0, 0.0005, 0.001, 0.003, 0.005, 0.02, 0.1, 0.2, 0.3, 0.5, 1.0, 1.5, 10.0, 100, 1000, 10000, 'ExecutionUrgency', 'No data', 'SpreadAnalyzer', 'SpreadMetrics', 'SpreadQuality', 'SpreadSnapshot', 'aggressive', 'ask', 'ask_size', 'avg_ask_size', 'avg_bid_size', 'avg_imbalance', 'avg_spread_bps', 'bid', 'bid_size', 'buy', 'confidence', 'cost_bps', 'current', 'error', 'excellent', 'fair', 'good', 'half_spread_cost', 'imbalance', 'immediate', 'limit', 'liquidity_score', 'market', 'market_impact', 'max_spread_bps', 'metrics', 'mid', 'min_spread_bps', 'normal', 'passive', 'poor', 'quality', 'quality_distribution', 'samples', 'sell', 'spread_bps', 'std_spread_bps', 'symbol', 'timestamp', 'timing_cost', 'total_cost', 'very_poor']

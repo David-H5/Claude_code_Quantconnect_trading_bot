@@ -1,0 +1,14 @@
+{
+  "chain_id": "cab893a7442175da",
+  "agent_name": "agent",
+  "task": "analysis",
+  "started_at": "2025-12-06T11:31:41.533028",
+  "completed_at": "2025-12-06T11:31:41.533035",
+  "status": "completed",
+  "steps": [],
+  "final_decision": "HOLD",
+  "final_confidence": 0.8,
+  "duration_ms": 0.007,
+  "average_confidence": 0.0,
+  "metadata": {}
+}

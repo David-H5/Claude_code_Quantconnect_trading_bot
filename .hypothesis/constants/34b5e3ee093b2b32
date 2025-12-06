@@ -1,0 +1,4 @@
+# file: /home/dshooter/.vscode-server/extensions/ms-python.debugpy-2025.16.0/bundled/libs/debugpy/_vendored/pydevd/pydev_ipython/matplotlibtools.py
+# hypothesis_version: 6.148.5
+
+['.', 'CocoaAgg', 'GTK', 'GTKAgg', 'GTKCairo', 'MacOSX', 'Qt4Agg', 'Qt5Agg', 'Qt6Agg', 'QtAgg', 'TkAgg', 'WX', 'WXAgg', 'backend', 'called', 'cocoaagg', 'gtk', 'gtkagg', 'gtkcairo', 'interactive', 'macosx', 'matplotlib', 'matplotlib.pyplot', 'none', 'osx', 'pylab', 'qt', 'qt4', 'qt4agg', 'qt5', 'qt5agg', 'qt6', 'qt6agg', 'qtagg', 'tk', 'tkagg', 'wx', 'wxagg']

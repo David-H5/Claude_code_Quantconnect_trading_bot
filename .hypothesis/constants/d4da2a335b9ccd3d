@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/utils/resource_monitor.py
+# hypothesis_version: 6.148.3
+
+[0.1, -2880, -1000, -100, 100, 200, 1000, 1024, 1100, 2880, 'active_positions', 'active_securities', 'alerts', 'avg_ms', 'avg_pct', 'broker_latency_ms', 'cpu', 'cpu_critical_pct', 'cpu_pct', 'cpu_warning_pct', 'critical', 'latency', 'latency_critical_ms', 'latency_warning_ms', 'max_ms', 'max_pct', 'memory', 'memory_critical_pct', 'memory_pct', 'memory_used_mb', 'memory_warning_pct', 'min_ms', 'min_pct', 'order_throughput', 'r', 'samples', 'timestamp', 'total', 'w', 'warning']

@@ -1,0 +1,320 @@
+name: Evaluation Pipeline
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'algorithms/**'
+      - 'llm/prompts/**'
+      - 'evaluation/**'
+      - 'models/**'
+      - 'indicators/**'
+  push:
+    branches: [develop]
+  workflow_dispatch:
+    inputs:
+      framework:
+        description: 'Framework to run (all, stockbench, classic, etc.)'
+        required: false
+        default: 'all'
+      fail_fast:
+        description: 'Stop on first failure'
+        required: false
+        default: 'false'
+
+jobs:
+  # Job 1: Component-Level Testing
+  component-testing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Run component evaluation
+        id: component-eval
+        run: |
+          python evaluation/run_component_evaluation.py --output-json results/component.json
+        continue-on-error: true
+
+      - name: Upload component results
+        uses: actions/upload-artifact@v4
+        with:
+          name: component-results
+          path: results/component.json
+
+      - name: Check component pass rate
+        run: |
+          python -c "
+          import json
+          with open('results/component.json') as f:
+              data = json.load(f)
+          pass_rate = data.get('pass_rate', 0)
+          if pass_rate < 0.90:
+              print(f'❌ Component pass rate {pass_rate:.1%} < 90%')
+              exit(1)
+          print(f'✅ Component pass rate {pass_rate:.1%} >= 90%')
+          "
+
+  # Job 2: STOCKBENCH Agent Testing
+  stockbench-testing:
+    runs-on: ubuntu-latest
+    needs: component-testing
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        agent: [TechnicalAnalyst, SentimentAnalyst, ConservativeTrader, ModerateTrader, AggressiveTrader]
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Run STOCKBENCH evaluation for ${{ matrix.agent }}
+        run: |
+          python evaluation/run_evaluation.py \
+            --agent ${{ matrix.agent }} \
+            --version v6.1 \
+            --threshold 0.90 \
+            --output-dir results/
+
+      - name: Upload STOCKBENCH results
+        uses: actions/upload-artifact@v4
+        with:
+          name: stockbench-${{ matrix.agent }}
+          path: results/*_${{ matrix.agent }}_*.json
+
+  # Job 3: CLASSic Framework Evaluation
+  classic-evaluation:
+    runs-on: ubuntu-latest
+    needs: stockbench-testing
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Download STOCKBENCH results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: stockbench-*
+          path: results/
+
+      - name: Run CLASSic framework evaluation
+        run: |
+          python evaluation/run_classic_evaluation.py \
+            --results-dir results/ \
+            --output-json results/classic.json
+
+      - name: Upload CLASSic results
+        uses: actions/upload-artifact@v4
+        with:
+          name: classic-results
+          path: results/classic.json
+
+      - name: Check CLASSic score
+        run: |
+          python -c "
+          import json
+          with open('results/classic.json') as f:
+              data = json.load(f)
+          score = data.get('classic_score', 0)
+          if score < 80:
+              print(f'❌ CLASSic score {score:.1f} < 80')
+              exit(1)
+          print(f'✅ CLASSic score {score:.1f} >= 80')
+          "
+
+  # Job 4: Overfitting Prevention Check
+  overfitting-check:
+    runs-on: ubuntu-latest
+    needs: stockbench-testing
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Run overfitting prevention check
+        run: |
+          python evaluation/check_overfitting.py \
+            --algorithm algorithms/options_trading_bot.py \
+            --output-json results/overfitting.json
+
+      - name: Upload overfitting results
+        uses: actions/upload-artifact@v4
+        with:
+          name: overfitting-results
+          path: results/overfitting.json
+
+      - name: Check overfitting risk
+        run: |
+          python -c "
+          import json
+          with open('results/overfitting.json') as f:
+              data = json.load(f)
+          risk_level = data.get('risk_level', 'CRITICAL')
+          if risk_level in ['HIGH', 'CRITICAL']:
+              print(f'❌ Overfitting risk: {risk_level}')
+              exit(1)
+          print(f'✅ Overfitting risk: {risk_level}')
+          "
+
+  # Job 5: Generate Evaluation Report
+  generate-report:
+    runs-on: ubuntu-latest
+    needs: [component-testing, stockbench-testing, classic-evaluation, overfitting-check]
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Download all results
+        uses: actions/download-artifact@v4
+        with:
+          path: results/
+
+      - name: Generate comprehensive report
+        run: |
+          python evaluation/generate_comprehensive_report.py \
+            --results-dir results/ \
+            --output results/EVALUATION_REPORT.md
+
+      - name: Upload evaluation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation-report
+          path: results/EVALUATION_REPORT.md
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('results/EVALUATION_REPORT.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });
+
+  # Job 6: Production Readiness Check
+  production-check:
+    runs-on: ubuntu-latest
+    needs: [component-testing, stockbench-testing, classic-evaluation, overfitting-check]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Download all results
+        uses: actions/download-artifact@v4
+        with:
+          path: results/
+
+      - name: Run orchestration pipeline
+        run: |
+          python evaluation/run_orchestration_pipeline.py \
+            --results-dir results/ \
+            --output-json results/pipeline.json
+
+      - name: Check production readiness
+        id: prod-check
+        run: |
+          python -c "
+          import json
+          with open('results/pipeline.json') as f:
+              data = json.load(f)
+          production_ready = data.get('production_ready', False)
+          overall_score = data.get('overall_score', 0)
+          print(f'Production Ready: {production_ready}')
+          print(f'Overall Score: {overall_score:.1f}/100')
+
+          if not production_ready:
+              print('❌ NOT PRODUCTION READY')
+              # Print remediation suggestions
+              for suggestion in data.get('remediation_suggestions', []):
+                  print(f\"  - {suggestion['severity'].upper()}: {suggestion['suggestion']}\")
+              exit(1)
+          print('✅ PRODUCTION READY')
+          " || echo "production_ready=false" >> $GITHUB_OUTPUT
+
+      - name: Create deployment gate
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        run: |
+          if [ "${{ steps.prod-check.outputs.production_ready }}" != "false" ]; then
+            echo "✅ All evaluation gates passed - safe to merge to main"
+          else
+            echo "❌ Evaluation gates failed - do NOT merge to main"
+            exit 1
+          fi

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/infrastructure/pubsub.py
+# hypothesis_version: 6.148.5
+
+[1.0, 2.0, 'Message', 'alert_type', 'alerts', 'alive', 'avg_price', 'channel', 'confidence', 'current_price', 'custom', 'data', 'heartbeat', 'info', 'message', 'order_id', 'order_update', 'orders', 'pattern', 'pmessage', 'pnl', 'position_update', 'positions', 'price', 'price_alert', 'quantity', 'raw', 'risk', 'risk_alert', 'severity', 'signal', 'signals', 'source', 'status', 'symbol', 'system', 'system_event', 'timestamp', 'trade_signal', 'trading', 'type', 'unknown', 'utf-8']

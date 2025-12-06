@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/exceptions.py
+# hypothesis_version: 6.148.3
+
+['ConfigurationError', 'DataValidationError', 'ExecutionError', 'InsufficientFunds', 'InvalidPositionSize', 'OptionPricingError', 'OrderRejected', 'RiskLimitExceeded', 'StrategyError', 'TradingError']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/decision_tracer.py
+# hypothesis_version: 6.148.5
+
+[0.0, 1.0, 100, 'agent_name', 'analysis', 'avg_confidence', 'avg_reasoning_steps', 'by_category', 'by_outcome', 'category', 'completed_at', 'confidence', 'context', 'created_at', 'decision_id', 'decisions', 'description', 'error', 'executed', 'execution', 'exported_at', 'final_confidence', 'inputs', 'logs/decisions', 'metadata', 'outcome', 'outcome_details', 'outputs', 'overridden', 'pending', 'position', 'reasoning_chain', 'rejected', 'risk', 'step_number', 'strategy', 'timeout', 'timestamp', 'total_decisions', 'trade', 'w']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/.vscode-server/extensions/ms-python.debugpy-2025.16.0/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_io.py
+# hypothesis_version: 6.148.5
+
+['PYTHONIOENCODING', '_pydevd_%s_redirect_', '_stack_%s', 'both', 'buffer', 'encoding', 'flush', 'isatty', 'replace', 'stderr', 'stdout', 'utf-8', 'write']

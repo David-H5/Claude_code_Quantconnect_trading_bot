@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/execution/spread_anomaly.py
+# hypothesis_version: 6.148.3
+
+[-1.0, -0.8, -0.7, -0.6, -0.5, -0.3, -0.2, 0.5, 0.6, 0.7, 0.8, 0.95, 0.99, 1.0, 3.0, 50.0, 100.0, -100, 100, 1000, 10000, 'AnomalySeverity', 'Minor anomalies only', 'No anomaly history', 'No recent anomalies', 'QuoteUpdate', 'SpreadAnomaly', 'SpreadAnomalyType', 'SpreadBaseline', 'ask', 'avg_quote_frequency', 'avg_spread_bps', 'avoid_trading', 'baseline', 'bid', 'critical', 'crossed_market', 'current_spread_bps', 'description', 'deviation_factor', 'inf', 'info', 'is_safe_to_trade', 'liquidity_gap', 'median_spread_bps', 'normal', 'normal_spread_bps', 'p95_spread_bps', 'p99_spread_bps', 'quote_frequency', 'quote_stuffing', 'recent_anomalies', 'safety_confidence', 'safety_reason', 'samples', 'severity', 'spread_quality_score', 'stale_quote', 'std_spread_bps', 'sudden_widening', 'symbol', 'timestamp', 'type', 'warning', 'wide_spread']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/evaluation/quantconnect_integration.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.1, 0.2, 0.55, 1.0, 1.5, 100, 600, 100000, '## ✅ Assessment\n', '%', '%Y%m%d', '--cash', '--data-resolution', '--end', '--start', 'Alpha', 'Authorization', 'Average Fill Time', 'Average Loss', 'Average Win', 'BacktestId', 'Beta', 'Calmar Ratio', 'CharlesSchwab', 'Drawdown', 'Information Ratio', 'Margin', 'Minute', 'Profit-Loss Ratio', 'Sharpe Ratio', 'Sortino Ratio', 'Statistics', 'Total Fees', 'Total Net Profit', 'Total Orders', 'Total Slippage', 'Tracking Error', 'Win Rate', 'backtest', 'backtestId', 'backtestName', 'compileId', 'completed', 'latest', 'lean', 'projectId', 'statistics', 'unknown', '{']

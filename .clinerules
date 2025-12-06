@@ -1,0 +1,124 @@
+# Claude Code Instructions for QuantConnect Trading Bot
+
+## Project Context
+
+This is a QuantConnect algorithmic trading project written in Python. QuantConnect is a cloud-based algorithmic trading platform that uses the LEAN engine for backtesting and live trading.
+
+## Key QuantConnect Concepts
+
+### Algorithm Structure
+- All algorithms inherit from `QCAlgorithm` base class
+- `Initialize()`: Set up algorithm parameters, data subscriptions, indicators
+- `OnData()`: Main event handler called when new data arrives
+- `OnOrderEvent()`: Handle order fill events (optional)
+
+### Common QuantConnect APIs
+- `self.SetStartDate()` / `self.SetEndDate()`: Define backtest period
+- `self.SetCash()`: Set starting capital
+- `self.AddEquity()`: Subscribe to stock data
+- `self.AddCrypto()` / `self.AddForex()`: Other asset types
+- `self.SetBrokerageModel()`: Configure brokerage settings
+- `self.Schedule.On()`: Schedule recurring events
+- `self.MarketOrder()` / `self.LimitOrder()`: Place orders
+- `self.Liquidate()`: Close all positions
+- `self.Portfolio`: Access portfolio holdings
+- `self.Securities`: Access security data
+
+### Indicators
+- Use built-in: `self.RSI()`, `self.SMA()`, `self.MACD()`, etc.
+- Custom indicators: Inherit from `PythonIndicator`
+- Always warm up indicators: `self.SetWarmUp(period)`
+
+## Development Guidelines
+
+### When Creating Algorithms
+
+1. **Always include proper docstrings** explaining the strategy logic
+2. **Use type hints** for function parameters and returns
+3. **Implement proper risk management**: Position sizing, stop losses
+4. **Add logging**: Use `self.Debug()` and `self.Log()` for important events
+5. **Handle edge cases**: Check if data exists before accessing
+6. **Test with different time periods**: Ensure robustness
+
+### Code Organization
+
+- **algorithms/**: Complete trading algorithms ready to backtest
+- **indicators/**: Custom technical indicators
+- **models/**: Portfolio construction and risk models
+- **utils/**: Helper functions (e.g., data processing, calculations)
+- **data/**: Custom data importers and processors
+- **research/**: Jupyter notebooks for strategy research
+- **tests/**: Unit tests for components
+
+### Error Prevention
+
+Common mistakes to avoid:
+- Accessing `data[symbol]` without checking if symbol exists in data
+- Not warming up indicators before using them
+- Creating orders without checking if market is open
+- Not handling corporate actions (splits, dividends)
+- Forgetting to set security type and resolution
+
+### Best Practices
+
+1. **Modular Design**: Separate strategy logic from execution logic
+2. **Configuration**: Use class attributes for parameters
+3. **Defensive Programming**: Check for None/null values
+4. **Performance**: Avoid unnecessary calculations in OnData()
+5. **Documentation**: Comment complex logic, especially entry/exit rules
+
+### Testing
+
+- Write tests for utility functions and custom indicators
+- Use mock data for testing algorithm logic
+- Test edge cases: missing data, market gaps, extreme volatility
+- Validate calculations against known results
+
+### When Asked to Implement Strategies
+
+1. First, clarify the strategy rules if ambiguous
+2. Outline the algorithm structure before coding
+3. Implement in stages: data setup → indicators → signals → execution
+4. Add proper logging for debugging
+5. Include comments explaining the strategy logic
+6. Suggest backtesting parameters
+
+### QuantConnect-Specific Patterns
+
+```python
+# Proper data access pattern
+if data.ContainsKey(self.symbol):
+    bar = data[self.symbol]
+
+# Indicator usage pattern
+if self.indicator.IsReady:
+    value = self.indicator.Current.Value
+
+# Order placement pattern
+if not self.Portfolio[self.symbol].Invested:
+    self.SetHoldings(self.symbol, 0.5)
+```
+
+## What to Avoid
+
+- Don't use pandas for real-time data processing (performance issues)
+- Don't look ahead in backtests (future data leakage)
+- Avoid hardcoded values - use configurable parameters
+- Don't over-optimize on historical data
+- Avoid complex logic in OnData() - extract to helper methods
+
+## Resources to Reference
+
+When unsure about QuantConnect APIs:
+- Check QuantConnect documentation
+- Look at existing algorithms in the codebase
+- Ask for clarification on specific API usage
+- Reference common patterns in this file
+
+## Communication Preferences
+
+- Explain strategy logic before implementing
+- Highlight any assumptions made
+- Warn about potential risks or limitations
+- Suggest improvements for robustness
+- Ask for clarification on ambiguous requirements

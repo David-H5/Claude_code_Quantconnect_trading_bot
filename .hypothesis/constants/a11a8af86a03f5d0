@@ -1,0 +1,4 @@
+# file: /home/dshooter/.vscode-server/extensions/ms-python.debugpy-2025.16.0/bundled/libs/debugpy/_vendored/pydevd/pydevconsole.py
+# hypothesis_version: 6.148.5
+
+[20.0, 259, 1024, 4096, '-1', '<input>', '@LINE@', 'IPYTHONENABLE', 'PYDEV_ECLIPSE_PID', 'True', '__main__', 'exec', 'exitfunc', 'interpreter', 'kill', 'single', 'win32']

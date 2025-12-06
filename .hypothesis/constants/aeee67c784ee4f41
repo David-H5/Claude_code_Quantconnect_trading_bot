@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/metrics_aggregator.py
+# hypothesis_version: 6.148.5
+
+['AggregatedMetric', 'MetricPoint', 'MetricSeries', 'MetricType', 'MetricsAggregator', 'SystemHealth', 'WindowSize', 'create_aggregator', 'record_llm_request', 'record_metric', 'record_tool_call']

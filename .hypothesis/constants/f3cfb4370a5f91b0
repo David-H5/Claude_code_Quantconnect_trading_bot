@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/ui/charts/calibration_chart.py
+# hypothesis_version: 6.148.3
+
+[-0.05, 0.0, 0.05, 0.3, 0.4, 0.5, 0.7, 0.9, 0.95, 1.05, 1.5, 'Model Calibration', 'No calibration data', 'Perfect Calibration', 'Sample Count', 'axes fraction', 'center', 'ece', 'equal', 'gray', 'green', 'is_overconfident', 'is_underconfident', 'k--', 'lower right', 'navy', 'num_bins', 'red', 'round', 'steelblue', 'total_samples', 'wheat', 'y']

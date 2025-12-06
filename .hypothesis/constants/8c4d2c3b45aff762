@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/agents/risk_agent.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.02, 0.03, 0.15, 0.25, 0.4, 0.8, 0.9, 1.0, 50000.0, 100000.0, 200000.0, 1000, 'action', 'alert_type', 'approved', 'approved_quantity', 'assessment_count', 'buy', 'buying_power', 'cash', 'checks_failed', 'checks_passed', 'critical', 'current_price', 'daily_loss_pct', 'daily_pnl', 'daily_trade_count', 'entry_price', 'fill_price', 'high', 'initial_equity', 'level', 'limits', 'long_exposure', 'low', 'margin_used', 'market_value', 'max_daily_loss_pct', 'max_position_size', 'max_position_value', 'max_total_exposure', 'medium', 'message', 'needs_review', 'net_exposure', 'original_quantity', 'portfolio_risk', 'position_count', 'price', 'quantity', 'reason', 'reduced', 'rejected', 'result', 'risk', 'risk_agent', 'risk_assessment', 'risk_level', 'short_exposure', 'symbol', 'timestamp', 'total_exposure', 'warnings']

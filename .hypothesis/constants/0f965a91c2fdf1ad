@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/anomaly_detector.py
+# hypothesis_version: 6.148.5
+
+[0.01, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, '*.json', '-', '--baseline', '--json', '--recent', '=', '__main__', 'accuracy_drop', 'activity', 'agent', 'agent_name', 'anomalies', 'anomaly_type', 'baseline_count', 'baseline_days', 'baseline_hours', 'baseline_samples', 'baseline_std', 'baseline_value', 'calibration_drift', 'confidence', 'confidence_drop', 'context', 'count', 'critical', 'current_value', 'decision_rate', 'decision_rate_change', 'decision_rate_drop', 'decision_rate_spike', 'decreased', 'detection_time', 'deviation', 'error', 'high', 'increased', 'info', 'low', 'medium', 'message', 'metric_name', 'no_activity', 'overall_confidence', 'recent_count', 'recent_hours', 'recent_samples', 'severity', 'timestamp', 'unknown', 'very_high', 'very_low', 'warning', 'ℹ️', '⚠️', '❌', '❓', '🚨']

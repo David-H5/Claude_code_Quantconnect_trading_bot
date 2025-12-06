@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/agents/market_agent.py
+# hypothesis_version: 6.148.5
+
+[-0.8, -0.7, -0.5, -0.3, 0.0, 0.3, 0.5, 0.6, 0.7, 0.8, 50.0, 100.0, 100, 252, '; ', 'Price above SMA20', 'Price below SMA20', 'bearish', 'bullish', 'buy', 'confidence', 'data_points', 'down', 'hold', 'indicators', 'last_price', 'last_update', 'market', 'market_agent', 'market_condition', 'max_history', 'neutral', 'price', 'ranging', 'reasoning', 'rsi_14', 'sell', 'signal_count', 'signal_threshold', 'signal_type', 'sma_20', 'sma_50', 'strength', 'strong_buy', 'strong_sell', 'symbol', 'symbol_count', 'timestamp', 'tracked_symbols', 'trend', 'trending', 'up', 'volatile', 'volatility', 'volume']

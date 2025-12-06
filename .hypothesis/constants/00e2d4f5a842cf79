@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/utils/log_handlers.py
+# hypothesis_version: 6.148.3
+
+[1.0, 5.0, 100, 1024, 10000, '%(message)s', 'a', 'level', 'message', 'monitoring_data', 'rb', 'timestamp', 'utf-8', 'wb']

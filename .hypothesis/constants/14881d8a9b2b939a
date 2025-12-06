@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/reasoning_logger.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.5, 1.0, 1000, 'ReasoningChain', 'abandon_reason', 'abandoned', 'abandoned_chains', 'active_chains', 'agent_name', 'average_confidence', 'average_duration_ms', 'chain_id', 'chains_by_agent', 'completed', 'completed_at', 'completed_chains', 'confidence', 'duration_ms', 'entries', 'evidence', 'export_timestamp', 'failed', 'failed_chains', 'failure_reason', 'filter_end', 'filter_start', 'final_confidence', 'final_decision', 'in_progress', 'metadata', 'reasoning_chains', 'reasoning_steps', 'started_at', 'status', 'step', 'step_count', 'step_number', 'steps', 'task', 'thought', 'timestamp', 'total_chains', 'total_steps', 'w']

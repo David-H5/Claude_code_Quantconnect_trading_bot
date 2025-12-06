@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/execution/pre_trade_validator.py
+# hypothesis_version: 6.148.3
+
+[0.02, 0.03, 0.25, 1.0, 100.0, 50000.0, 100, 'Combo is balanced', 'Not a combo order', 'Order', 'age_seconds', 'approved', 'buy', 'checks', 'circuit_breaker', 'combo_balance', 'concentration_limit', 'current_exposure_pct', 'current_pct', 'daily_loss_limit', 'daily_pnl_pct', 'data_freshness', 'details', 'duplicate_order', 'failed', 'failed_count', 'leg_count', 'limit_pct', 'liquidity', 'market_data', 'market_value', 'max_age_seconds', 'max_value', 'message', 'min_value', 'min_volume', 'name', 'net_quantity', 'new_pct', 'order_value', 'passed', 'position_limit', 'positions', 'recent_timestamp', 'sell', 'skipped', 'status', 'timestamp', 'total_value', 'volume', 'warning', 'warning_count', 'window_seconds']

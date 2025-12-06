@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/api/routes/decision_audit.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.5, 100, 365, 404, 500, 1000, '%Y-%m-%d', '*.json', '/agents/performance', '/audit', '/decisions', '/summary', 'Decision Audit', 'Decision not found', 'actions', 'agent_counts', 'agent_name', 'agents_active', 'avg_confidence', 'buy', 'close', 'confidence', 'confidence_sum', 'context', 'correct', 'count', 'daily_avg_confidence', 'daily_counts', 'decision', 'decision_count', 'decisions', 'executed', 'explanation', 'hold', 'human_readable', 'limit', 'metadata', 'other', 'outcome', 'outcome_notes', 'outcome_updated_at', 'outcomes', 'pending', 'period_days', 'rejected', 'sell', 'skip', 'symbol', 'timestamp', 'total', 'total_decisions', 'total_evaluated', 'unknown']

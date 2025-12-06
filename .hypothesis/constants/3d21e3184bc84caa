@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/.venv/bin/pytest
+# hypothesis_version: 6.148.5
+
+['.exe', '__main__']

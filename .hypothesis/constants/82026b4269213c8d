@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/portfolio_hedging.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.01, 0.05, 0.5, 0.7, 0.8, 0.9, 1.0, 5.0, 10.0, 50.0, 100.0, 100, 'Greeks', 'HedgeRecommendation', 'HedgeTargets', 'HedgeType', 'PortfolioHedger', 'Position', 'Underlying', '_', 'action', 'aggregate_greeks', 'asset_type', 'buy', 'by_underlying', 'call', 'cost', 'current_price', 'daily_theta_decay', 'delta', 'delta_change', 'delta_gamma', 'dollar_delta_1pct', 'dollar_gamma_1pct', 'entry_price', 'expiry', 'full', 'gamma', 'gamma_change', 'hedge_type', 'is_delta_neutral', 'is_gamma_neutral', 'market_value', 'option', 'option_type', 'portfolio_delta', 'portfolio_gamma', 'portfolio_theta', 'portfolio_vega', 'position_count', 'positions', 'price', 'priority', 'put', 'quantity', 'rationale', 'risk_metrics', 'sell', 'stock', 'strike', 'symbol', 'targets', 'theta', 'timestamp', 'type', 'underlying', 'underlying_symbol', 'vega', 'vega_change']

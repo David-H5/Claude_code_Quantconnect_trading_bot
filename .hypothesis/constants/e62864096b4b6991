@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/agents/strategy_agent.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.02, 0.05, 0.5, 0.6, 1.0, 100000.0, 100, 'action', 'buy', 'confidence', 'cooling_off', 'current_price', 'day', 'default', 'entry_price', 'equity', 'fill_price', 'hold', 'idle', 'in_position', 'indicators', 'initial_equity', 'limit', 'order_type', 'position_count', 'positions', 'price', 'quantity', 'reasoning', 'seeking_entry', 'seeking_exit', 'sell', 'side', 'signal_strength', 'signal_type', 'signals_generated', 'stop_loss', 'strategies', 'strategy', 'strategy_agent', 'strategy_name', 'strength', 'strong_buy', 'strong_sell', 'symbol', 'take_profit', 'time_in_force', 'timestamp', 'trades_executed', 'unrealized_pnl']

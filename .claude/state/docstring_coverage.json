@@ -1,0 +1,57 @@
+[
+  {
+    "date": "2025-12-05T19:38:26.927417",
+    "results": {
+      "llm": {
+        "coverage_pct": 99.48,
+        "functions": "724/729",
+        "classes": "226/226"
+      },
+      "execution": {
+        "coverage_pct": 91.67,
+        "functions": "327/357",
+        "classes": "113/123"
+      },
+      "models": {
+        "coverage_pct": 99.3,
+        "functions": "434/438",
+        "classes": "137/137"
+      },
+      "observability": {
+        "coverage_pct": 96.02,
+        "functions": "370/390",
+        "classes": "113/113"
+      },
+      "evaluation": {
+        "coverage_pct": 97.92,
+        "functions": "302/311",
+        "classes": "121/121"
+      },
+      "algorithms": {
+        "coverage_pct": 87.96,
+        "functions": "85/85",
+        "classes": "10/23"
+      },
+      "scanners": {
+        "coverage_pct": 100.0,
+        "functions": "75/75",
+        "classes": "27/27"
+      },
+      "indicators": {
+        "coverage_pct": 100.0,
+        "functions": "41/41",
+        "classes": "13/13"
+      },
+      "config": {
+        "coverage_pct": 100.0,
+        "functions": "23/23",
+        "classes": "13/13"
+      },
+      "utils": {
+        "coverage_pct": 100.0,
+        "functions": "57/57",
+        "classes": "12/12"
+      }
+    }
+  }
+]

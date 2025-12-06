@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/base.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.3, 500, 1000, 'AnalysisResult', 'BaseLLMProvider', 'NewsItem', 'Sentiment', 'SentimentResult', 'api_key', 'confidence', 'content', 'key_points', 'max_tokens', 'model', 'processing_time_ms', 'provider', 'published_at', 'risk_factors', 'score', 'sentiment', 'source', 'summary', 'symbols', 'temperature', 'timestamp', 'title', 'trading_signals', 'url']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/attention_layer.py
+# hypothesis_version: 6.148.5
+
+[0.0, 1e-10, 1e-06, 0.1, 2.0, 100, 1000, 10000, '-inf', 'cross', 'masked', 'self']

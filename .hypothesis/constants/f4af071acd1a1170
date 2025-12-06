@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/execution/bot_managed_positions.py
+# hypothesis_version: 6.148.3
+
+[-2.0, 0.0, 0.2, 0.3, 0.5, 1.0, 2.0, 999, '%Y-%m-%d %H:%M:%S', 'Debug', 'a', 'action', 'active_positions', 'adjust', 'autonomous', 'bot_positions.json', 'close', 'current_quantity', 'details', 'entry_price', 'entry_time', 'error', 'expiry', 'gain_pct', 'info', 'management_enabled', 'management_history', 'manual_ui', 'min_dte_for_roll', 'none', 'position_id', 'profit_takes', 'profit_thresholds', 'quantity_closed', 'realized_pnl', 'reason', 'recurring', 'remaining_quantity', 'roll', 'rolls', 'source', 'stop_loss', 'stop_loss_threshold', 'stop_losses', 'strategy_type', 'symbol', 'take_pct', 'take_profit', 'timestamp', 'total_positions', 'total_realized_pnl', 'total_unrealized_pnl', 'triggered']

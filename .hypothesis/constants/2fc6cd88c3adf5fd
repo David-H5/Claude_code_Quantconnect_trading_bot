@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/api/routes/orders.py
+# hypothesis_version: 6.148.5
+
+[2.5, 100, 201, 400, 404, 500, 503, 1000, 1440, '/orders', '/orders/{order_id}', 'Buy or sell', 'Filter by status', 'Filter by symbol', 'Maximum results', 'Number of contracts', 'Order notes', 'Order priority', 'Order quantity', 'SPY', 'buy', 'equity', 'example', 'execution_type', 'high', 'iron_condor', 'limit_price', 'low', 'manual_legs', 'message', 'normal', 'notes', 'option_strategy', 'order_id', 'pending', 'pending_count', 'priority', 'quantity', 'sell', 'side', 'strategy_name', 'symbol', 'two_part_spread', 'urgent']

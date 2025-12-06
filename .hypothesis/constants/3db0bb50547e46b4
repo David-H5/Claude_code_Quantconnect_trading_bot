@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/compliance/__init__.py
+# hypothesis_version: 6.148.5
+
+['AuditEntry', 'AuditLevel', 'AuditLogger', 'AuditTrail', 'ChecklistItem', 'ChecklistResult', 'ChecklistStatus', 'ComplianceReport', 'ComplianceReporter', 'FINRAChecklist', 'ManipulationAlert', 'ManipulationType', 'ReportFormat', 'ReportPeriod', 'RetentionPolicy', 'RetentionRule', 'create_audit_logger']

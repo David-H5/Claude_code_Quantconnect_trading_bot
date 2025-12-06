@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/agentops_client.py
+# hypothesis_version: 6.148.5
+
+[0.0, 100, 'AGENTOPS_API_KEY', 'completion_tokens', 'confidence', 'context', 'decision', 'decision_type', 'development', 'error', 'error_type', 'failed', 'input', 'llm_call', 'market', 'message', 'model', 'order_type', 'output', 'price', 'prompt_tokens', 'quantity', 'session', 'session_error', 'side', 'success', 'symbol', 'tool_call', 'total_tokens', 'trade']

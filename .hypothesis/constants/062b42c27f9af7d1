@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/agents/sentiment_analyst.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.3, 0.5, 0.7, 1.2, 8000.0, 100, 1000, '  (Balanced)', '=', 'FinBERT', 'SENTIMENT DATA', 'SentimentAnalyst', 'YOUR ANALYSIS', 'active', 'analyst_ratings', 'bearish_mentions', 'bullish_mentions', 'buy_ratings', 'confidence', 'content', 'cost', 'error', 'exception', 'finbert_scores', 'headline', 'hold_ratings', 'input_tokens', 'label', 'news_articles', 'options_flow', 'output_tokens', 'put_call_ratio', 'raw_response', 'recent_changes', 'role', 'score', 'sell_ratings', 'social_mentions', 'stop_reason', 'symbol', 'total_mentions', 'unusual_activity', 'usage', 'user']

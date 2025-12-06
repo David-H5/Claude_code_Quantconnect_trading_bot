@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/checkpointing.py
+# hypothesis_version: 6.148.5
+
+[100, 1000, ' AND agent_name = ?', ' AND created_at < ?', ' AND thread_id = ?', 'Checkpoint', 'CheckpointMetadata', 'agent_name', 'checkpoint_id', 'checkpoint_ns', 'checkpoints.db', 'created_at', 'metadata', 'name', 'node_name', 'parent_checkpoint_id', 'pending_writes', 'state', 'step', 'tags', 'thread_id']

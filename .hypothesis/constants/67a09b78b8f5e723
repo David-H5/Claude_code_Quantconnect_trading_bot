@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/prompts/prompt_registry.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.7, 1.0, 1000, 'PromptVersion', 'accuracy', 'active', 'active_versions', 'aggressive_trader', 'avg_confidence', 'avg_response_time_ms', 'bear_researcher', 'bull_researcher', 'conservative_trader', 'created_date', 'error', 'fundamentals_analyst', 'metrics', 'metrics_comparison', 'moderate_trader', 'news_analyst', 'prompts', 'r', 'role', 'sentiment_analyst', 'sonnet-4', 'supervisor', 'system', 'technical_analyst', 'total_uses', 'v1', 'v2', 'version1', 'version2', 'volatility_analyst', 'w', 'winner']

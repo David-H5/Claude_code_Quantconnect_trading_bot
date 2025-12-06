@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/execution/slippage_monitor.py
+# hypothesis_version: 6.148.5
+
+[-0.5, 0.0, 0.5, 5.0, 10.0, 25.0, 100, 10000, '-', '=', 'BY SYMBOL', 'DIRECTION BREAKDOWN', 'SUMMARY', 'actual_price', 'adverse', 'adverse_pct', 'alerts_count', 'avg_slippage_bps', 'buy', 'critical', 'direction', 'expected_price', 'favorable', 'favorable_pct', 'info', 'level', 'market', 'max_slippage_bps', 'median_slippage_bps', 'message', 'metadata', 'min_slippage_bps', 'neutral', 'neutral_pct', 'order_id', 'order_type', 'period_end', 'period_start', 'quantity', 'side', 'slippage_bps', 'std_dev_bps', 'symbol', 'timestamp', 'total_fills', 'total_slippage_value', 'total_volume', 'warning']

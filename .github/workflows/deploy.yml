@@ -1,0 +1,123 @@
+name: Deploy to QuantConnect
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'algorithms/**'
+  workflow_dispatch:
+    inputs:
+      algorithm:
+        description: 'Algorithm file to deploy (e.g., simple_momentum.py)'
+        required: false
+        type: string
+
+env:
+  PYTHON_VERSION: '3.10'
+
+jobs:
+  validate:
+    name: Validate Algorithms
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Run tests
+        run: pytest tests/ -v --cov=algorithms --cov-fail-under=70
+
+      - name: Lint algorithms
+        run: |
+          flake8 algorithms/ --max-line-length=100 --max-complexity=10
+          black --check --line-length 100 algorithms/
+
+      - name: Type check
+        run: mypy algorithms/ --ignore-missing-imports
+
+  deploy:
+    name: Deploy to QuantConnect
+    needs: validate
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.inputs.algorithm != ''
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install LEAN CLI
+        run: pip install lean
+
+      - name: Configure LEAN CLI
+        env:
+          QC_USER_ID: ${{ secrets.QC_USER_ID }}
+          QC_API_TOKEN: ${{ secrets.QC_API_TOKEN }}
+        run: |
+          lean login --user-id "$QC_USER_ID" --api-token "$QC_API_TOKEN"
+
+      - name: Get changed algorithms
+        id: changed-files
+        if: github.event_name == 'push'
+        uses: tj-actions/changed-files@v44
+        with:
+          files: algorithms/*.py
+
+      - name: Deploy changed algorithms
+        if: github.event_name == 'push' && steps.changed-files.outputs.any_changed == 'true'
+        env:
+          QC_USER_ID: ${{ secrets.QC_USER_ID }}
+          QC_API_TOKEN: ${{ secrets.QC_API_TOKEN }}
+        run: |
+          echo "Deploying changed algorithms..."
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            if [[ "$file" == algorithms/*.py ]] && [[ "$file" != algorithms/__init__.py ]]; then
+              echo "Pushing $file to QuantConnect..."
+              lean cloud push --project "$file"
+            fi
+          done
+
+      - name: Deploy specific algorithm
+        if: github.event.inputs.algorithm != ''
+        env:
+          QC_USER_ID: ${{ secrets.QC_USER_ID }}
+          QC_API_TOKEN: ${{ secrets.QC_API_TOKEN }}
+        run: |
+          echo "Deploying ${{ github.event.inputs.algorithm }}..."
+          lean cloud push --project "algorithms/${{ github.event.inputs.algorithm }}"
+
+  notify:
+    name: Notify on Deployment
+    needs: [validate, deploy]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check deployment status
+        run: |
+          if [ "${{ needs.deploy.result }}" == "success" ]; then
+            echo "✅ Deployment successful"
+          elif [ "${{ needs.deploy.result }}" == "skipped" ]; then
+            echo "⏭️ Deployment skipped (no changes to algorithms)"
+          else
+            echo "❌ Deployment failed"
+            exit 1
+          fi

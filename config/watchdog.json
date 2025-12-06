@@ -1,0 +1,13 @@
+{
+    "max_runtime_hours": 10,
+    "max_idle_minutes": 30,
+    "max_cost_usd": 50.0,
+    "checkpoint_interval_minutes": 15,
+    "log_file": "logs/watchdog.log",
+    "progress_file": "claude-progress.txt",
+    "budget_file": "logs/budget.json",
+    "check_interval_seconds": 30,
+    "claude_process_name": "claude",
+    "alert_email": null,
+    "slack_webhook": null
+}

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/compliance/audit_logger.py
+# hypothesis_version: 6.148.5
+
+['AuditCategory', 'AuditEntry', 'AuditLevel', 'AuditLogger', 'AuditTrail', 'create_audit_logger']

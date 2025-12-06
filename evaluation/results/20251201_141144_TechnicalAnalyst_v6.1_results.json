@@ -1,0 +1,334 @@
+{
+  "agent_type": "TechnicalAnalyst",
+  "version": "v6.1",
+  "timestamp": "2025-12-01T14:11:44.221727",
+  "total_cases": 32,
+  "passed_cases": 28,
+  "failed_cases": 4,
+  "pass_rate": 0.875,
+  "category_breakdown": {
+    "success": {
+      "total": 13,
+      "passed": 11,
+      "pass_rate": 0.8461538461538461
+    },
+    "edge": {
+      "total": 13,
+      "passed": 11,
+      "pass_rate": 0.8461538461538461
+    },
+    "failure": {
+      "total": 6,
+      "passed": 6,
+      "pass_rate": 1.0
+    }
+  },
+  "metrics": {
+    "accuracy": 0.875,
+    "false_positive_rate": 0.03125,
+    "confidence_rmse": 0.07639453514486493,
+    "out_of_sample_usage_rate": 1.0,
+    "pattern_recognition_accuracy": 0.875
+  },
+  "duration_seconds": 4.8160552978515625e-05,
+  "production_ready": false,
+  "test_results": [
+    {
+      "case_id": "TECH_SUCCESS_001",
+      "category": "success",
+      "scenario": "Bull flag pattern on AAPL daily chart (2024-Q4)",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.003814697265625
+    },
+    {
+      "case_id": "TECH_SUCCESS_002",
+      "category": "success",
+      "scenario": "Head and shoulders reversal on MSFT (2024-Q3)",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.0016689300537109375
+    },
+    {
+      "case_id": "TECH_SUCCESS_003",
+      "category": "success",
+      "scenario": "Double bottom breakout on NVDA (2025-Q1)",
+      "passed": false,
+      "errors": [
+        "Signal mismatch: expected bullish, got neutral"
+      ],
+      "warnings": [],
+      "execution_time_ms": 0.0016689300537109375
+    },
+    {
+      "case_id": "TECH_SUCCESS_004",
+      "category": "success",
+      "scenario": "Ascending triangle breakout on TSLA (2024-Q4)",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.0011920928955078125
+    },
+    {
+      "case_id": "TECH_SUCCESS_005",
+      "category": "success",
+      "scenario": "Cup and handle pattern on GOOG (2024-Q3)",
+      "passed": false,
+      "errors": [
+        "Signal mismatch: expected bullish, got neutral"
+      ],
+      "warnings": [],
+      "execution_time_ms": 0.00095367431640625
+    },
+    {
+      "case_id": "TECH_SUCCESS_006",
+      "category": "success",
+      "scenario": "High-confidence pattern #6",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.00095367431640625
+    },
+    {
+      "case_id": "TECH_SUCCESS_007",
+      "category": "success",
+      "scenario": "High-confidence pattern #7",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_SUCCESS_008",
+      "category": "success",
+      "scenario": "High-confidence pattern #8",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_SUCCESS_009",
+      "category": "success",
+      "scenario": "High-confidence pattern #9",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.00095367431640625
+    },
+    {
+      "case_id": "TECH_SUCCESS_010",
+      "category": "success",
+      "scenario": "High-confidence pattern #10",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.0007152557373046875
+    },
+    {
+      "case_id": "TECH_SUCCESS_011",
+      "category": "success",
+      "scenario": "High-confidence pattern #11",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_SUCCESS_012",
+      "category": "success",
+      "scenario": "High-confidence pattern #12",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.0007152557373046875
+    },
+    {
+      "case_id": "TECH_SUCCESS_013",
+      "category": "success",
+      "scenario": "High-confidence pattern #13",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_EDGE_001",
+      "category": "edge",
+      "scenario": "High VIX >35 distorts pattern (2024-Q1 volatility spike)",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_EDGE_002",
+      "category": "edge",
+      "scenario": "Low liquidity small-cap (wide spreads)",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.0011920928955078125
+    },
+    {
+      "case_id": "TECH_EDGE_003",
+      "category": "edge",
+      "scenario": "Overnight gap invalidates support (earnings gap)",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_EDGE_004",
+      "category": "edge",
+      "scenario": "Mixed timeframe signals (daily bullish, weekly bearish)",
+      "passed": false,
+      "errors": [
+        "Signal mismatch: expected neutral, got bullish"
+      ],
+      "warnings": [],
+      "execution_time_ms": 0.0007152557373046875
+    },
+    {
+      "case_id": "TECH_EDGE_005",
+      "category": "edge",
+      "scenario": "Pattern degradation exactly 14.9% (borderline acceptable)",
+      "passed": false,
+      "errors": [
+        "Signal mismatch: expected bearish, got neutral",
+        "Degradation 15.5% exceeds 15% threshold"
+      ],
+      "warnings": [],
+      "execution_time_ms": 0.002384185791015625
+    },
+    {
+      "case_id": "TECH_EDGE_006",
+      "category": "edge",
+      "scenario": "Challenging scenario #6",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_EDGE_007",
+      "category": "edge",
+      "scenario": "Challenging scenario #7",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.0007152557373046875
+    },
+    {
+      "case_id": "TECH_EDGE_008",
+      "category": "edge",
+      "scenario": "Challenging scenario #8",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_EDGE_009",
+      "category": "edge",
+      "scenario": "Challenging scenario #9",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_EDGE_010",
+      "category": "edge",
+      "scenario": "Challenging scenario #10",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_EDGE_011",
+      "category": "edge",
+      "scenario": "Challenging scenario #11",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_EDGE_012",
+      "category": "edge",
+      "scenario": "Challenging scenario #12",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_EDGE_013",
+      "category": "edge",
+      "scenario": "Challenging scenario #13",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_FAIL_001",
+      "category": "failure",
+      "scenario": "False triangle breakout (failed immediately)",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.0007152557373046875
+    },
+    {
+      "case_id": "TECH_FAIL_002",
+      "category": "failure",
+      "scenario": "Fakeout head and shoulders (no volume confirmation)",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.0002384185791015625
+    },
+    {
+      "case_id": "TECH_FAIL_003",
+      "category": "failure",
+      "scenario": "Pattern reversal after entry (bull flag becomes bear flag)",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_FAIL_004",
+      "category": "failure",
+      "scenario": "Failed pattern #4",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.000476837158203125
+    },
+    {
+      "case_id": "TECH_FAIL_005",
+      "category": "failure",
+      "scenario": "Failed pattern #5",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.0002384185791015625
+    },
+    {
+      "case_id": "TECH_FAIL_006",
+      "category": "failure",
+      "scenario": "Failed pattern #6",
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "execution_time_ms": 0.0002384185791015625
+    }
+  ]
+}

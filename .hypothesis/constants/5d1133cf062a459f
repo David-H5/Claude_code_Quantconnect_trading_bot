@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/.claude/hooks/log_trade.py
+# hypothesis_version: 6.148.5
+
+['CLAUDE_SESSION_ID', 'FAILED', 'SUCCESS', '[REDACTED]', '__main__', 'a', 'api_key', 'cancel_order', 'credential', 'error', 'event_type', 'get_account_info', 'get_fills', 'get_orders', 'get_positions', 'input', 'modify_order', 'order_id', 'output_summary', 'password', 'place_order', 'secret', 'session_id', 'status', 'success', 'timestamp', 'token', 'tool_call', 'tool_input', 'tool_name', 'tool_output', 'total_fills', 'total_orders', 'total_positions', 'trade_log.jsonl', 'unknown']

@@ -1,0 +1,193 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Claude Code Registry Schema",
+  "description": "Schema for the Claude Code hook, script, command, and workflow registry",
+  "type": "object",
+  "required": ["version", "hooks", "scripts", "commands", "workflows", "mandatory_hooks", "mandatory_workflows"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Registry version (semver)"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date",
+      "description": "Last update date"
+    },
+    "description": {
+      "type": "string",
+      "description": "Registry description"
+    },
+    "hooks": {
+      "type": "object",
+      "description": "Claude Code hooks",
+      "additionalProperties": {
+        "$ref": "#/definitions/hook"
+      }
+    },
+    "scripts": {
+      "type": "object",
+      "description": "Utility scripts",
+      "additionalProperties": {
+        "$ref": "#/definitions/script"
+      }
+    },
+    "commands": {
+      "type": "object",
+      "description": "Slash commands",
+      "additionalProperties": {
+        "$ref": "#/definitions/command"
+      }
+    },
+    "workflows": {
+      "type": "object",
+      "description": "Defined workflows",
+      "additionalProperties": {
+        "$ref": "#/definitions/workflow"
+      }
+    },
+    "mandatory_hooks": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Hooks that must always be configured"
+    },
+    "mandatory_workflows": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Workflows that must be followed for certain tasks"
+    }
+  },
+  "definitions": {
+    "hook": {
+      "type": "object",
+      "required": ["file", "trigger", "mandatory", "description"],
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "Path to hook file relative to .claude/"
+        },
+        "trigger": {
+          "type": "string",
+          "enum": ["PreToolUse", "PostToolUse", "SessionStart", "UserPromptSubmit"],
+          "description": "When the hook is triggered"
+        },
+        "matcher": {
+          "type": ["string", "null"],
+          "description": "Tool matcher pattern (regex), null for all tools"
+        },
+        "mandatory": {
+          "type": "boolean",
+          "description": "Whether this hook is required"
+        },
+        "description": {
+          "type": "string",
+          "description": "What the hook does"
+        },
+        "documentation": {
+          "type": ["string", "null"],
+          "description": "Path to documentation"
+        }
+      }
+    },
+    "script": {
+      "type": "object",
+      "required": ["file", "category", "mandatory", "description"],
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "Path to script file"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["documentation", "validation", "safety", "deployment", "analysis", "infrastructure", "workflow", "general"],
+          "description": "Script category"
+        },
+        "mandatory": {
+          "type": "boolean",
+          "description": "Whether this script must exist"
+        },
+        "description": {
+          "type": "string",
+          "description": "What the script does"
+        },
+        "usage": {
+          "type": ["string", "null"],
+          "description": "Usage example"
+        },
+        "documentation": {
+          "type": ["string", "null"],
+          "description": "Path to documentation"
+        }
+      }
+    },
+    "command": {
+      "type": "object",
+      "required": ["file", "category", "mandatory", "description"],
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "Path to command file relative to .claude/"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["workflow", "documentation", "development"],
+          "description": "Command category"
+        },
+        "mandatory": {
+          "type": "boolean",
+          "description": "Whether this command is required"
+        },
+        "description": {
+          "type": "string",
+          "description": "What the command does"
+        },
+        "documentation": {
+          "type": ["string", "null"],
+          "description": "Path to documentation"
+        }
+      }
+    },
+    "workflow": {
+      "type": "object",
+      "required": ["name", "mandatory_for", "documentation"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Workflow display name"
+        },
+        "mandatory_for": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Task types that require this workflow"
+        },
+        "phases": {
+          "type": "integer",
+          "description": "Number of phases in the workflow"
+        },
+        "hooks": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Hooks that support this workflow"
+        },
+        "commands": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Commands that support this workflow"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Path to workflow documentation"
+        },
+        "quick_ref": {
+          "type": "string",
+          "description": "Path to quick reference file"
+        }
+      }
+    }
+  }
+}

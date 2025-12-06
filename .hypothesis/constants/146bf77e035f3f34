@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/execution/manual_legs_executor.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.25, 0.35, 0.65, 2.5, 180, '2.5s timeout', 'Call', 'Canceled', 'ComboOrder', 'ExecutionPhase', 'Filled', 'LegType', 'ManualLeg', 'ManualLegsExecutor', 'PartiallyFilled', 'PreTradeValidator', 'Put', 'SPY', 'Submitted', 'TwoPartPosition', 'UNKNOWN', 'Underlying', 'buy', 'canceled', 'combo', 'complete', 'credit_attempts', 'credit_filled', 'credit_pending', 'debit', 'debit_attempts', 'debit_filled', 'debit_pending', 'enabled', 'entry_time', 'failed', 'filled', 'limit', 'long_call', 'long_put', 'net_credit', 'pending', 'phase', 'position_id', 'rejected', 'sell', 'short_call', 'short_put', 'submitted', 'underlying']

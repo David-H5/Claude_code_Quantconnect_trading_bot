@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/ensemble.py
+# hypothesis_version: 6.148.3
+
+[-0.5, -0.1, 0.0, 0.05, 0.1, 0.5, 0.6, 0.9, 0.95, 1.0, 1.1, 100, 500, 3600, 'DynamicWeightConfig', 'EnsembleResult', 'LLMEnsemble', 'ProviderPerformance', 'accuracy', 'agreement_score', 'anthropic', 'avg_error', 'calibration_score', 'combined_confidence', 'combined_score', 'confidence', 'correct_predictions', 'create_ensemble', 'enabled', 'ensemble', 'ensemble_strategy', 'finbert', 'id', 'individual_results', 'last_updated', 'local', 'majority_vote', 'none', 'openai', 'prediction_id', 'provider', 'provider_name', 'providers', 'score', 'sentiment', 'text_hash', 'timestamp', 'total_predictions', 'underpriced_pct', 'unknown', 'weighted_accuracy', 'weighted_average', 'weights']

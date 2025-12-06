@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/exceptions/execution.py
+# hypothesis_version: 6.148.5
+
+[100, 'ExecutionError', 'MarketClosedError', 'OrderFillError', 'OrderRejectedError', 'OrderSubmissionError', 'OrderTimeoutError']

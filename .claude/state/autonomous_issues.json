@@ -1,0 +1,25 @@
+[
+  {
+    "timestamp": "2025-12-04T13:39:18.847687",
+    "type": "test_issue",
+    "details": {
+      "test": "data",
+      "timestamp": "2025-12-04"
+    },
+    "session_id": "unknown"
+  },
+  {
+    "timestamp": "2025-12-04T13:39:18.848323",
+    "type": "stub_doc_created",
+    "details": {
+      "path": "docs/research/UPGRADE-999-CAT99-TEST-CATEGORY-RESEARCH.md",
+      "upgrade_id": "UPGRADE-999",
+      "topic": "TEST-CATEGORY",
+      "category": [
+        99,
+        "TEST-CATEGORY"
+      ]
+    },
+    "session_id": "unknown"
+  }
+]

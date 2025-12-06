@@ -1,0 +1,31 @@
+{
+  "trace_id": "test_workflow_20251205_014117",
+  "workflow_name": "test_workflow",
+  "started_at": "2025-12-05T01:41:17.999516",
+  "ended_at": "2025-12-05T01:41:17.999528",
+  "duration_ms": 0.012,
+  "spans": [
+    {
+      "span_id": "agent1_0",
+      "agent_name": "agent1",
+      "started_at": "2025-12-05T01:41:17.999519",
+      "ended_at": "2025-12-05T01:41:17.999523",
+      "status": "success",
+      "duration_ms": 0.004,
+      "tokens_in": 500,
+      "tokens_out": 1000,
+      "error": null
+    },
+    {
+      "span_id": "agent2_1",
+      "agent_name": "agent2",
+      "started_at": "2025-12-05T01:41:17.999525",
+      "ended_at": "2025-12-05T01:41:17.999527",
+      "status": "failed",
+      "duration_ms": 0.002,
+      "tokens_in": 100,
+      "tokens_out": 0,
+      "error": "Test error"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/agents/bull_researcher.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.05, 0.1, 0.5, 0.55, 0.6, 0.7, 0.8, 0.85, 0.9, 0.95, '. ', ': ', ';', '; ', 'Bullish options flow', 'Macro context: ', 'No major headwinds', 'SPY', 'Unknown', 'above_sma_20', 'analysis', 'analyst_upgrades', 'bear_argument', 'bull_researcher', 'bullish', 'confidence', 'earnings_growth', 'fed_accommodative', 'fundamentals', 'institutional_buying', 'macd_bullish', 'macro', 'margin_expanding', 'market_trend', 'neutral', 'news_sentiment', 'opportunity', 'options_flow_bullish', 'price', 'revenue_growth', 'rsi', 'seasonality_positive', 'sector_strength', 'sentiment', 'symbol', 'technicals', 'volume_surge']

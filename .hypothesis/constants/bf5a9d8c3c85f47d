@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/ui/charts/decision_chart.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.02, 0.2, 0.3, 0.5, 1.5, 100, '#2196F3', '#4CAF50', '#9E9E9E', '#F44336', '#FFC107', '%1.1f%%', 'Correct', 'Count', 'Decision Type', 'Incorrect', 'No decision data', 'Pending', 'Skipped', 'accuracy', 'bar', 'black', 'bold', 'by_type', 'center', 'correct', 'equal', 'gray', 'incorrect', 'overall_accuracy', 'pending', 'pie', 'skipped', 'total', 'total_decisions', 'upper right', 'y']

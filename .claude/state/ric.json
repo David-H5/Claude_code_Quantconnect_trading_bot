@@ -1,0 +1,26 @@
+{
+  "version": "5.1",
+  "active": false,
+  "current_phase": 0,
+  "current_iteration": 1,
+  "max_iterations": 5,
+  "fix_attempts": {},
+  "last_checkpoint": null,
+  "started_at": null,
+  "plateau_count": 0,
+  "decision_trace": [],
+  "hallucination_flags": [],
+  "throttle_state": {
+    "tool_calls_this_phase": 0,
+    "edits_per_file": {},
+    "consecutive_failures": 0,
+    "phase_start_time": null,
+    "decisions_without_progress": 0
+  },
+  "insights": [],
+  "iteration_metrics": [],
+  "confidence_records": [],
+  "phase_completion": {},
+  "original_intent": "",
+  "session_id": ""
+}

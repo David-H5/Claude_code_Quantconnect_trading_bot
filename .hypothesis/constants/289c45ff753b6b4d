@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/sentiment.py
+# hypothesis_version: 6.148.3
+
+[-0.5, 0.0, 0.5, 0.7, 512, 1000, 'ProsusAI/finbert', 'bearish', 'beat', 'below', 'boom', 'bullish', 'bust', 'buy', 'crash', 'decline', 'down', 'downgrade', 'drop', 'exceed', 'fall', 'finbert', 'gain', 'growth', 'high', 'jump', 'label', 'loss', 'low', 'miss', 'model', 'negative', 'neutral', 'optimistic', 'outperform', 'pessimistic', 'plunge', 'positive', 'profit', 'rally', 'record', 'rise', 'score', 'sell', 'sentiment-analysis', 'simple', 'slide', 'slump', 'soar', 'strong', 'surge', 'underperform', 'up', 'upgrade', 'weak']

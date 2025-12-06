@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/ui/charts/elo_history_chart.py
+# hypothesis_version: 6.148.5
+
+[0.3, 0.5, 0.8, 111, 150, 1500, '#17becf', '#1f77b4', '#2ca02c', '#7f7f7f', '#8c564b', '#9467bd', '#bcbd22', '#d62728', '#e377c2', '#ff7f0e', '--', 'Baseline (1500)', 'ELO History', 'ELO Rating', 'No ELO history data', 'Time', 'agent_name', 'avg_change', 'best', 'change', 'current_elo', 'elo_rating', 'gray', 'highest_elo', 'lowest_elo', 'o', 'outcome', 'tight', 'timestamp', 'total_change', 'total_changes']

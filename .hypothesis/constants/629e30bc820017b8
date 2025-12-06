@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/backtesting/walk_forward.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.2, 0.3, 0.5, 0.7, 1.0, 252, 'No valid windows', 'anchored', 'avg_in_sample_return', 'expanding', 'id', 'in_sample_return', 'is_robust', 'method', 'num_windows', 'out_sample_return', 'parameter_stability', 'performance_ratio', 'return', 'robustness_score', 'rolling', 'sharpe', 'warnings', 'windows']

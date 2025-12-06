@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/utils/__init__.py
+# hypothesis_version: 6.148.3
+
+['NodeOptimizer', 'NodeSpec', 'NodeType', 'ObjectStoreManager', 'ResourceAlert', 'ResourceMetrics', 'ResourceMonitor', 'StorageAlert', 'StorageCategory', 'StorageMonitor', 'StoredObject', 'calculate_cagr', 'calculate_volatility', 'calculate_win_rate']

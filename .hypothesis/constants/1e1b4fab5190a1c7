@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/performance_tracker.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.5, 100000.0, 100, 252, 3600, 'avg_hold_time_hours', 'commission', 'current_drawdown_pct', 'daily', 'direction', 'entry_price', 'entry_time', 'exit_price', 'exit_time', 'is_closed', 'long', 'losing_trades', 'manual_close', 'max_drawdown', 'max_drawdown_pct', 'net_pnl', 'peak_equity', 'performance', 'pnl', 'pnl_pct', 'profit_factor', 'quantity', 'realized_pnl', 'recent_sessions', 'return_pct', 'session_date', 'session_type', 'sharpe_ratio', 'slippage_bps', 'strategies', 'strategy', 'strategy_name', 'summary', 'symbol', 'timestamp', 'total_pnl', 'total_trades', 'trade_closed', 'trade_id', 'trade_opened', 'trades', 'trading_state', 'unknown', 'unrealized_pnl', 'weekly', 'win_rate', 'winning_trades']

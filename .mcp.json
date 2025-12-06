@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "MCP configuration for QuantConnect Trading Bot autonomous development",
+  "mcpServers": {
+    "trading-tools": {
+      "command": "python3",
+      "args": [
+        "-m",
+        "mcp.trading_tools_server",
+        "--stdio"
+      ],
+      "cwd": "/home/dshooter/projects/Claude_code_Quantconnect_trading_bot",
+      "description": "Trading tools: market data, portfolio, risk, technicals, sentiment, orders (UPGRADE-014)"
+    },
+    "market-data": {
+      "command": "python3",
+      "args": [
+        "-m",
+        "mcp.market_data_server",
+        "--stdio"
+      ],
+      "cwd": "/home/dshooter/projects/Claude_code_Quantconnect_trading_bot",
+      "description": "Market data server: quotes, option chains, Greeks, historical data, IV surface (UPGRADE-015)"
+    },
+    "broker": {
+      "command": "python3",
+      "args": [
+        "-m",
+        "mcp.broker_server",
+        "--stdio"
+      ],
+      "cwd": "/home/dshooter/projects/Claude_code_Quantconnect_trading_bot",
+      "description": "Broker server: orders, positions, fills, account info (UPGRADE-015)"
+    },
+    "portfolio": {
+      "command": "python3",
+      "args": [
+        "-m",
+        "mcp.portfolio_server",
+        "--stdio"
+      ],
+      "cwd": "/home/dshooter/projects/Claude_code_Quantconnect_trading_bot",
+      "description": "Portfolio server: status, exposure, risk metrics, P&L (UPGRADE-015)"
+    },
+    "backtest": {
+      "command": "python3",
+      "args": [
+        "-m",
+        "mcp.backtest_server",
+        "--stdio"
+      ],
+      "cwd": "/home/dshooter/projects/Claude_code_Quantconnect_trading_bot",
+      "description": "Backtest server: run, status, results, analysis (UPGRADE-015)"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/mnt/c/Custom/WSL/Projects/Claude_code_Quantconnect_trading_bot"
+      ],
+      "description": "Filesystem access for project files"
+    },
+    "git": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-git"
+      ],
+      "description": "Git operations for version control"
+    }
+  },
+  "settings": {
+    "autoApprove": {
+      "read": true,
+      "write": [
+        "algorithms/**",
+        "indicators/**",
+        "models/**",
+        "utils/**",
+        "tests/**",
+        "results/**"
+      ],
+      "execute": [
+        "pytest",
+        "python -m pytest",
+        "lean backtest",
+        "black",
+        "flake8",
+        "mypy"
+      ]
+    },
+    "blockedPaths": [
+      ".env",
+      ".env.*",
+      "credentials.*",
+      "secrets.*",
+      "*.pem",
+      "*.key"
+    ],
+    "blockedCommands": [
+      "rm -rf /",
+      "curl | bash",
+      "wget | bash"
+    ]
+  }
+}

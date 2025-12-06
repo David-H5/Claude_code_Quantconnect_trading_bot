@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/api/websocket_handler.py
+# hypothesis_version: 6.148.5
+
+[30.0, 1000, '*', 'Server shutdown', 'alert', 'alerts', 'circuit_breaker', 'client_id', 'connected', 'connected_at', 'daily_pnl', 'is_halted', 'level', 'message', 'order_cancelled', 'order_filled', 'order_id', 'order_partial', 'order_rejected', 'order_submitted', 'orders', 'ping', 'pnl', 'pnl_update', 'pong', 'position_closed', 'position_opened', 'position_updated', 'positions', 'reason', 'remaining_count', 'removed_count', 'source', 'subscriptions', 'symbol', 'timestamp', 'total_pnl', 'type', 'unrealized_pnl']

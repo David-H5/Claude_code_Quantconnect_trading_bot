@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/exceptions/infrastructure.py
+# hypothesis_version: 6.148.5
+
+['CacheError', 'DataFeedError', 'InfrastructureError', 'MessageQueueError', 'RedisError', 'ServiceTimeoutError', 'TimeSeriesError', 'WebSocketError', 'pubsub', 'redis', 'timeseries']

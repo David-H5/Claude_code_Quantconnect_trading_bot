@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/ui/charts/metrics_chart.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.3, 0.5, 100, 105, 3600, 86400, '#2196F3', '#4CAF50', '#FF9800', '%H:%M', '%H:%M:%S', '%m/%d %H:%M', '-', '--', '-.', ':', 'Accuracy %', 'Agent Metrics Trend', 'Calibration Error %', 'Confidence %', 'No data available', 'Percentage', 'Time', '^', 'accuracy', 'calibration', 'center', 'confidence', 'gray', 'lower right', 'o', 's']

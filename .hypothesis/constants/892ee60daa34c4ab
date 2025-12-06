@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/ui/charts/attention_chart.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.5, 111, 150, 'Attention Weight', 'Attention Weights', 'Blues', 'Key (Assets)', 'No attention weights', 'No weights available', 'Query (Assets)', 'auto', 'avg_weight', 'black', 'center', 'error', 'max_weight', 'min_weight', 'num_assets', 'num_heads', 'right', 'selected_head', 'tight', 'top_5_pairs', 'white']

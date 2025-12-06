@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/ensemble.py
+# hypothesis_version: 6.148.3
+
+[-0.5, -0.1, 0.0, 0.1, 0.5, 1.0, 'EnsembleResult', 'LLMEnsemble', 'agreement_score', 'anthropic', 'confidence', 'create_ensemble', 'enabled', 'ensemble', 'ensemble_strategy', 'finbert', 'individual_results', 'local', 'majority_vote', 'none', 'openai', 'provider', 'providers', 'sentiment', 'timestamp', 'underpriced_pct', 'weighted_average', 'weights']

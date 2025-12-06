@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/agents/communication.py
+# hypothesis_version: 6.148.5
+
+[3600, 5000, 10000, 'broadcast', 'channels', 'dead_letters', 'message_count', 'persisted_messages', 'queue', 'registered_agents', 'topic', 'total_queued', 'total_subscriptions', 'unicast', 'uptime_seconds']

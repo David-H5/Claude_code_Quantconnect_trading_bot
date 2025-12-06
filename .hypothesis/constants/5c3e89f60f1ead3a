@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/infrastructure/redis_client.py
+# hypothesis_version: 6.148.5
+
+[0.0, 5.0, 300, 1000, 6379, '6379', 'REDIS_HOST', 'REDIS_PASSWORD', 'REDIS_PORT', 'cached_at', 'localhost']

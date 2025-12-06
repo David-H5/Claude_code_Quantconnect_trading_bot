@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/ui/custom_leg_builder.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.01, 0.1, 0.2, 0.5, 1.5, 5.0, 450.0, 1000.0, 10000.0, 100, 200, '$', '$0', '$0.00', ', ', 'Actions', 'Add Leg', 'Breakevens:', 'Buy', 'Call', 'Clear All', 'Clear all legs?', 'Confirm Clear', 'Current Spot Price:', 'Custom Leg Builder', 'Custom Spread', 'Error', 'Legs', 'Max Loss:', 'Max Profit:', 'Net Debit/Credit:', 'No legs to save', 'No legs to submit', 'None', 'Premium', 'Premium:', 'Put', 'Qty', 'Qty:', 'Remove', 'Save as Template', 'Sell', 'Side', 'Spread Submitted', 'Spread Summary', 'Strike', 'Strike:', 'Submit Spread', 'Template Saved', 'Type', 'color: green;', 'color: red;', 'green', 'inf', 'red']

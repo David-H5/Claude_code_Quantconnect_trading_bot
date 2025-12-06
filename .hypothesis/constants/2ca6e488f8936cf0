@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/indicators/technical_alpha.py
+# hypothesis_version: 6.148.3
+
+[-1.0, -0.3, -0.02, 0.0, 0.015, 0.02, 0.3, 0.5, 0.7, 0.8, 1.0, 2.0, 50.0, 100.0, -200, -100, 100, 200, 'AlphaSignal', 'Bollinger Bands', 'CCI', 'CCIIndicator', 'Composite', 'Ichimoku', 'IchimokuIndicator', 'MACD', 'MACD initializing', 'MACDIndicator', 'No clear OBV signal', 'No signals available', 'OBV', 'OBV confirms uptrend', 'OBV initializing', 'OBVIndicator', 'Price near VWAP', 'RSI', 'RSIIndicator', 'Signal', 'TechnicalAlphaModel', 'VWAP', 'VWAPIndicator', 'anchor', 'bb_lower', 'bb_middle', 'bb_upper', 'bbw', 'bollinger', 'cci', 'fast', 'ichimoku', 'indicator', 'kijun', 'macd', 'macd_histogram', 'macd_signal', 'month', 'obv', 'overbought', 'oversold', 'period', 'reason', 'rsi', 'senkou_a', 'senkou_b', 'session', 'signal', 'signal_period', 'slow', 'std_dev', 'strength', 'tenkan', 'threshold', 'timestamp', 'value', 'vwap', 'week']

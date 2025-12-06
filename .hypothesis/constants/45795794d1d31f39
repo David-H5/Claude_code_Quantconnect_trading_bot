@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/scripts/hierarchical_memory.py
+# hypothesis_version: 6.148.5
+
+[100, 200, 1000, 1800, 3600, '\nRecovery Context:', ':', 'Memory Statistics:', 'MemoryEntry', '__main__', 'access_count', 'capacity', 'category', 'count', 'created_at', 'current_task', 'expires_at', 'fix', 'general', 'imports', 'key', 'last_accessed', 'logs/memory', 'long', 'long_term', 'long_term.json', 'medium', 'medium_term', 'medium_term.json', 'metadata', 'numpy_import', 'python', 'rationale', 'short', 'short_term', 'tags', 'utilization', 'value']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/agents/technical_analyst.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.3, 0.5, 8000.0, 1000, '=', 'MARKET DATA', 'TECHNICAL_ANALYST', 'TechnicalAnalyst', 'YOUR ANALYSIS', 'above', 'active', 'avg_volume', 'below', 'bollinger', 'confidence', 'content', 'cost', 'current_price', 'daily_trend', 'error', 'exception', 'indicators', 'input_tokens', 'intraday_trend', 'macd', 'output_tokens', 'raw_response', 'resistance_levels', 'role', 'rsi', 'stop_reason', 'support_levels', 'support_resistance', 'symbol', 'timeframe_data', 'usage', 'user', 'volume', 'vwap', 'weekly_trend']

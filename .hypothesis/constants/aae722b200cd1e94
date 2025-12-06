@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/api/rest_server.py
+# hypothesis_version: 6.148.5
+
+[5.0, 30.0, 1011, 8000, ',', '/', '/api/v1', '/docs', '/openapi.json', '/redoc', '/ws', '0.0.0.0', '1.0.0', 'Algorithm', 'Authorization', 'CORS_ALLOWED_ORIGINS', 'CORS_CONFIGURED', 'CORS_DEV_MODE', 'Content-Type', 'DELETE', 'ENVIRONMENT', 'GET', 'Health', 'OPTIONS', 'OrderQueue', 'OrderQueueAPI', 'Orders', 'POST', 'PUT', 'Positions', 'Root', 'Server not ready', 'T', 'Templates', 'Trading Bot API', 'WebSocketManager', 'X-Request-ID', '__main__', 'active', 'api.rest_server:app', 'channel', 'development', 'docs', 'info', 'name', 'origins', 'ping', 'pong', 'production', 'reason', 'running', 'status', 'subscribe', 'subscribed', 'type', 'unsubscribe', 'unsubscribed', 'version', 'warning', 'websocket']

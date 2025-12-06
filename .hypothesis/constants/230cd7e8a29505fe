@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/api/routes/templates.py
+# hypothesis_version: 6.148.5
+
+[100, 201, 400, 404, 500, '/templates', '09:35', 'Day for monthly', 'Expiration date', 'Filter by status', 'Filter by symbol', 'Limit price', 'Max executions', 'Order quantity', 'SPY', 'Schedule type', 'Strategy to execute', 'Template deleted', 'Template name', 'Template paused', 'Template resumed', 'Underlying symbol', 'active', 'daily', 'days_of_week', 'example', 'expired', 'iron_condor', 'market_close', 'market_open', 'message', 'monthly', 'name', 'notes', 'paused', 'quantity', 'recurring_manager', 'schedule_time', 'schedule_type', 'status', 'strategy_name', 'symbol', 'template_id', 'template_mock', 'weekly']

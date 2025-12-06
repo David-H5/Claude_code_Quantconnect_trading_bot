@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/signal_aggregator.py
+# hypothesis_version: 6.148.5
+
+[-1.0, -0.3, -0.1, 0.0, 0.1, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 24.0, 72.0, 1000, 3600, 'Moderately bearish', 'Moderately bullish', 'No clear direction', 'action', 'actionability', 'active_tickers', 'aggregation_time_ms', 'agreement_score', 'analysis_summary', 'analyst', 'bearish', 'bearish_count', 'bullish', 'bullish_count', 'buy', 'composite_score', 'confidence', 'conflicting', 'conflicting_signals', 'custom', 'direction', 'earnings', 'expiry', 'fundamentals', 'hold', 'insider_trades', 'metadata', 'neutral', 'neutral_count', 'news', 'options_flow', 'primary_driver', 'reddit', 'sell', 'signals', 'signals_by_ticker', 'source', 'strength', 'strong_buy', 'strong_sell', 'technical', 'ticker', 'timestamp', 'total_signals']

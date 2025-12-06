@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/evaluation/decision_context.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.3, 0.4, 1000, ' | ', 'agent_name', 'anomalies', 'anomaly_count', 'average_confidence', 'completeness', 'confidence_score', 'context_id', 'contexts_by_agent', 'contribution', 'created_at', 'critical', 'decision', 'empty', 'explanation', 'explanation_type', 'full', 'has_anomaly_warnings', 'has_critical_anomaly', 'high', 'market_context', 'market_regime', 'minimal', 'model_confidence', 'name', 'none', 'partial', 'reasoning_chain', 'recent_volatility', 'symbol', 'timestamp', 'top_features', 'total_contexts', 'unknown', 'value']

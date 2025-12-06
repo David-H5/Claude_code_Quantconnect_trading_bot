@@ -1,0 +1,414 @@
+{
+  "$schema": "./registry-schema.json",
+  "version": "1.3.0",
+  "updated": "2025-12-05",
+  "description": "Registry of all Claude Code hooks, scripts, commands, and workflows (Refactor Phase 2: hook organization)",
+  "hooks": {
+    "protect_files": {
+      "file": "hooks/core/protect_files.py",
+      "trigger": "PreToolUse",
+      "matcher": "Edit|Write|Read",
+      "mandatory": true,
+      "description": "Prevents access to sensitive files (.env, credentials)",
+      "documentation": "../docs/autonomous-agents/README.md"
+    },
+    "ric": {
+      "file": "hooks/core/ric.py",
+      "trigger": "PreToolUse|UserPromptSubmit",
+      "matcher": "Edit|Write|Bash",
+      "mandatory": true,
+      "description": "RIC Loop v5.1 (Guardian) - Unified enforcement, compliance, and suggestion hook",
+      "documentation": "../docs/development/ENHANCED_RIC_WORKFLOW.md"
+    },
+    "hook_utils": {
+      "file": "hooks/core/hook_utils.py",
+      "trigger": "none",
+      "matcher": null,
+      "mandatory": false,
+      "description": "Shared utilities for all hooks",
+      "is_utility": true
+    },
+    "session_stop": {
+      "file": "hooks/core/session_stop.py",
+      "trigger": "Stop",
+      "matcher": null,
+      "mandatory": true,
+      "timeout": 60,
+      "description": "Session cleanup, notifications, continuous mode support (UPGRADE-011)",
+      "documentation": "../docs/autonomous-agents/README.md"
+    },
+    "pre_compact": {
+      "file": "hooks/core/pre_compact.py",
+      "trigger": "PreCompact",
+      "matcher": null,
+      "mandatory": true,
+      "timeout": 60,
+      "description": "Transcript backup before context compaction (UPGRADE-011)",
+      "documentation": "../docs/autonomous-agents/README.md"
+    },
+    "validate_algorithm": {
+      "file": "hooks/validation/validate_algorithm.py",
+      "trigger": "PostToolUse",
+      "matcher": "Edit|Write",
+      "mandatory": true,
+      "description": "Validates QuantConnect algorithm files after modification",
+      "documentation": "../docs/development/BEST_PRACTICES.md"
+    },
+    "validate_research": {
+      "file": "hooks/validation/validate_research.py",
+      "trigger": "PostToolUse",
+      "matcher": "Edit|Write",
+      "mandatory": true,
+      "description": "Validates research document naming and frontmatter",
+      "documentation": "../docs/development/DOCUMENTATION_HOOKS.md"
+    },
+    "validate_category_docs": {
+      "file": "hooks/validation/validate_category_docs.py",
+      "trigger": "PostToolUse",
+      "matcher": "Edit|Write",
+      "mandatory": true,
+      "description": "Validates category documentation exists for multi-category upgrades"
+    },
+    "qa_auto_check": {
+      "file": "hooks/validation/qa_auto_check.py",
+      "trigger": "PostToolUse",
+      "matcher": "Edit|Write",
+      "mandatory": false,
+      "description": "Running QA quick check"
+    },
+    "algo_change_guard": {
+      "file": "hooks/validation/algo_change_guard.py",
+      "trigger": "PreToolUse",
+      "matcher": "Edit|Write|Bash",
+      "mandatory": true,
+      "description": "Guards against unreviewed algorithm changes"
+    },
+    "document_research": {
+      "file": "hooks/research/document_research.py",
+      "trigger": "PostToolUse",
+      "matcher": "WebSearch|WebFetch",
+      "mandatory": true,
+      "description": "Tracks web searches and reminds to document after 3+",
+      "documentation": "../docs/development/DOCUMENTATION_HOOKS.md"
+    },
+    "research_saver": {
+      "file": "hooks/research/research_saver.py",
+      "trigger": "none",
+      "matcher": null,
+      "mandatory": false,
+      "description": "Research/upgrade document creator with templates",
+      "is_utility": true
+    },
+    "thorough_research": {
+      "file": "hooks/research/thorough_research.py",
+      "trigger": "none",
+      "matcher": null,
+      "mandatory": false,
+      "description": "Multi-pass URL fetching helper",
+      "is_utility": true
+    },
+    "auto_research_trigger": {
+      "file": "hooks/research/auto_research_trigger.py",
+      "trigger": "none",
+      "matcher": null,
+      "mandatory": false,
+      "description": "Auto-triggers research documentation",
+      "is_utility": true
+    },
+    "risk_validator": {
+      "file": "hooks/trading/risk_validator.py",
+      "trigger": "PreToolUse",
+      "matcher": "mcp__broker__place_order|mcp__broker__cancel_order",
+      "mandatory": true,
+      "description": "Validates trading risk limits before orders"
+    },
+    "log_trade": {
+      "file": "hooks/trading/log_trade.py",
+      "trigger": "PostToolUse",
+      "matcher": "mcp__broker__place_order|mcp__broker__cancel_order|mcp__broker__get_positions|mcp__broker__get_orders|mcp__broker__get_fills",
+      "mandatory": false,
+      "description": "Logs trading activity"
+    },
+    "parse_backtest": {
+      "file": "hooks/trading/parse_backtest.py",
+      "trigger": "PostToolUse",
+      "matcher": "mcp__backtest__run_backtest|mcp__backtest__get_backtest_results",
+      "mandatory": false,
+      "description": "Parses backtest results"
+    },
+    "load_trading_context": {
+      "file": "hooks/trading/load_trading_context.py",
+      "trigger": "SessionStart",
+      "matcher": null,
+      "mandatory": false,
+      "description": "Loads trading context at session start"
+    },
+    "auto_format": {
+      "file": "hooks/formatting/auto_format.py",
+      "trigger": "PostToolUse",
+      "matcher": "Edit|Write",
+      "mandatory": true,
+      "timeout": 30,
+      "description": "Auto-format Python code after edits",
+      "documentation": "../docs/development/CODING_STANDARDS.md"
+    },
+    "update_cross_refs": {
+      "file": "hooks/formatting/update_cross_refs.py",
+      "trigger": "PostToolUse",
+      "matcher": "Edit|Write",
+      "mandatory": false,
+      "description": "Checks and updates cross-references"
+    },
+    "template_detector": {
+      "file": "hooks/formatting/template_detector.py",
+      "trigger": "none",
+      "matcher": null,
+      "mandatory": false,
+      "description": "Detects document templates",
+      "is_utility": true
+    },
+    "agent_orchestrator": {
+      "file": "hooks/agents/agent_orchestrator.py",
+      "trigger": "none",
+      "matcher": null,
+      "mandatory": false,
+      "description": "Multi-agent orchestration engine",
+      "is_utility": true
+    },
+    "multi_agent": {
+      "file": "hooks/agents/multi_agent.py",
+      "trigger": "none",
+      "matcher": null,
+      "mandatory": false,
+      "description": "Multi-agent utilities",
+      "is_utility": true
+    }
+  },
+  "scripts": {
+    "create_research_doc": {
+      "file": "../scripts/create_research_doc.py",
+      "category": "documentation",
+      "mandatory": false,
+      "description": "Creates new research documents with proper templates",
+      "usage": "python scripts/create_research_doc.py \"Title\" --topic X",
+      "documentation": "../docs/development/DOCUMENTATION_HOOKS.md"
+    },
+    "validate_research_docs": {
+      "file": "../scripts/validate_research_docs.py",
+      "category": "documentation",
+      "mandatory": false,
+      "description": "Validates all research documents against naming conventions",
+      "usage": "python scripts/validate_research_docs.py [--fix] [--verbose]",
+      "documentation": "../docs/development/DOCUMENTATION_HOOKS.md"
+    },
+    "update_research_index": {
+      "file": "../scripts/update_research_index.py",
+      "category": "documentation",
+      "mandatory": false,
+      "description": "Auto-updates cross-references in research index files",
+      "usage": "python scripts/update_research_index.py [--check] [--rename OLD NEW]",
+      "documentation": "../docs/development/DOCUMENTATION_HOOKS.md"
+    },
+    "algorithm_validator": {
+      "file": "../scripts/algorithm_validator.py",
+      "category": "validation",
+      "mandatory": false,
+      "description": "Validates QuantConnect algorithm structure and patterns",
+      "usage": "python scripts/algorithm_validator.py <algorithm_file>",
+      "documentation": "../docs/development/BEST_PRACTICES.md"
+    },
+    "backup_manager": {
+      "file": "../scripts/backup_manager.py",
+      "category": "safety",
+      "mandatory": false,
+      "description": "Creates and restores backups of algorithm files",
+      "usage": "python scripts/backup_manager.py",
+      "documentation": "../CLAUDE.md"
+    },
+    "watchdog": {
+      "file": "../scripts/watchdog.py",
+      "category": "safety",
+      "mandatory": false,
+      "description": "External process monitor for overnight sessions",
+      "usage": "python scripts/watchdog.py",
+      "documentation": "../docs/autonomous-agents/README.md"
+    },
+    "deploy_with_nodes": {
+      "file": "../scripts/deploy_with_nodes.py",
+      "category": "deployment",
+      "mandatory": false,
+      "description": "Deploy algorithms with optimal compute node selection",
+      "usage": "python scripts/deploy_with_nodes.py <algorithm> --type backtest|live",
+      "documentation": "../docs/infrastructure/COMPUTE_NODES.md"
+    },
+    "manage_object_store": {
+      "file": "../scripts/manage_object_store.py",
+      "category": "infrastructure",
+      "mandatory": false,
+      "description": "Manage QuantConnect Object Store",
+      "usage": "python scripts/manage_object_store.py",
+      "documentation": "../docs/infrastructure/SETUP_SUMMARY.md"
+    },
+    "analyze_results": {
+      "file": "../scripts/analyze_results.py",
+      "category": "analysis",
+      "mandatory": false,
+      "description": "Analyze backtest results for Claude iteration",
+      "usage": "python scripts/analyze_results.py --results-dir results/",
+      "documentation": "../CLAUDE.md"
+    },
+    "ric_convergence": {
+      "file": "../scripts/ric_convergence.py",
+      "category": "workflow",
+      "mandatory": false,
+      "description": "RIC Loop iteration state management and exit condition checking",
+      "usage": "python scripts/ric_convergence.py [--check] [--status]",
+      "documentation": "../docs/development/ENHANCED_RIC_WORKFLOW.md"
+    },
+    "run_overnight": {
+      "file": "../scripts/run_overnight.sh",
+      "category": "overnight",
+      "mandatory": false,
+      "description": "Start overnight autonomous session with tmux persistence",
+      "usage": "./scripts/run_overnight.sh [--continuous] [--with-recovery] [--model opus] \"Task\"",
+      "documentation": "../docs/autonomous-agents/README.md"
+    },
+    "auto_resume": {
+      "file": "../scripts/auto-resume.sh",
+      "category": "overnight",
+      "mandatory": false,
+      "description": "Crash recovery with exponential backoff and jitter",
+      "usage": "./scripts/auto-resume.sh --max-restarts 5 --backoff-base 30",
+      "documentation": "../docs/autonomous-agents/README.md"
+    },
+    "notify": {
+      "file": "../scripts/notify.py",
+      "category": "overnight",
+      "mandatory": false,
+      "description": "Discord/Slack notification system for overnight sessions",
+      "usage": "python scripts/notify.py",
+      "documentation": "../docs/autonomous-agents/README.md"
+    },
+    "checkpoint": {
+      "file": "../scripts/checkpoint.sh",
+      "category": "overnight",
+      "mandatory": false,
+      "description": "Create checkpoints and recover from failed sessions",
+      "usage": "./scripts/checkpoint.sh [auto|recover|list|periodic]",
+      "documentation": "../docs/autonomous-agents/README.md"
+    }
+  },
+  "commands": {
+    "ric-start": {
+      "file": "commands/ric-start.md",
+      "category": "workflow",
+      "description": "Start new Enhanced RIC Loop session"
+    },
+    "ric-research": {
+      "file": "commands/ric-research.md",
+      "category": "workflow",
+      "description": "Phase 0 research with documentation protocol"
+    },
+    "ric-introspect": {
+      "file": "commands/ric-introspect.md",
+      "category": "workflow",
+      "description": "Phase 5-6 introspection and metacognition"
+    },
+    "ric-converge": {
+      "file": "commands/ric-converge.md",
+      "category": "workflow",
+      "description": "Phase 7 integration & decision with insight triage"
+    },
+    "validate-docs": {
+      "file": "commands/validate-docs.md",
+      "category": "documentation",
+      "description": "Run documentation validation"
+    },
+    "new-algorithm": {
+      "file": "commands/new-algorithm.md",
+      "category": "development",
+      "description": "Create a new trading algorithm"
+    },
+    "backtest": {
+      "file": "commands/backtest.md",
+      "category": "development",
+      "description": "Run a backtest"
+    },
+    "run-tests": {
+      "file": "commands/run-tests.md",
+      "category": "development",
+      "description": "Run test suite"
+    },
+    "analyze-strategy": {
+      "file": "commands/analyze-strategy.md",
+      "category": "development",
+      "description": "Review strategy code"
+    },
+    "lint": {
+      "file": "commands/lint.md",
+      "category": "development",
+      "description": "Run code quality checks"
+    },
+    "sync-registry": {
+      "file": "commands/sync-registry.md",
+      "category": "development",
+      "description": "Sync Claude Code Registry"
+    }
+  },
+  "workflows": {
+    "ric_loop": {
+      "name": "Meta-RIC Loop v3.0",
+      "mandatory_for": ["multi-file changes", "research tasks", "architecture decisions"],
+      "hooks": ["ric"],
+      "commands": ["ric-start", "ric-research", "ric-introspect", "ric-converge"],
+      "scripts": ["ric_convergence"],
+      "documentation": "../docs/development/ENHANCED_RIC_WORKFLOW.md"
+    },
+    "documentation": {
+      "name": "Research Documentation",
+      "mandatory_for": ["web searches", "research findings"],
+      "hooks": ["validate_research", "document_research"],
+      "commands": ["validate-docs"],
+      "scripts": ["create_research_doc", "validate_research_docs", "update_research_index"]
+    },
+    "algorithm_safety": {
+      "name": "Algorithm Safety Pipeline",
+      "mandatory_for": ["algorithm modifications", "deployment"],
+      "hooks": ["protect_files", "validate_algorithm"],
+      "commands": ["new-algorithm", "backtest", "lint"],
+      "scripts": ["algorithm_validator", "backup_manager"]
+    },
+    "overnight_sessions": {
+      "name": "Overnight Autonomous Sessions",
+      "mandatory_for": ["extended autonomous development", "overnight coding sessions"],
+      "hooks": ["session_stop", "pre_compact", "protect_files"],
+      "scripts": ["run_overnight", "auto_resume", "watchdog", "notify", "checkpoint"],
+      "documentation": "../docs/autonomous-agents/README.md"
+    }
+  },
+  "hook_directories": {
+    "core": "Critical hooks (RIC, session, protection)",
+    "validation": "Code and document validators",
+    "research": "Research tracking hooks",
+    "trading": "Trading-specific hooks",
+    "formatting": "Code formatting hooks",
+    "agents": "Agent orchestration hooks",
+    "deprecated": "Legacy hooks (do not use)"
+  },
+  "mandatory_hooks": [
+    "protect_files",
+    "ric",
+    "validate_algorithm",
+    "validate_research",
+    "document_research",
+    "session_stop",
+    "pre_compact",
+    "auto_format"
+  ],
+  "mandatory_workflows": [
+    "ric_loop",
+    "documentation",
+    "algorithm_safety",
+    "overnight_sessions"
+  ]
+}

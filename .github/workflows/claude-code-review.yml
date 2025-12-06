@@ -1,0 +1,151 @@
+# Claude Code Review Workflow
+# Integrates Claude Code for automated code review and strategy analysis
+
+name: Claude Code Review
+
+on:
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  claude-review:
+    name: Claude Code Analysis
+    runs-on: ubuntu-latest
+    # Only run on PR comments that mention @claude
+    if: |
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       contains(github.event.comment.body, '@claude'))
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Run Claude Code Action
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: claude-sonnet-4-5-20250929
+          allowed_tools: |
+            Read
+            Glob
+            Grep
+            Bash(python:*)
+            Bash(pytest:*)
+            Bash(flake8:*)
+            Bash(mypy:*)
+          prompt: |
+            Review this pull request for a QuantConnect trading bot. Focus on:
+            1. Trading logic correctness and potential look-ahead bias
+            2. Risk management implementation
+            3. Data validation and error handling
+            4. Code quality and test coverage
+            5. QuantConnect API best practices
+
+            Provide specific, actionable feedback with line references.
+
+      - name: Run Algorithm Validation
+        id: validate
+        run: |
+          python scripts/algorithm_validator.py algorithms/ > validation_output.txt 2>&1 || true
+          echo "validation_output<<EOF" >> $GITHUB_OUTPUT
+          cat validation_output.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Run Tests
+        id: tests
+        run: |
+          pytest tests/ -v --tb=short --junitxml=test-results.xml || true
+
+      - name: Post Results Comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const validation = `${{ steps.validate.outputs.validation_output }}`;
+
+            const body = `## Claude Code Analysis Complete
+
+            ### Algorithm Validation
+            \`\`\`
+            ${validation.slice(0, 2000)}
+            \`\`\`
+
+            ### Next Steps
+            - Review any validation warnings above
+            - Ensure all tests pass
+            - Check backtest results before merging
+
+            ---
+            *Automated by Claude Code Review*
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+  strategy-analysis:
+    name: Strategy Deep Analysis
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '@claude analyze')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Run Claude Code Deep Analysis
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: claude-opus-4-20250514
+          timeout: 600000  # 10 minutes for deep analysis
+          prompt: |
+            Perform a deep analysis of this trading strategy. Use extended thinking
+            to thoroughly analyze:
+
+            1. **Strategy Logic**: Analyze the trading signals and entry/exit logic
+            2. **Risk Analysis**: Evaluate position sizing, stop losses, and exposure limits
+            3. **Market Regime**: Consider how the strategy might perform in different conditions
+            4. **Edge Cases**: Identify potential failure modes
+            5. **Optimization Risks**: Check for potential overfitting to historical data
+
+            Provide a detailed report with specific recommendations for improvement.
+            Think step by step through the analysis.

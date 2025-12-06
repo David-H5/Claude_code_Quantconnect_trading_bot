@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/ui/agent_metrics_widget.py
+# hypothesis_version: 6.148.3
+
+[0.05, 0.1, 0.2, 0.5, 0.6, 0.75, 0.8, 100, 120, 150, 180, 250, 350, 5000, '#17a2b8', '#28a745', '#6c757d', '#dc3545', '#ffc107', '%v%', '(no agents)', '--', 'Accuracy', 'Accuracy Rate', 'Agent Metrics', 'Agent:', 'AgentMetricsWidget', 'Average Confidence', 'Avg Confidence', 'Avg Exec Time', 'Calibration', 'Calibration Error', 'Confidence', 'Count', 'Efficiency', 'Evaluated', 'MetricDisplayConfig', 'MetricLabel', 'MetricsChartWidget', 'Overconfidence Rate', 'P95 Exec Time', 'Performance Overview', 'Std Deviation', 'Total Decisions', 'Type', 'Underconfidence Rate', 'accuracy', 'accuracy_rate', 'avg_confidence', 'avg_exec_time', 'calibration', 'calibration_error', 'confidence', 'evaluated', 'good', 'overconfidence', 'p95_exec_time', 'std_confidence', 'total_decisions', 'underconfidence', 'warn', '{:.0f}', '{:.0f}ms', '{:.1%}', '{:.3f}', '↻']

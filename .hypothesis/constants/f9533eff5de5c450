@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/ui/reasoning_viewer.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.5, 0.8, 100, 120, 150, 400, 600, '#17a2b8', '#28a745', '#6c757d', '#888', '#dc3545', '#ffc107', '--', '...', 'Abandoned', 'Agent', 'Agent:', 'All', 'All Agents', 'Avg Confidence:', 'Completed', 'Confidence', 'Duration:', 'Export', 'Failed', 'Final Decision', 'In Progress', 'Pending...', 'Reasoning Chains', 'Reasoning Steps', 'Search:', 'Status', 'Status:', 'Steps', 'Task', 'Task:', '_', 'abandoned', 'agent_name', 'all', 'average_confidence', 'chain_id', 'completed', 'completed_at', 'confidence', 'duration_ms', 'evidence', 'failed', 'final_confidence', 'final_decision', 'in_progress', 'metadata', 'started_at', 'status', 'step_count', 'step_number', 'steps', 'task', 'thought', 'timestamp', 'unknown']

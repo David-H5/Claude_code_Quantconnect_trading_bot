@@ -1,0 +1,224 @@
+{
+  "env": {
+    "BASH_DEFAULT_TIMEOUT_MS": "1800000",
+    "BASH_MAX_TIMEOUT_MS": "7200000",
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(pytest:*)",
+      "Bash(pip:*)",
+      "Bash(lean:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(jupyter:*)",
+      "Bash(black:*)",
+      "Bash(flake8:*)",
+      "Bash(mypy:*)",
+      "Bash(pre-commit:*)",
+      "Bash(docker:*)",
+      "Bash(chmod:*)",
+      "Bash(mkdir:*)",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep"
+    ],
+    "ask": [
+      "Bash(rm:*)",
+      "Bash(git push:*)",
+      "Bash(lean live:*)",
+      "Bash(lean paper:*)"
+    ],
+    "deny": [
+      "Bash(curl | bash:*)",
+      "Bash(wget | bash:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/core/protect_files.py",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/core/ric.py",
+            "statusMessage": "RIC Loop compliance check",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/validation/algo_change_guard.py",
+            "statusMessage": "Checking algorithm change guard",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__broker__place_order|mcp__broker__cancel_order",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/trading/risk_validator.py",
+            "statusMessage": "Validating trading risk limits",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/formatting/auto_format.py",
+            "statusMessage": "Auto-formatting Python code",
+            "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/validation/validate_algorithm.py",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/validation/validate_research.py",
+            "statusMessage": "Validating research documentation",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/validation/validate_category_docs.py",
+            "statusMessage": "Validating category documentation",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/validation/qa_auto_check.py 2>/dev/null || true",
+            "statusMessage": "Running QA quick check",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/formatting/update_cross_refs.py 2>/dev/null || true",
+            "statusMessage": "Checking cross-references",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/formatting/auto_docstring.py 2>/dev/null || true",
+            "statusMessage": "Checking for undocumented functions",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "WebSearch|WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/research/document_research.py",
+            "statusMessage": "Tracking research activity",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__broker__place_order|mcp__broker__cancel_order|mcp__broker__get_positions|mcp__broker__get_orders|mcp__broker__get_fills",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/trading/log_trade.py 2>/dev/null || true",
+            "statusMessage": "Logging trading activity",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__backtest__run_backtest|mcp__backtest__get_backtest_results",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/trading/parse_backtest.py 2>/dev/null || true",
+            "statusMessage": "Parsing backtest results",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '--- RIC LOOP: For complex tasks use /ric-start. Quick ref: .claude/RIC_CONTEXT.md ---'",
+            "statusMessage": "Loading RIC Loop workflow context",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/trading/load_trading_context.py 2>/dev/null || true",
+            "statusMessage": "Loading trading context",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/core/ric.py status 2>/dev/null || true",
+            "statusMessage": "Checking RIC status",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/core/ric.py 2>/dev/null || true",
+            "statusMessage": "RIC compliance check",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/core/session_stop.py",
+            "statusMessage": "Running session stop hook",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/core/pre_compact.py",
+            "statusMessage": "Backing up transcript before context compaction",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}

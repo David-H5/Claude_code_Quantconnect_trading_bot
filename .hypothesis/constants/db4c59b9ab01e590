@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/providers.py
+# hypothesis_version: 6.148.3
+
+[-1.0, 0.0, 0.1, 0.5, 1.0, 200, 500, 1000, 3000, 'AnthropicProvider', 'OpenAIProvider', 'Raw response: %s', 'anthropic', 'bearish', 'bullish', 'confidence', 'content', 'create_provider', 'key_points', 'neutral', 'openai', 'overall_confidence', 'risk_factors', 'role', 'score', 'sentiment', 'summary', 'trading_signals', 'user', 'very_bearish', 'very_bullish']

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/execution/profit_taking.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.1, 0.15, 0.25, 0.5, 1.0, 2.0, 4.0, 10.0, 'OrderSide', 'PositionState', 'ProfitTakeOrder', 'Sell 15% at +400%', 'Sell 25% at +200%', 'Sell 50% at +100%', 'buy', 'current_gain_pct', 'enabled', 'gain', 'positions_tracked', 'quantity', 'reason', 'sell', 'sell_pct', 'side', 'symbol', 'threshold_triggered', 'thresholds', 'timestamp', 'trailing_stop_pct']

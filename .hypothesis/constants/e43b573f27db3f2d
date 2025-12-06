@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/utils/__init__.py
+# hypothesis_version: 6.148.3
+
+['calculate_cagr', 'calculate_volatility', 'calculate_win_rate']

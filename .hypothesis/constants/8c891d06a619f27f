@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/evaluation/evaluation_framework.py
+# hypothesis_version: 6.148.3
+
+[0.3, 0.55, 0.6, 0.65, 0.8, 0.9, 0.95, 1000, '%Y%m%d_%H%M%S', '=', 'AggressiveTrader', 'CATEGORY BREAKDOWN:', 'ConservativeTrader', 'DETAILED RESULTS:', 'METRICS:', 'ModerateTrader', 'PortfolioRiskManager', 'PositionRiskManager', 'SentimentAnalyst', 'TechnicalAnalyst', 'accuracy', 'agent_type', 'case_id', 'category', 'category_breakdown', 'confidence', 'degradation_pct', 'degradation_under_15', 'duration_seconds', 'edge', 'errors', 'execution_time_ms', 'failed_cases', 'failure', 'false_positive_rate', 'metrics', 'out_of_sample_check', 'pass_rate', 'passed', 'passed_cases', 'position_size_pct', 'production_ready', 'scenario', 'signal', 'signal_correct', 'success', 'test_results', 'timestamp', 'total', 'total_cases', 'version', 'veto_triggered', 'w', 'warnings', 'win_rate', 'zero_violations_rate', '⚠️', '✅', '✅ PRODUCTION-READY', '❌']

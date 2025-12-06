@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/evaluation/llm_judge.py
+# hypothesis_version: 6.148.3
+
+[0.0, 1.0, 3.0, 15.0, 30.0, 1024, 1000000, 'JudgeConfig', 'JudgeCostTracker', 'LLMJudge', 'anthropic', 'avg_cost_per_request', 'claude', 'confidence', 'content', 'gemini', 'gpt', 'gpt-4', 'gpt-4-turbo', 'issues_found', 'openai', 'opus', 'reasoning', 'role', 'score', 'sonnet', 'strengths_found', 'total_cost_usd', 'total_input_tokens', 'total_output_tokens', 'total_requests', 'user']

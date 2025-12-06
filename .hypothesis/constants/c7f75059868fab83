@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/backtesting/regime_detector.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.01, 0.03, 0.5, 1.0, 25.0, 50.0, 75.0, 95.0, 100, 252, 'bear_high_vol', 'bear_low_vol', 'bull_high_vol', 'bull_low_vol', 'combined_regime', 'confidence', 'crisis', 'current_regime', 'high_volatility', 'low_volatility', 'mean_return', 'normal_volatility', 'num_days', 'regime_durations', 'regime_frequencies', 'sharpe', 'sideways', 'strong_downtrend', 'strong_uptrend', 'timestamp', 'total_return', 'trend_regime', 'trend_strength', 'volatility', 'volatility_regime', 'weak_downtrend', 'weak_uptrend']

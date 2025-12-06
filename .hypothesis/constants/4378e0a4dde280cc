@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/agents/orchestrator.py
+# hypothesis_version: 6.148.5
+
+[100, 'agent_count', 'agents', 'broadcast', 'direct', 'execution_mode', 'inactive_seconds', 'is_healthy', 'name', 'orchestrator', 'parallel', 'priority', 'queue_size', 'round_robin', 'routing_strategy', 'running', 'running_agents', 'sequential', 'state', 'tick_count', 'total_agents', 'total_errors', 'total_processed', 'total_queue_size', 'type', 'type_based', 'uptime_seconds']

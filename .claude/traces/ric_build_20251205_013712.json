@@ -1,0 +1,31 @@
+{
+  "trace_id": "ric_build_20251205_013712",
+  "workflow_name": "ric_build",
+  "started_at": "2025-12-05T01:37:12.000074",
+  "ended_at": "2025-12-05T01:37:12.202543",
+  "duration_ms": 202.46900000000002,
+  "spans": [
+    {
+      "span_id": "implementer_0",
+      "agent_name": "implementer",
+      "started_at": "2025-12-05T01:37:12.000080",
+      "ended_at": "2025-12-05T01:37:12.101896",
+      "status": "success",
+      "duration_ms": 101.816,
+      "tokens_in": 585,
+      "tokens_out": 1085,
+      "error": null
+    },
+    {
+      "span_id": "refactorer_1",
+      "agent_name": "refactorer",
+      "started_at": "2025-12-05T01:37:12.102055",
+      "ended_at": "2025-12-05T01:37:12.202201",
+      "status": "success",
+      "duration_ms": 100.146,
+      "tokens_in": 641,
+      "tokens_out": 2141,
+      "error": null
+    }
+  ]
+}

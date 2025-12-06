@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/utils/object_store.py
+# hypothesis_version: 6.148.3
+
+[0.3, 0.4, 0.5, 1.5, 100, 1024, '__object_registry__', 'backtest_results', 'by_category', 'category', 'compressed', 'compression_enabled', 'count', 'created_at', 'data', 'expires_at', 'llm_cache', 'max_file_size_mb', 'metadata', 'ml_models', 'monitoring_data', 'options_greeks', 'quota_mb', 'research_data', 'size_bytes', 'size_mb', 'storage_allocation', 'total_objects', 'total_size_mb', 'trading_state', 'utf-8']

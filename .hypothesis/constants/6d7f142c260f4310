@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/volatility_surface.py
+# hypothesis_version: 6.148.3
+
+[-0.03, -0.01, 0.0, 0.02, 0.05, 0.1, 0.95, 1.05, 50.0, -252, 100, 252, 'TermStructure', 'VolatilityAnalyzer', 'VolatilityPoint', 'VolatilitySlice', 'VolatilitySurface', 'actual_iv', 'atm_iv', 'backwardation', 'call', 'contango', 'days_to_expiry', 'deviation', 'elevated_call_demand', 'elevated_put_demand', 'expected_iv', 'expiry', 'flat', 'high', 'implied_volatility', 'inverted_smile', 'iv', 'iv_percentile', 'low', 'mispriced_count', 'moneyness', 'neutral', 'normal', 'open_interest', 'option_type', 'points', 'pronounced_smile', 'put', 'skew', 'skew_signal', 'slices', 'smile_curvature', 'smile_signal', 'spot_price', 'strike', 'term_structure', 'timestamp', 'type', 'underpriced', 'volatility_level', 'volume']

@@ -1,0 +1,37 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  black:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Install Black
+      run: pip install black
+    - name: Check code formatting
+      run: black --check --line-length 100 .
+
+  pylint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pylint
+    - name: Run Pylint
+      run: pylint algorithms/ indicators/ models/ utils/ --fail-under=7.0
+      continue-on-error: true

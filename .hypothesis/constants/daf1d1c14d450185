@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/api/routes/__init__.py
+# hypothesis_version: 6.148.5
+
+['decision_audit', 'health', 'orders', 'positions', 'templates']

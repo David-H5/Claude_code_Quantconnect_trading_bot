@@ -1,0 +1,65 @@
+{
+  "scan_time": "2025-12-05T20:06:43.570200",
+  "files_scanned": 420,
+  "total_count": 6,
+  "by_priority": {
+    "P0": 0,
+    "P1": 2,
+    "P2": 4
+  },
+  "items": {
+    "P0": [],
+    "P1": [
+      {
+        "file": "scripts/scan_todos.py",
+        "line": 95,
+        "type": "TODO",
+        "text": ", FIXME, XXX, HACK, BUG",
+        "priority": "P1",
+        "context": "line: int\ntodo_type: str  # TODO, FIXME, XXX, HACK, BUG\ntext: str"
+      },
+      {
+        "file": "scripts/scan_todos.py",
+        "line": 148,
+        "type": "BUG",
+        "text": "and FIXME default to higher priority",
+        "priority": "P1",
+        "context": "\n# BUG and FIXME default to higher priority\nif type_lower in (\"bug\", \"fixme\"):"
+      }
+    ],
+    "P2": [
+      {
+        "file": "evaluation/continuous_monitoring.py",
+        "line": 417,
+        "type": "TODO",
+        "text": "Implement email/Slack/webhook notifications",
+        "priority": "P2",
+        "context": "\n# TODO: Implement email/Slack/webhook notifications\n# if self.config.email_alerts:"
+      },
+      {
+        "file": "evaluation/test_data_validation.py",
+        "line": 338,
+        "type": "TODO",
+        "text": "Implement redundancy detection",
+        "priority": "P2",
+        "context": "missing_scenarios=missing_scenarios,\nredundant_scenarios=[],  # TODO: Implement redundancy detection\n)"
+      },
+      {
+        "file": "tests/test_example.py",
+        "line": 49,
+        "type": "TODO",
+        "text": "Add tests for your algorithms, indicators, and utilities",
+        "priority": "P2",
+        "context": "\n# TODO: Add tests for your algorithms, indicators, and utilities\n# Example test structure for an algorithm:"
+      },
+      {
+        "file": "execution/arbitrage_executor.py",
+        "line": 762,
+        "type": "TODO",
+        "text": "Calculate IV edge",
+        "priority": "P2",
+        "context": "),\niv_edge=0.0  # TODO: Calculate IV edge\n)"
+      }
+    ]
+  }
+}

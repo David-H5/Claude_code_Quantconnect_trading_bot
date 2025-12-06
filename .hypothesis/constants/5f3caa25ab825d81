@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/logging/base.py
+# hypothesis_version: 6.148.5
+
+['LogEntry', 'actor', 'agent', 'audit', 'authentication', 'category', 'configuration', 'context', 'correlation_id', 'critical', 'data', 'debug', 'duration_ms', 'entry_id', 'error', 'event_type', 'execution', 'hook', 'info', 'level', 'message', 'outcome', 'performance', 'position', 'reasoning', 'resource', 'risk', 'session_id', 'source', 'strategy', 'system', 'timestamp', 'trade', 'warning']

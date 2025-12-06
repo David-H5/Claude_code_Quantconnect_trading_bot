@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/agents/__init__.py
+# hypothesis_version: 6.148.5
+
+['AgentBus', 'AgentConfig', 'AgentMessage', 'AgentOrchestrator', 'AgentState', 'BaseAgent', 'Channel', 'MarketAgent', 'MarketSignal', 'MessageBroker', 'OrchestratorConfig', 'RiskAgent', 'RiskAssessment', 'StrategyAgent', 'StrategySignal', 'create_agent', 'create_market_agent', 'create_orchestrator', 'create_risk_agent']

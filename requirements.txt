@@ -1,0 +1,130 @@
+# QuantConnect Trading Bot Dependencies
+
+# Core dependencies for QuantConnect development
+# Note: QuantConnect cloud environment includes many libraries by default
+# These are primarily for local development and testing
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.1
+pytest-asyncio>=0.23.0
+pytest-timeout>=2.3.0  # Prevent test hangs with automatic timeouts
+hypothesis>=6.100.0
+
+# Data analysis and research
+numpy>=1.24.0
+pandas>=2.0.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+scipy>=1.11.0
+
+# Options pricing and Greeks
+py_vollib>=1.0.1
+
+# LLM Integration
+openai>=1.0.0
+anthropic>=0.18.0
+transformers>=4.35.0
+torch>=2.0.0
+
+# UI Dashboard
+PySide6>=6.5.0
+pyqtgraph>=0.13.0
+
+# Jupyter for research notebooks
+jupyter>=1.0.0
+jupyterlab>=4.0.0
+ipykernel>=6.25.0
+
+# Code quality (ruff replaces black, flake8, isort, pylint)
+ruff>=0.4.0
+mypy>=1.5.0
+pre-commit>=3.5.0
+
+# Type stubs
+types-requests>=2.31.0
+
+# Documentation
+mkdocs>=1.5.0
+mkdocs-material>=9.2.0
+
+# Utilities
+python-dotenv>=1.0.0
+pyyaml>=6.0
+aiohttp>=3.8.0
+requests>=2.31.0
+psutil>=5.9.0  # For resource monitoring
+beautifulsoup4>=4.12.0  # Web scraping
+httpx>=0.27.0  # Async HTTP client (required for FastAPI testing)
+
+# REST API Server
+fastapi>=0.109.0
+uvicorn>=0.27.0
+websockets>=12.0
+python-multipart>=0.0.6  # For form data
+slowapi>=0.1.8  # Rate limiting for FastAPI
+
+# Optional: Local LEAN CLI for backtesting
+# Install separately: pip install lean
+
+# Optional: FinBERT (large download)
+# transformers will auto-download ProsusAI/finbert on first use
+
+# =====================================
+# UPGRADE-010: Advanced AI Features
+# =====================================
+
+# Explainable AI (XAI)
+shap>=0.42.0
+lime>=0.2.0
+
+# Reinforcement Learning
+stable-baselines3>=2.0.0
+# finrl>=0.4.0  # Optional: Heavy dependency, install separately if needed
+
+# Social Media APIs (Alternative Data)
+praw>=7.7.0  # Reddit API
+# tweepy>=4.14.0  # Twitter/X API (optional, requires API keys)
+
+# Time Series / Econometrics
+arch>=6.0.0  # TGARCH volatility modeling
+hmmlearn>=0.3.0  # Hidden Markov Models for regime detection
+
+# Advanced Visualization
+plotly>=5.18.0
+
+# Graph Neural Networks (optional - large dependency)
+# torch-geometric>=2.4.0  # Uncomment if using GNN features
+
+# Monte Carlo / Statistical
+# scipy already included above
+
+# =====================================
+# UPGRADE-012.2: Semantic Routing
+# =====================================
+
+# Optional: Semantic similarity for task routing fallback
+# Used by scripts/select_prompts.py for hybrid keyword+semantic classification
+# Gracefully degrades to keyword-only if not installed
+sentence-transformers>=2.2.0  # ~22MB for default model (all-MiniLM-L6-v2)
+
+# =====================================
+# UPGRADE-015: Observability & Agent Ops
+# =====================================
+
+# Agent observability and monitoring
+agentops>=0.1.0  # AI agent monitoring and analytics
+
+# OpenTelemetry for distributed tracing (optional enhancement)
+opentelemetry-api>=1.20.0
+opentelemetry-sdk>=1.20.0
+opentelemetry-exporter-otlp>=1.20.0
+
+# =====================================
+# UPGRADE-015: Redis Infrastructure
+# =====================================
+
+# Redis client for caching and streams
+redis>=5.0.0
+hiredis>=2.3.0  # C-based parser for better performance

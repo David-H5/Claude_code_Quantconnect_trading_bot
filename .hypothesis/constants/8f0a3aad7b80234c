@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/.claude/hooks/risk_validator.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.25, -200, 100, 50000, 500000, '%Y-%m-%d', '__main__', 'block', 'blocked_symbols', 'cancel_order', 'date', 'input', 'limit_price', 'live', 'max_daily_orders', 'max_daily_volume', 'max_order_value', 'max_position_pct', 'min_order_value', 'modify_order', 'order_count', 'order_id', 'paper', 'place_order', 'quantity', 'reason', 'require_paper_mode', 'result', 'stop_price', 'symbol', 'symbols_traded', 'timestamp', 'tool', 'tool_input', 'tool_name', 'total_volume', 'trading_mode', 'w']

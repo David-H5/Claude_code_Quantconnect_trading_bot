@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/evaluation/agent_contest.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.3, 0.5, 1.0, 2.0, 32.0, 100.0, 400.0, 1000.0, 1500.0, 3000.0, -500, -100, 100, 500, 'ABSTAIN', 'Agent not found', 'CONTEST_LOAD_FAILED', 'accuracy', 'actual', 'agent_a', 'agent_b', 'agent_name', 'agents', 'average_accuracy', 'average_elo', 'change', 'confidence', 'contest_data', 'contest_state.json', 'correct', 'created_at', 'draws', 'elo', 'elo_difference', 'elo_history', 'elo_rating', 'error', 'expected_win_rate_a', 'expected_win_rate_b', 'filepath', 'highest_elo', 'incorrect', 'last_updated', 'losses', 'lowest_elo', 'metadata', 'name', 'outcome', 'partial', 'pending', 'pending_outcomes', 'prediction', 'prediction_counter', 'prediction_id', 'predictions', 'saved_at', 'symbol', 'timestamp', 'total_agents', 'total_predictions', 'unknown', 'w', 'wins']

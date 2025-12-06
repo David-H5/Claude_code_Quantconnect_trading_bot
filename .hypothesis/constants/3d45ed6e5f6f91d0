@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/self_evolving_agent.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.02, 0.05, 0.6, 0.85, 1.0, 1000, '=', 'AgentEvaluator', 'PERFORMANCE:', 'TestCase', 'TradingAgent', 'agent_name', 'constraint', 'context', 'converged', 'convergence_reason', 'cycle_number', 'cycles', 'description', 'duration_ms', 'error', 'example', 'fail', 'final_score', 'improvement', 'initial_score', 'limit', 'manual_stop', 'max_cycles_reached', 'metadata', 'no_improvement', 'num_cycles', 'post_score', 'pre_score', 'process', 'prompt', 'query', 'refinements_applied', 'regression_detected', 'score', 'step', 'target_reached', 'timestamp', 'total_improvement', 'version']

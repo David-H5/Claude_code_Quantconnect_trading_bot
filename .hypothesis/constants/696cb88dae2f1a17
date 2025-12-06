@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/utils/system_monitor.py
+# hypothesis_version: 6.148.3
+
+[90.0, 100.0, 200, '/', 'Check returned False', 'alerts_sent', 'consecutive_failures', 'degraded', 'degraded_count', 'degraded_services', 'error_message', 'errors_last_hour', 'healthy', 'healthy_count', 'healthy_services', 'last_check', 'last_failure', 'last_success', 'name', 'new_status', 'old_status', 'overall_health', 'overall_status', 'service', 'services', 'status', 'timestamp', 'total_checks', 'total_failures', 'total_services', 'unhealthy', 'unhealthy_count', 'unhealthy_services', 'unknown', 'unknown_count', 'uptime_pct']

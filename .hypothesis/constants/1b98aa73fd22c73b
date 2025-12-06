@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/agents/explanation.py
+# hypothesis_version: 6.148.5
+
+[0.0, 0.2, 0.4, 0.6, 0.8, '### Reasoning Chain', '### Risk Assessment', 'Based on risk limits', 'ConfidenceLevel', 'ExplanationReport', 'UNKNOWN', 'Unknown', 'action', 'agent_name', 'confidence', 'confidence_breakdown', 'confidence_if_chosen', 'contributing_signals', 'data_points', 'decision_id', 'expected_outcome', 'factors', 'high', 'low', 'market', 'market_context', 'max_loss', 'max_loss_estimate', 'medium', 'mitigation_steps', 'original_log_id', 'overall_confidence', 'overall_level', 'position', 'position_context', 'price', 'price_target', 'probability_of_loss', 'quantity', 'reason_rejected', 'reasoning', 'reasoning_chain', 'risk_assessment', 'risk_level', 'risk_reward_ratio', 'signal_type', 'source', 'stop_loss_reasoning', 'symbol', 'timestamp', 'unknown', 'very_high', 'very_low', 'weight']

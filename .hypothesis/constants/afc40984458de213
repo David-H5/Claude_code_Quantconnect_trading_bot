@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/models/error_handler.py
+# hypothesis_version: 6.148.3
+
+[1000, 'TradingError', 'category', 'component', 'connection', 'context', 'critical', 'data', 'debug', 'degraded', 'degraded_since', 'error', 'error_count', 'error_handled', 'error_id', 'exception_message', 'exception_type', 'execution', 'failed', 'format', 'healthy', 'info', 'invalid', 'last_check', 'max_retries', 'memory', 'message', 'name', 'network', 'operation', 'overflow', 'parse', 'permanent', 'recoverable', 'recovering', 'recovery_attempts', 'resource', 'retry_count', 'severity', 'socket', 'stack_trace', 'status', 'system', 'timeout', 'timestamp', 'transient', 'type', 'validation', 'value', 'warning']

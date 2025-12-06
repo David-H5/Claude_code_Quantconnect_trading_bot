@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/agents/registry.py
+# hypothesis_version: 6.148.5
+
+['AgentRole', 'TradingAgent', 'agents', 'aggregate_signals', 'analysis', 'analyze', 'analyze_exposure', 'analyze_sentiment', 'calculate_indicators', 'calculate_var', 'cancel_order', 'capabilities', 'categories', 'category', 'check_limits', 'count', 'degraded', 'description', 'gather_analyses', 'get_news', 'get_price_data', 'health', 'healthy', 'identify_patterns', 'input_schema', 'last_health_check', 'make_decision', 'metadata', 'modify_order', 'name', 'orchestration', 'output_schema', 'place_order', 'registered_at', 'registration', 'research', 'risk', 'risk_assessment', 'role', 'roles', 'sentiment', 'sentiment_analysis', 'synthesize_views', 'technical_analysis', 'tools', 'trading', 'trading_execution', 'unhealthy', 'unknown']

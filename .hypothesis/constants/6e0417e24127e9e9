@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/evaluation/adapters/agent_response_adapter.py
+# hypothesis_version: 6.148.3
+
+[0.6, '%Y%m%d_%H%M%S', '%Y%m%d_%H%M%S_%f', 'ACQUIRE', 'BUY', 'CLOSE', 'EXIT', 'HOLD', 'LONG', 'MAINTAIN', 'NO ACTION', 'PURCHASE', 'SELL', 'SHORT', 'UNKNOWN', 'WAIT', 'action', 'action_match', 'agent_name', 'agent_response_test', 'agent_role', 'buy', 'confidence', 'confidence_above_min', 'content', 'error', 'execution_time_ms', 'hold', 'metadata', 'min_confidence', 'no_errors', 'query', 'reasoning', 'reasoning_chain', 'risk', 'sell', 'success', 'tools_used', 'type']

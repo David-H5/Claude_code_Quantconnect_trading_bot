@@ -1,0 +1,16 @@
+{
+  "failures": {
+    "web_researcher": 0,
+    "doc_finder": 0,
+    "code_finder": 0,
+    "implementer": 0,
+    "refactorer": 0,
+    "architect": 0,
+    "test_analyzer": 0,
+    "type_checker": 0,
+    "security_scanner": 0,
+    "deep_architect": 0
+  },
+  "open_circuits": {},
+  "updated_at": "2025-12-05T01:41:02.408026"
+}

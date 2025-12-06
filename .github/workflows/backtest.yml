@@ -1,0 +1,79 @@
+name: Run Backtest
+
+on:
+  workflow_dispatch:
+    inputs:
+      algorithm:
+        description: 'Algorithm file to backtest (e.g., simple_momentum.py)'
+        required: true
+        type: string
+      start_date:
+        description: 'Backtest start date (YYYY-MM-DD)'
+        required: false
+        default: '2020-01-01'
+        type: string
+      end_date:
+        description: 'Backtest end date (YYYY-MM-DD)'
+        required: false
+        default: '2023-12-31'
+        type: string
+
+env:
+  PYTHON_VERSION: '3.10'
+
+jobs:
+  backtest:
+    name: Run Backtest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install lean
+          pip install -r requirements.txt
+
+      - name: Configure LEAN CLI
+        env:
+          QC_USER_ID: ${{ secrets.QC_USER_ID }}
+          QC_API_TOKEN: ${{ secrets.QC_API_TOKEN }}
+        run: |
+          lean login --user-id "$QC_USER_ID" --api-token "$QC_API_TOKEN"
+
+      - name: Validate algorithm exists
+        run: |
+          if [ ! -f "algorithms/${{ github.event.inputs.algorithm }}" ]; then
+            echo "Error: Algorithm file not found: algorithms/${{ github.event.inputs.algorithm }}"
+            exit 1
+          fi
+
+      - name: Run cloud backtest
+        env:
+          QC_USER_ID: ${{ secrets.QC_USER_ID }}
+          QC_API_TOKEN: ${{ secrets.QC_API_TOKEN }}
+        run: |
+          echo "Running backtest for ${{ github.event.inputs.algorithm }}"
+          echo "Period: ${{ github.event.inputs.start_date }} to ${{ github.event.inputs.end_date }}"
+
+          # Push latest code
+          lean cloud push --project "algorithms/${{ github.event.inputs.algorithm }}"
+
+          # Run backtest
+          lean cloud backtest "algorithms/${{ github.event.inputs.algorithm }}" \
+            --name "CI-Backtest-$(date +%Y%m%d-%H%M%S)"
+
+      - name: Upload backtest results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backtest-results-${{ github.event.inputs.algorithm }}-${{ github.run_id }}
+          path: |
+            **/backtests/**
+            **/*.json
+          retention-days: 30

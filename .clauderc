@@ -1,0 +1,33 @@
+# Claude Code Configuration
+
+# Project-specific settings for Claude Code development
+
+## Project Type
+project_type: quantconnect_trading
+
+## Language Settings
+primary_language: python
+python_version: 3.8+
+
+## Code Style
+max_line_length: 100
+use_type_hints: true
+docstring_style: google
+
+## Testing
+test_framework: pytest
+min_coverage: 80
+
+## Development Preferences
+- Prioritize code clarity over cleverness
+- Always add docstrings to new functions/classes
+- Include error handling for data access
+- Log important trading decisions
+- Use descriptive variable names
+- Comment complex trading logic
+
+## File Organization
+- Keep algorithms under 300 lines (extract to modules if larger)
+- One algorithm per file
+- Group related utilities together
+- Separate concerns: strategy, execution, risk management

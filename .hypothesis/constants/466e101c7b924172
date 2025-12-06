@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/tools/finbert.py
+# hypothesis_version: 6.148.5
+
+[-1.0, 0.0, 1.0, 512, 'FinBERTAnalyzer', 'ProsusAI/finbert', 'model', 'negative', 'neutral', 'positive', 'pt']

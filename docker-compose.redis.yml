@@ -1,0 +1,59 @@
+# Docker Compose for Redis Infrastructure
+# UPGRADE-015 Phase 7: Redis Infrastructure
+#
+# Usage:
+#   docker-compose -f docker-compose.redis.yml up -d
+#   docker-compose -f docker-compose.redis.yml down
+#
+# Services:
+#   - redis: Main Redis server
+#   - redis-commander: Web UI for Redis management (optional)
+
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: trading-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./infrastructure/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - trading-network
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+  # Optional: Redis Commander web UI
+  # Access at http://localhost:8081
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: trading-redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - trading-network
+    profiles:
+      - ui  # Only start with: docker-compose --profile ui up
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  trading-network:
+    driver: bridge

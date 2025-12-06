@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/infrastructure/__init__.py
+# hypothesis_version: 6.148.5
+
+['MarketDataStream', 'PubSubManager', 'RedisClient', 'RedisConfig', 'StreamConfig', 'TimeSeriesStore', 'create_market_stream', 'create_redis_client']

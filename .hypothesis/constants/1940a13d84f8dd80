@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/clients/__init__.py
+# hypothesis_version: 6.148.3
+
+['AnthropicClient', 'ClaudeMessage', 'ClaudeModel', 'ClaudeResponse']

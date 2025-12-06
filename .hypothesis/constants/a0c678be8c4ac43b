@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/evaluation/anomaly_alerting_bridge.py
+# hypothesis_version: 6.148.5
+
+['actions_triggered', 'alerting_enabled', 'alerting_service', 'alerts_sent', 'anomalies_processed', 'anomaly_detector', 'bridge', 'config', 'continue', 'continuous_monitor', 'halt_new_orders', 'halt_trading', 'last_action', 'last_action_time', 'monitor', 'monitoring_enabled', 'reasoning_logger', 'reduce_exposure']

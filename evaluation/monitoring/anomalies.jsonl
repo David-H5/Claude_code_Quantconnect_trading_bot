@@ -1,0 +1,1 @@
+{"timestamp": "2025-12-02T22:38:04.830731", "is_anomaly": true, "anomaly_type": "flash_crash", "severity": "high", "score": 0.85, "description": "Test flash crash", "recommended_action": "MONITOR", "feature_values": {"price_drop": 0.08}}

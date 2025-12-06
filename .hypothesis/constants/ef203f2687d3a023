@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/evaluation/overfitting_prevention.py
+# hypothesis_version: 6.148.3
+
+[-0.1, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.5, 0.6, 1.0, 100, '\n## 🏁 Verdict\n', 'backtest_count_ok', 'backtests', 'critical', 'high', 'hypothesis', 'low', 'medium', 'oos_period', 'oos_period_ok', 'param_sensitivity', 'parameter_count_ok', 'params', 'sharpe', 'sharpe_degradation', 'time', 'time_invested_ok', '🔴', '🟠', '🟡', '🟢']

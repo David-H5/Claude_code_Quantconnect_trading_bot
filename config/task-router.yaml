@@ -1,0 +1,302 @@
+# Task Router Configuration for Hierarchical Prompt System (UPGRADE-012)
+#
+# This file defines rules for classifying task complexity and detecting domains.
+# Used by scripts/select_prompts.py to route tasks to appropriate prompts.
+#
+# Design Principles (from research):
+# 1. Start Simple - L1 is default, escalate only when needed
+# 2. Minimal Context - High-signal tokens only
+# 3. Rule-Based Routing - Keyword matching for v1
+
+version: "1.3.0"
+updated: "2025-12-03"
+changelog:
+  - "1.3.0: Added autonomous operation prompts (UPGRADE-013)"
+  - "1.2.0: Added RIC loop trigger patterns"
+  - "1.1.0: Added depth+width indicators"
+
+# =============================================================================
+# OVERRIDE PATTERNS
+# =============================================================================
+# Human can force complexity/domain with special prefixes in task description
+# Examples:
+#   "SIMPLE: Fix typo in README"
+#   "COMPLEX: Add logging"
+#   "DOMAIN:algorithm: Update config"
+
+overrides:
+  complexity:
+    - pattern: "^SIMPLE:"
+      level: "L1_simple"
+      strip_prefix: true
+    - pattern: "^MODERATE:"
+      level: "L1_moderate"
+      strip_prefix: true
+    - pattern: "^COMPLEX:"
+      level: "L1_complex"
+      strip_prefix: true
+
+  domain:
+    - pattern: "DOMAIN:([a-z_]+):"
+      extract_group: 1
+      strip_prefix: true
+
+# =============================================================================
+# COMPLEXITY CLASSIFICATION
+# =============================================================================
+# Tasks are scored against these patterns. Default is L1 (Simple).
+# Higher scores indicate higher complexity.
+
+complexity:
+  # L3 (Complex) indicators - score >= 5 triggers L3
+  L3_triggers:
+    threshold: 5
+    patterns:
+      # Architecture/design keywords (high weight)
+      - pattern: "architect|redesign|migrate|refactor.*system|overhaul"
+        weight: 3
+      # Multi-file/multi-component keywords
+      - pattern: "multi.?file|multiple.*files|across.*modules|system.?wide"
+        weight: 3
+      # Research-required keywords
+      - pattern: "research|investigate|explore.*options|evaluate.*approaches"
+        weight: 2
+      # Integration keywords
+      - pattern: "integrate|integration|connect.*systems|api.*integration"
+        weight: 2
+      # Major feature keywords
+      - pattern: "implement.*feature|new.*system|build.*framework"
+        weight: 2
+      # RIC loop explicit request (expanded v1.2)
+      # Primary RIC triggers - user explicitly requests RIC workflow
+      - pattern: "ric.?loop|ric.?workflow|ric.?loop.?workflow"
+        weight: 5  # Highest priority - explicit request
+      # Meta-RIC and enhanced workflow references
+      - pattern: "meta.?ric|enhanced.*ric|full.*ric|use.*ric"
+        weight: 5
+      # Upgrade-related keywords that require RIC
+      - pattern: "upgrade|sub.?upgrade|major.*upgrade|implement.*upgrade"
+        weight: 3
+      # UPGRADE-XXX references (documented upgrades require RIC)
+      - pattern: "upgrade.?\\d+|UPGRADE.?\\d+"
+        weight: 4
+      # Comprehensive/systematic work requiring RIC
+      - pattern: "comprehensive|systematic|thorough.*implement"
+        weight: 3
+      # Full workflow indicators
+      - pattern: "full.*workflow|complete.*workflow|end.?to.?end.*implement"
+        weight: 3
+      # Research-first indicators (Phase 0 needed)
+      - pattern: "research.*first|investigate.*before|explore.*then.*implement"
+        weight: 3
+      # Multi-phase/multi-iteration work
+      - pattern: "multi.?phase|multi.?iteration|iterative.*refin"
+        weight: 3
+      # Slash command triggers for RIC
+      - pattern: "/ric|ric.?start|ric.?research|ric.?introspect|ric.?converge"
+        weight: 5
+      # Cross-domain implementation (strategy + LLM, etc.)
+      - pattern: "(trading|strategy|algorithm).*(llm|sentiment|agent)"
+        weight: 3
+      - pattern: "(llm|agent|sentiment).*(trading|strategy|algorithm)"
+        weight: 3
+      # New strategy/system with components
+      - pattern: "new.*(strategy|system|framework).*with"
+        weight: 2
+
+  # L2 (Moderate) indicators - score >= 2 triggers L2
+  L2_triggers:
+    threshold: 2
+    patterns:
+      # New file creation
+      - pattern: "create.*file|new.*module|add.*class|new.*component|new.*file"
+        weight: 2
+      # Testing keywords - creating new tests
+      - pattern: "add.*test|write.*test|new.*test|create.*test"
+        weight: 2
+      # Testing keywords - general
+      - pattern: "test.*coverage|run.*tests"
+        weight: 1
+      # Feature addition (not major)
+      - pattern: "add.*feature|implement|extend|enhance"
+        weight: 1
+      # Refactoring (single component)
+      - pattern: "refactor|restructure|reorganize|clean.?up"
+        weight: 1
+      # Update/modify keywords
+      - pattern: "update.*multiple|modify.*several|change.*files"
+        weight: 1
+
+  # L1 (Simple) - default, or explicit simple keywords
+  L1_indicators:
+    patterns:
+      # Explicit simple keywords (reduce score)
+      - pattern: "fix.*typo|update.*comment|minor.*change|small.*fix"
+        weight: -2
+      # Single file indicators
+      - pattern: "single.*file|one.*file|just.*update|quick.*fix"
+        weight: -1
+      # Config/doc changes
+      - pattern: "update.*config|change.*setting|update.*readme"
+        weight: -1
+
+# =============================================================================
+# DEPTH + WIDTH CLASSIFICATION (v1.1 - arXiv:2510.04311)
+# =============================================================================
+# Two-dimensional complexity assessment:
+# - Depth: Length of reasoning chain (sequential inference steps)
+# - Width: Capability diversity (range of skills needed per step)
+# Research shows multi-agent benefits increase with both, especially depth.
+
+depth_indicators:
+  # Depth = sequential reasoning chain length
+  # Higher depth = more sequential steps required
+  multiplier: 1.5  # Depth has more pronounced effect per research
+  patterns:
+    # Explicit sequential chains (high depth)
+    - pattern: "first.*then.*finally|step.*1.*step.*2|phase.*1.*phase.*2"
+      weight: 3
+    # Step-by-step indicators
+    - pattern: "step.?by.?step|phase.?by.?phase|one.*at.*a.*time"
+      weight: 2
+    # Dependency indicators
+    - pattern: "depends.*on|requires.*first|after.*complete|before.*can"
+      weight: 2
+    # Pipeline/sequence keywords
+    - pattern: "chain|sequence|pipeline|workflow|process"
+      weight: 1
+    # Temporal sequencing
+    - pattern: "and.*then|then.*after|once.*done"
+      weight: 1
+
+width_indicators:
+  # Width = capability diversity (cross-domain skills)
+  # Higher width = more diverse skills needed
+  multiplier: 1.2
+  patterns:
+    # Cross-domain combinations (high width)
+    - pattern: "(algorithm|trading).*(test|evaluation|deploy)"
+      weight: 3
+    - pattern: "(llm|agent).*(infrastructure|deploy|test)"
+      weight: 3
+    - pattern: "(frontend|ui).*(backend|api|database)"
+      weight: 3
+    # Multiple skill areas
+    - pattern: "multiple.*domains|cross.?functional|end.?to.?end"
+      weight: 2
+    # Broad scope indicators
+    - pattern: "full.*stack|comprehensive|holistic"
+      weight: 2
+    # Multiple explicit domains mentioned
+    - pattern: "(code|implement).*(test|document)"
+      weight: 1
+    - pattern: "(design|architect).*(implement|build)"
+      weight: 1
+
+# =============================================================================
+# DOMAIN DETECTION
+# =============================================================================
+# Domains provide specialized context and safety checks.
+# Default is "general" if no domain detected.
+
+domains:
+  algorithm:
+    description: "Trading algorithms, strategies, backtesting"
+    keywords:
+      - "algorithm|algo|trading|strategy|backtest"
+      - "options|greeks|delta|gamma|theta|vega"
+      - "position|order|execution|fill"
+      - "risk.*management|circuit.*breaker|stop.*loss"
+      - "schwab|quantconnect|lean"
+    safety_checks:
+      - "Run algorithm validator"
+      - "Check circuit breaker integration"
+      - "Verify risk limits"
+    prompt_file: "prompts/domains/algorithm.md"
+
+  llm_agent:
+    description: "LLM integration, agents, sentiment analysis"
+    keywords:
+      - "llm|agent|sentiment|prompt"
+      - "gpt|claude|openai|anthropic"
+      - "ensemble|multi.?agent|debate"
+      - "finbert|analyzer|guardrail"
+    safety_checks:
+      - "Check LLM guardrails"
+      - "Verify API rate limits"
+      - "Test agent isolation"
+    prompt_file: "prompts/domains/llm_agent.md"
+
+  evaluation:
+    description: "Testing, evaluation, metrics"
+    keywords:
+      - "test|testing|pytest|coverage"
+      - "evaluation|metric|benchmark"
+      - "walk.?forward|monte.?carlo|backtest.*validation"
+      - "regression|integration.*test"
+    safety_checks:
+      - "Ensure test isolation"
+      - "Check coverage thresholds"
+      - "Verify no production data"
+    prompt_file: "prompts/domains/evaluation.md"
+
+  infrastructure:
+    description: "CI/CD, deployment, Docker, hooks"
+    keywords:
+      - "deploy|deployment|ci.?cd|pipeline"
+      - "docker|container|kubernetes"
+      - "github.*action|workflow|hook"
+      - "compute.*node|infrastructure"
+    safety_checks:
+      - "Check rollback plan"
+      - "Verify staging test"
+      - "Review security implications"
+    prompt_file: "prompts/domains/infrastructure.md"
+
+  documentation:
+    description: "Documentation, research docs, README"
+    keywords:
+      - "document|documentation|readme"
+      - "research.*doc|claude.?md|changelog"
+      - "adr|architecture.*decision"
+    safety_checks:
+      - "Follow naming conventions"
+      - "Update cross-references"
+      - "Validate frontmatter"
+    prompt_file: "prompts/domains/documentation.md"
+
+  general:
+    description: "Default domain for unclassified tasks"
+    keywords: []
+    safety_checks: []
+    prompt_file: "prompts/domains/general.md"
+
+# =============================================================================
+# PROMPT FILES
+# =============================================================================
+# Mapping of complexity levels to prompt templates
+
+prompts:
+  complexity:
+    L1_simple: "prompts/complexity/L1_simple.md"
+    L1_moderate: "prompts/complexity/L1_moderate.md"
+    L1_complex: "prompts/complexity/L1_complex.md"
+
+  # Autonomous operation prompts (UPGRADE-013)
+  # These are supplementary prompts included for overnight/autonomous sessions
+  autonomous:
+    stuck_detection: "prompts/autonomous/stuck_detection.md"
+    graceful_fallback: "prompts/autonomous/graceful_fallback.md"
+    error_recovery: "prompts/autonomous/error_recovery.md"
+    edge_cases: "prompts/autonomous/edge_cases.md"
+
+# =============================================================================
+# LOGGING
+# =============================================================================
+# Configuration for routing decision logging
+
+logging:
+  enabled: true
+  log_to_session_notes: true
+  log_file: "logs/task-routing.jsonl"
+  include_reasoning: true

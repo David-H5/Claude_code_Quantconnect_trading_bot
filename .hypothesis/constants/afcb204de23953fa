@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/exception_logger.py
+# hypothesis_version: 6.148.5
+
+[100, 200, ', ', 'ExceptionAggregator', 'additional_context', 'args', 'context', 'error', 'error_type', 'error_types', 'errors', 'exception_handler', 'function', 'kwargs', 'log_exception', 'message', 'module', 'recoverable', 'recoverable_count', 'structured', 'timestamp', 'total_errors', 'traceback', 'warning']

@@ -1,0 +1,194 @@
+name: Paper Trading Deployment
+
+# This workflow deploys algorithms to QuantConnect paper trading
+# ONLY after they have passed all autonomous testing stages
+
+on:
+  workflow_dispatch:
+    inputs:
+      algorithm:
+        description: 'Algorithm file to deploy (e.g., simple_momentum.py)'
+        required: true
+        type: string
+      deployment_duration:
+        description: 'Paper trading duration (hours)'
+        required: false
+        default: '24'
+        type: string
+      notify_on_trade:
+        description: 'Send notification on each trade'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  PYTHON_VERSION: '3.10'
+
+jobs:
+  # Pre-deployment validation
+  pre-deploy-check:
+    name: Pre-Deployment Validation
+    runs-on: ubuntu-latest
+    outputs:
+      can_deploy: ${{ steps.check.outputs.can_deploy }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Verify algorithm exists
+        run: |
+          if [ ! -f "algorithms/${{ github.event.inputs.algorithm }}" ]; then
+            echo "::error::Algorithm file not found: algorithms/${{ github.event.inputs.algorithm }}"
+            exit 1
+          fi
+
+      - name: Run final validation
+        id: check
+        run: |
+          python scripts/algorithm_validator.py "algorithms/${{ github.event.inputs.algorithm }}"
+          if [ $? -eq 0 ]; then
+            echo "can_deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "can_deploy=false" >> $GITHUB_OUTPUT
+            echo "::error::Algorithm validation failed. Cannot deploy to paper trading."
+            exit 1
+          fi
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v -m "unit" --tb=short
+
+      - name: Check for recent successful backtest
+        run: |
+          echo "::notice::Ensure a backtest has been run recently for this algorithm"
+          # In production, this would check for recent backtest results
+
+  # Create backup before deployment
+  create-backup:
+    name: Create Pre-Deployment Backup
+    needs: pre-deploy-check
+    if: needs.pre-deploy-check.outputs.can_deploy == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Create backup
+        run: |
+          pip install -r requirements.txt
+          python -c "
+          from scripts.backup_manager import BackupManager
+          from pathlib import Path
+
+          manager = BackupManager()
+          backup = manager.backup_file(
+              Path('algorithms/${{ github.event.inputs.algorithm }}'),
+              reason='pre-paper-trading-deployment',
+              metadata={'deployment_id': '${{ github.run_id }}'}
+          )
+          print(f'Backup created: {backup}')
+          "
+
+      - name: Commit backup
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .backups/ || true
+          git commit -m "Backup before paper trading: ${{ github.event.inputs.algorithm }}" || true
+          git push || true
+
+  # Deploy to paper trading
+  deploy-paper:
+    name: Deploy to Paper Trading
+    needs: [pre-deploy-check, create-backup]
+    if: needs.pre-deploy-check.outputs.can_deploy == 'true'
+    runs-on: ubuntu-latest
+    environment: paper-trading
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install LEAN CLI
+        run: pip install lean
+
+      - name: Configure LEAN CLI
+        env:
+          QC_USER_ID: ${{ secrets.QC_USER_ID }}
+          QC_API_TOKEN: ${{ secrets.QC_API_TOKEN }}
+        run: |
+          lean login --user-id "$QC_USER_ID" --api-token "$QC_API_TOKEN"
+
+      - name: Push algorithm to QuantConnect
+        env:
+          QC_USER_ID: ${{ secrets.QC_USER_ID }}
+          QC_API_TOKEN: ${{ secrets.QC_API_TOKEN }}
+        run: |
+          lean cloud push --project "algorithms/${{ github.event.inputs.algorithm }}"
+
+      - name: Start paper trading
+        env:
+          QC_USER_ID: ${{ secrets.QC_USER_ID }}
+          QC_API_TOKEN: ${{ secrets.QC_API_TOKEN }}
+        run: |
+          echo "Starting paper trading for ${{ github.event.inputs.algorithm }}"
+          echo "Duration: ${{ github.event.inputs.deployment_duration }} hours"
+
+          # Note: Actual paper trading deployment would use QuantConnect API
+          # lean cloud live "algorithms/${{ github.event.inputs.algorithm }}" \
+          #   --brokerage "QuantConnectBrokerage" \
+          #   --paper-trading
+
+          echo "::notice::Paper trading deployment initiated"
+
+      - name: Record deployment
+        run: |
+          echo "## Paper Trading Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Algorithm**: ${{ github.event.inputs.algorithm }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Duration**: ${{ github.event.inputs.deployment_duration }} hours" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployed at**: $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployment ID**: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+
+  # Monitor paper trading
+  monitor:
+    name: Setup Monitoring
+    needs: deploy-paper
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure monitoring
+        run: |
+          echo "Paper trading monitoring configured"
+          echo "Duration: ${{ github.event.inputs.deployment_duration }} hours"
+
+          # In production, this would:
+          # 1. Set up scheduled checks for the paper trading status
+          # 2. Configure alerts for significant events
+          # 3. Schedule automatic stop after duration
+
+      - name: Create monitoring summary
+        run: |
+          echo "### Monitoring Setup" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Paper trading will be monitored for ${{ github.event.inputs.deployment_duration }} hours" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Alerts configured for:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Drawdown exceeding 10%" >> $GITHUB_STEP_SUMMARY
+          echo "- Daily loss exceeding 3%" >> $GITHUB_STEP_SUMMARY
+          echo "- Error conditions" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/analytics/greeks_calculator.py
+# hypothesis_version: 6.148.5
+
+[-0.5, -0.1, -0.05, -0.025, -0.02, 0.0, 0.01, 0.02, 0.025, 0.05, 0.1, 0.25, 0.5, 365.0, 100, 365, 10000, 'base_greeks', 'call', 'charm', 'delta', 'dollar_delta', 'dollar_gamma', 'dollar_theta', 'dte', 'expiry_days', 'gamma', 'implied_volatility', 'iv', 'iv_change_pct', 'iv_scenarios', 'new_iv', 'new_spot', 'option_type', 'put', 'quantity', 'rho', 'spot', 'spot_change_pct', 'spot_scenarios', 'strike', 'theta', 'type', 'underlying_price', 'vanna', 'vega', 'volga']

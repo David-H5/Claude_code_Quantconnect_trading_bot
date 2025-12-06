@@ -1,0 +1,110 @@
+{
+  "version": "1.5.0",
+  "description": "Agent Orchestrator Configuration (UPGRADE-017-MEDIUM)",
+  "defaults": {
+    "model": "haiku",
+    "agent_type": "Explore",
+    "timeout_ms": 120000,
+    "max_parallel_agents": 10,
+    "enable_auto_aggregation": true
+  },
+  "model_preferences": {
+    "search_tasks": "haiku",
+    "review_tasks": "sonnet",
+    "implementation_tasks": "sonnet",
+    "critical_tasks": "opus",
+    "architecture_tasks": "opus"
+  },
+  "cost_optimization": {
+    "enabled": true,
+    "prefer_haiku_for_simple": true,
+    "use_opus_only_for_critical": true,
+    "max_opus_per_workflow": 1
+  },
+  "patterns": {
+    "parallel": {
+      "max_agents": 10,
+      "wait_for_all": true
+    },
+    "sequential": {
+      "pass_output": true,
+      "stop_on_failure": false
+    },
+    "consensus": {
+      "min_threshold": 0.66,
+      "vote_keywords": ["APPROVE", "REJECT", "NEEDS_MORE_INFO"]
+    }
+  },
+  "fallbacks": {
+    "security_scanner": ["type_checker", "code_finder"],
+    "architect": ["implementer"],
+    "risk_reviewer": ["execution_reviewer", "backtest_reviewer"],
+    "deep_architect": ["architect", "implementer"],
+    "web_researcher": ["doc_finder", "code_finder"],
+    "critical_reviewer": ["architect", "security_scanner"],
+    "test_analyzer": ["code_finder"],
+    "type_checker": ["code_finder"]
+  },
+  "timeouts": {
+    "default_ms": 120000,
+    "by_model": {
+      "haiku": 60000,
+      "sonnet": 180000,
+      "opus": 300000
+    },
+    "by_type": {
+      "search": 60000,
+      "fast": 45000,
+      "review": 180000,
+      "implementation": 300000,
+      "critical": 300000,
+      "architecture": 240000
+    }
+  },
+  "retry": {
+    "max_retries": 3,
+    "initial_delay_ms": 1000,
+    "max_delay_ms": 30000,
+    "exponential_base": 2.0,
+    "jitter_pct": 0.25,
+    "retryable_errors": [
+      "timeout",
+      "rate_limit",
+      "server_error",
+      "connection_error",
+      "context_length",
+      "overloaded"
+    ]
+  },
+  "circuit_breaker": {
+    "failure_threshold": 3,
+    "reset_timeout_s": 300
+  },
+  "cost_tracking": {
+    "enabled": true,
+    "pricing_per_mtok": {
+      "haiku": {"input": 0.25, "output": 1.25},
+      "sonnet": {"input": 3.0, "output": 15.0},
+      "opus": {"input": 15.0, "output": 75.0}
+    }
+  },
+  "ric_integration": {
+    "enabled": true,
+    "phase_agents": {
+      "P0_RESEARCH": ["web_researcher", "doc_finder", "code_finder"],
+      "P1_PLAN": ["architect"],
+      "P2_BUILD": ["implementer", "refactorer"],
+      "P3_VERIFY": ["test_analyzer", "type_checker", "security_scanner"],
+      "P4_REFLECT": ["deep_architect"]
+    }
+  },
+  "custom_agents": {},
+  "custom_workflows": {},
+  "shortcuts": {
+    "r": "code_review",
+    "s": "multi_search",
+    "t": "trading_review",
+    "i": "implementation_pipeline",
+    "d": "critical_decision"
+  }
+}

@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/llm/prompts/__init__.py
+# hypothesis_version: 6.148.3
+
+[' [ACTIVE]', 'AgentRole', 'PromptMetrics', 'PromptRegistry', 'PromptVersion', 'active', 'analyst_prompts', 'avg_confidence', 'description', 'get_prompt', 'get_registry', 'model', 'register_prompt', 'risk_prompts', 'supervisor_prompts', 'total_uses', 'trader_prompts', 'version']

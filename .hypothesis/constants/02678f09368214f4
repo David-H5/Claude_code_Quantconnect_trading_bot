@@ -1,0 +1,4 @@
+# file: /home/dshooter/.vscode-server/extensions/ms-python.debugpy-2025.16.0/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/../debugpy/common/sockets.py
+# hypothesis_version: 6.148.5
+
+['127.0.0.1', ':', '::1', 'win32']

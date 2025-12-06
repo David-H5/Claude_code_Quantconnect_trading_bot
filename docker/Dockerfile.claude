@@ -1,0 +1,84 @@
+# Dockerfile for Claude Code Sandboxed Overnight Sessions
+#
+# This container provides an isolated environment for running Claude Code
+# with --dangerously-skip-permissions safely. The external watchdog remains
+# on the host and monitors via bind-mounted files.
+#
+# Build: docker build -t claude-sandbox -f Dockerfile.claude .
+# Test:  docker run --rm claude-sandbox --version
+
+FROM ubuntu:22.04
+
+LABEL maintainer="Trading Bot Team"
+LABEL description="Sandboxed environment for Claude Code autonomous sessions"
+
+# Prevent interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Create non-root user for security
+RUN groupadd -r claude && useradd -r -g claude -m -s /bin/bash claude
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    python3-venv \
+    git \
+    curl \
+    nodejs \
+    npm \
+    jq \
+    bc \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Install Claude Code CLI globally
+RUN npm install -g @anthropic-ai/claude-code@latest
+
+# Install LEAN CLI for QuantConnect backtesting
+RUN pip3 install --no-cache-dir lean
+
+# Setup Python virtual environment
+WORKDIR /workspace
+RUN python3 -m venv /home/claude/.venv \
+    && chown -R claude:claude /home/claude
+
+# Set PATH to use venv
+ENV PATH="/home/claude/.venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Install Python dependencies
+# Copy requirements first to leverage Docker layer caching
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt \
+    && rm /tmp/requirements.txt
+
+# Install additional development tools
+RUN pip install --no-cache-dir \
+    pytest \
+    pytest-cov \
+    mypy \
+    ruff \
+    psutil
+
+# Create directories for logs and config
+RUN mkdir -p /workspace/logs /home/claude/.claude \
+    && chown -R claude:claude /workspace /home/claude
+
+# Switch to non-root user
+USER claude
+
+# Set working directory
+WORKDIR /workspace
+
+# Health check for watchdog integration
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD pgrep -f "claude" > /dev/null || exit 1
+
+# Default entrypoint
+ENTRYPOINT ["claude"]
+
+# Default command (can be overridden)
+CMD ["--help"]

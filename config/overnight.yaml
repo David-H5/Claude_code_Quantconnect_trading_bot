@@ -1,0 +1,57 @@
+# Overnight Session Configuration
+# Part of OVERNIGHT-002 refactoring
+# Environment variables: Use ${VAR_NAME} syntax for expansion
+
+session:
+  max_runtime_hours: 10
+  max_idle_minutes: 30
+  checkpoint_interval_minutes: 15
+  max_continuation_attempts: 20
+
+budget:
+  max_cost_usd: 50.0
+  warning_threshold_pct: 80
+  critical_threshold_pct: 95
+
+recovery:
+  max_restarts: 5
+  backoff_base_seconds: 30
+  backoff_max_seconds: 600
+  backoff_jitter_pct: 20
+
+enforcement:
+  continuous_mode: true
+  ric_mode: SUGGESTED  # ENFORCED | SUGGESTED | DISABLED
+  min_completion_pct: 100
+  require_p0: true
+  require_p1: true
+  require_p2: false
+
+notifications:
+  discord_webhook: ${DISCORD_WEBHOOK_URL}
+  slack_webhook: ${SLACK_WEBHOOK_URL}
+  idle_warning_pct: 70
+  cost_warning_pct: 80
+  enable_session_start: true
+  enable_checkpoints: true
+  enable_completion: true
+
+watchdog:
+  check_interval_seconds: 30
+  memory_warning_pct: 80
+  memory_critical_pct: 90
+  cpu_warning_pct: 80
+  min_checkpoint_interval_minutes: 15
+
+logging:
+  level: INFO
+  format: json  # json | text
+  max_entries: 500
+  max_progress_notes: 50
+
+paths:
+  state_file: logs/overnight_state.json
+  progress_file: claude-progress.txt
+  session_notes: claude-session-notes.md
+  ric_state: .claude/state/ric.json
+  hook_logs: .claude/logs/hook_activity.json

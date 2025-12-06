@@ -1,0 +1,4 @@
+# file: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/scripts/backup_manager.py
+# hypothesis_version: 6.148.5
+
+['%Y%m%d_%H%M%S', '*.py', '--abbrev-ref', '--force', '-B', '-m', '-u', '.backups', 'HEAD', '__init__.py', '__main__', 'add', 'algorithm backup', 'algorithms', 'backup_path', 'backups', 'backups/automated', 'change_type', 'checkout', 'checkpoint_id', 'commit', 'created', 'git', 'manifest.json', 'manual backup', 'metadata', 'origin', 'original_hash', 'pre-restore backup', 'pre_modification', 'push', 'r', 'rb', 'reason', 'rev-parse', 'timestamp', 'updated', 'w']
