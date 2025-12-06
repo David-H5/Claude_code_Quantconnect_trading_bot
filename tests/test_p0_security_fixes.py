@@ -598,6 +598,7 @@ class TestPositionRollingImplementation:
         manager = create_bot_position_manager(
             algorithm=None,
             roll_config=roll_config,
+            enable_logging=False,
         )
 
         assert manager.roll_config.target_dte == 45

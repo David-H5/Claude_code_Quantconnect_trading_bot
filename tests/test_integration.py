@@ -54,12 +54,12 @@ class TestHybridArchitectureIntegration:
     def components(self, algorithm, tmp_path):
         """Create all system components."""
         return {
-            "bot_manager": create_bot_position_manager(algorithm),
+            "bot_manager": create_bot_position_manager(algorithm, enable_logging=False),
             "recurring_manager": create_recurring_order_manager(
                 algorithm,
                 storage_path=tmp_path,
             ),
-            "order_queue": create_order_queue_api(algorithm),
+            "order_queue": create_order_queue_api(algorithm, skip_auth_validation=True),
         }
 
     @pytest.mark.integration
@@ -480,7 +480,7 @@ class TestPerformanceIntegration:
         algorithm = Mock()
         algorithm.Debug = Mock()
 
-        bot_manager = create_bot_position_manager(algorithm)
+        bot_manager = create_bot_position_manager(algorithm, enable_logging=False)
 
         # Add 100 positions
         for i in range(100):
@@ -507,7 +507,7 @@ class TestPerformanceIntegration:
     def test_high_order_throughput(self):
         """Test order queue handles high throughput."""
         algorithm = Mock()
-        order_queue = create_order_queue_api(algorithm)
+        order_queue = create_order_queue_api(algorithm, skip_auth_validation=True)
 
         # Submit 1000 orders
         for i in range(1000):

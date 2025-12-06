@@ -25,7 +25,7 @@ class TestBotPositionManagerInitialization:
     def test_manager_creation(self):
         """Test manager instance creation."""
         algorithm = Mock()
-        manager = create_bot_position_manager(algorithm)
+        manager = create_bot_position_manager(algorithm, enable_logging=False)
 
         assert manager.algorithm == algorithm
         assert manager.stop_loss_threshold == -2.00
@@ -39,6 +39,7 @@ class TestBotPositionManagerInitialization:
         manager = create_bot_position_manager(
             algorithm,
             profit_thresholds=[(0.25, 0.50), (0.75, 0.50)],
+            enable_logging=False,
         )
 
         assert len(manager.default_profit_thresholds) == 2
@@ -54,7 +55,7 @@ class TestAddPosition:
         """Create manager instance for testing."""
         algorithm = Mock()
         algorithm.Debug = Mock()
-        return create_bot_position_manager(algorithm)
+        return create_bot_position_manager(algorithm, enable_logging=False)
 
     @pytest.mark.unit
     def test_add_autonomous_position(self, manager):
@@ -200,6 +201,7 @@ class TestProfitTaking:
                 (0.50, 0.30),  # 30% at +50%
                 (1.00, 0.50),  # 50% at +100%
             ],
+            enable_logging=False,
         )
 
     @pytest.mark.unit
@@ -282,6 +284,7 @@ class TestStopLoss:
         return create_bot_position_manager(
             algorithm,
             stop_loss_threshold=-2.00,  # -200%
+            enable_logging=False,
         )
 
     @pytest.mark.unit
@@ -341,6 +344,7 @@ class TestRolling:
         return create_bot_position_manager(
             algorithm,
             min_dte_for_roll=7,
+            enable_logging=False,
         )
 
     @pytest.mark.unit
@@ -372,7 +376,7 @@ class TestPositionManagement:
         """Create manager instance for testing."""
         algorithm = Mock()
         algorithm.Debug = Mock()
-        return create_bot_position_manager(algorithm)
+        return create_bot_position_manager(algorithm, enable_logging=False)
 
     @pytest.mark.unit
     def test_disable_management(self, manager):
@@ -439,7 +443,7 @@ class TestStatistics:
         """Create manager instance for testing."""
         algorithm = Mock()
         algorithm.Debug = Mock()
-        return create_bot_position_manager(algorithm)
+        return create_bot_position_manager(algorithm, enable_logging=False)
 
     @pytest.mark.unit
     def test_statistics_tracking(self, manager):

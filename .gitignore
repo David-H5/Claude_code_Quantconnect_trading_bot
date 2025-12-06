@@ -95,6 +95,11 @@ temp/
 # MyPy
 .mypy_cache/
 
+# State files (change frequently, should not be tracked)
+bot_positions.json
+circuit_breaker_log.json
+.claude/state/
+
 # Backups - local only, not tracked in git
 .backups/
 
