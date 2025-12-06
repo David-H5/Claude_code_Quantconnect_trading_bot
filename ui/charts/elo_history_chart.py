@@ -138,7 +138,7 @@ class ELOHistoryChart(BaseChartWidget):
         # Formatting
         ax.set_xlabel("Time")
         ax.set_ylabel("ELO Rating")
-        ax.set_title(self._title)
+        ax.set_title(self.title)
         ax.legend(loc="best", fontsize=8)
         ax.grid(True, alpha=0.3)
 

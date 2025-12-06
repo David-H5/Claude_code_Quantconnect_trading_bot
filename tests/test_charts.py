@@ -648,7 +648,7 @@ class TestELOHistoryChart:
         """Test ELO history chart creation."""
         elo_chart = load_chart_module("elo_history_chart")
         chart = elo_chart.ELOHistoryChart(title="Test ELO")
-        assert chart._title == "Test ELO"
+        assert chart.title == "Test ELO"
         assert chart._time_range_days is None
 
     def test_set_data(self, setup_mocks):
@@ -726,8 +726,8 @@ class TestELOHistoryChart:
             title="Custom ELO",
             figsize=(12, 8),
         )
-        assert chart._title == "Custom ELO"
-        assert chart._figsize == (12, 8)
+        assert chart.title == "Custom ELO"
+        assert chart.figsize == (12, 8)
 
 
 class TestAttentionHeatmapChart:
@@ -737,7 +737,7 @@ class TestAttentionHeatmapChart:
         """Test attention heatmap chart creation."""
         attention_chart = load_chart_module("attention_chart")
         chart = attention_chart.AttentionHeatmapChart(title="Test Attention")
-        assert chart._title == "Test Attention"
+        assert chart.title == "Test Attention"
         assert chart._selected_head is None
 
     def test_set_weights(self, setup_mocks):
@@ -802,7 +802,7 @@ class TestAttentionHeatmapChart:
             title="Custom Attention",
             figsize=(8, 8),
         )
-        assert chart._title == "Custom Attention"
+        assert chart.title == "Custom Attention"
 
 
 class TestChartDataClasses:

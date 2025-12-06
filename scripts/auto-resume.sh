@@ -137,6 +137,26 @@ set_state() {
     fi
 }
 
+# Check Claude CLI availability
+# Part of P5-1 from REMEDIATION_PLAN.md
+check_claude_cli() {
+    if ! command -v claude &> /dev/null; then
+        log_error "Claude CLI not found in PATH"
+        echo "Install with: npm install -g @anthropic-ai/claude-code"
+        return 1
+    fi
+
+    # Verify it responds (basic check)
+    if ! claude --version &> /dev/null; then
+        log_error "Claude CLI installed but not responding"
+        return 1
+    fi
+
+    local version=$(claude --version 2>/dev/null || echo "unknown")
+    log_info "Claude CLI: $version"
+    return 0
+}
+
 # Check if Claude process is running
 is_claude_running() {
     pgrep -f "claude" > /dev/null 2>&1
@@ -415,6 +435,12 @@ main() {
     echo "  Claude Code Auto-Resume Monitor"
     echo "=============================================="
     echo ""
+
+    # Check Claude CLI availability before starting (P5-1)
+    if ! check_claude_cli; then
+        log_error "Cannot start: Claude CLI not available"
+        exit 1
+    fi
 
     init_state
 

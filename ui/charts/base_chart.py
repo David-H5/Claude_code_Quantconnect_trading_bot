@@ -246,6 +246,15 @@ class BaseChartWidget(QWidget):
         """
         return MATPLOTLIB_AVAILABLE and self.ax is not None
 
+    def _show_placeholder(self, message: str) -> None:
+        """Show a placeholder message when chart cannot be displayed.
+
+        Args:
+            message: Message to display in the placeholder
+        """
+        if self._placeholder is not None:
+            self._placeholder.setText(f"[{self.title}]\n{message}")
+
 
 def create_base_chart(
     title: str = "Chart",

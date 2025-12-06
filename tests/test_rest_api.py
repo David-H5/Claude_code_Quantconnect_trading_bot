@@ -244,7 +244,9 @@ class TestPositionEndpoints:
 
     def test_list_positions_no_algorithm(self, test_client):
         """Test listing positions when algorithm not connected."""
-        with patch("api.rest_server._algorithm", None):
+        mock_algorithm_ref = MagicMock()
+        mock_algorithm_ref.get_or_none.return_value = None
+        with patch("api.rest_server._algorithm", mock_algorithm_ref):
             response = test_client.get("/api/v1/positions")
             assert response.status_code == 200
             data = response.json()
@@ -252,7 +254,9 @@ class TestPositionEndpoints:
 
     def test_get_pnl_summary_no_algorithm(self, test_client):
         """Test P&L summary when algorithm not connected."""
-        with patch("api.rest_server._algorithm", None):
+        mock_algorithm_ref = MagicMock()
+        mock_algorithm_ref.get_or_none.return_value = None
+        with patch("api.rest_server._algorithm", mock_algorithm_ref):
             response = test_client.get("/api/v1/pnl")
             assert response.status_code == 200
             data = response.json()
@@ -351,7 +355,9 @@ class TestHealthEndpoints:
 
     def test_readiness_probe_not_ready(self, test_client):
         """Test readiness probe when not ready."""
-        with patch("api.rest_server._order_queue", None):
+        mock_order_queue_ref = MagicMock()
+        mock_order_queue_ref.get_or_none.return_value = None
+        with patch("api.rest_server._order_queue", mock_order_queue_ref):
             response = test_client.get("/api/v1/health/ready")
             assert response.status_code == 503
 
@@ -368,7 +374,9 @@ class TestHealthEndpoints:
 
     def test_circuit_breaker_status_no_algorithm(self, test_client):
         """Test circuit breaker status when algorithm not connected."""
-        with patch("api.rest_server._algorithm", None):
+        mock_algorithm_ref = MagicMock()
+        mock_algorithm_ref.get_or_none.return_value = None
+        with patch("api.rest_server._algorithm", mock_algorithm_ref):
             response = test_client.get("/api/v1/circuit-breaker")
             assert response.status_code == 200
             data = response.json()
@@ -376,7 +384,9 @@ class TestHealthEndpoints:
 
     def test_config_no_algorithm(self, test_client):
         """Test configuration when algorithm not connected."""
-        with patch("api.rest_server._algorithm", None):
+        mock_algorithm_ref = MagicMock()
+        mock_algorithm_ref.get_or_none.return_value = None
+        with patch("api.rest_server._algorithm", mock_algorithm_ref):
             response = test_client.get("/api/v1/config")
             assert response.status_code == 200
             data = response.json()

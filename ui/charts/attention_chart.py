@@ -184,7 +184,7 @@ class AttentionHeatmapChart(BaseChartWidget):
             ax.set_yticklabels(self._labels, fontsize=8)
 
         # Add title with head info
-        title = self._title
+        title = self.title
         if self._selected_head is not None:
             title += f" (Head {self._selected_head})"
         elif self._head_weights:

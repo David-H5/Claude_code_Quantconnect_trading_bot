@@ -25,10 +25,10 @@ class TestOrderQueueInitialization:
     def test_api_creation(self):
         """Test API instance creation."""
         algorithm = Mock()
-        api = create_order_queue_api(algorithm, auth_token="test-token")
+        # Use skip_auth_validation for tests that don't need to test auth
+        api = create_order_queue_api(algorithm, skip_auth_validation=True)
 
         assert api.algorithm == algorithm
-        assert api.auth_token == "test-token"
         assert api.queue.qsize() == 0
         assert len(api.orders) == 0
 
@@ -38,7 +38,7 @@ class TestOrderQueueInitialization:
         algorithm = Mock()
         api = OrderQueueAPI(
             algorithm=algorithm,
-            auth_token="custom-token",
+            skip_auth_validation=True,
             max_queue_size=500,
             enable_logging=False,
         )
@@ -56,7 +56,7 @@ class TestOrderSubmission:
         algorithm = Mock()
         algorithm.Debug = Mock()
         algorithm.Error = Mock()
-        return create_order_queue_api(algorithm)
+        return create_order_queue_api(algorithm, skip_auth_validation=True)
 
     @pytest.mark.unit
     def test_submit_option_strategy_order(self, api):
@@ -153,7 +153,7 @@ class TestOrderValidation:
     def api(self):
         """Create API instance for testing."""
         algorithm = Mock()
-        return create_order_queue_api(algorithm)
+        return create_order_queue_api(algorithm, skip_auth_validation=True)
 
     @pytest.mark.unit
     def test_reject_missing_symbol(self, api):
@@ -250,7 +250,7 @@ class TestOrderProcessing:
     def api(self):
         """Create API instance for testing."""
         algorithm = Mock()
-        return create_order_queue_api(algorithm)
+        return create_order_queue_api(algorithm, skip_auth_validation=True)
 
     @pytest.mark.unit
     def test_get_pending_orders(self, api):
@@ -342,7 +342,7 @@ class TestOrderRetrieval:
     def api(self):
         """Create API instance for testing."""
         algorithm = Mock()
-        return create_order_queue_api(algorithm)
+        return create_order_queue_api(algorithm, skip_auth_validation=True)
 
     @pytest.mark.unit
     def test_get_order_status(self, api):
@@ -411,7 +411,7 @@ class TestStatistics:
     def api(self):
         """Create API instance for testing."""
         algorithm = Mock()
-        return create_order_queue_api(algorithm)
+        return create_order_queue_api(algorithm, skip_auth_validation=True)
 
     @pytest.mark.unit
     def test_statistics_tracking(self, api):
@@ -451,7 +451,7 @@ class TestBotManagedOrders:
     def api(self):
         """Create API instance for testing."""
         algorithm = Mock()
-        return create_order_queue_api(algorithm)
+        return create_order_queue_api(algorithm, skip_auth_validation=True)
 
     @pytest.mark.unit
     def test_submit_bot_managed_order(self, api):
@@ -495,7 +495,7 @@ class TestRecurringOrders:
     def api(self):
         """Create API instance for testing."""
         algorithm = Mock()
-        return create_order_queue_api(algorithm)
+        return create_order_queue_api(algorithm, skip_auth_validation=True)
 
     @pytest.mark.unit
     def test_submit_recurring_order(self, api):

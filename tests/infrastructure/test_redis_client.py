@@ -184,12 +184,13 @@ class TestRedisClient:
 
     def test_ping_with_mock(self):
         """Test ping with mock Redis."""
-        client = RedisClient.__new__(RedisClient)
-        client._client = MockRedis()
-        client._health_status = HealthStatus()
+        with patch("infrastructure.redis_client.REDIS_AVAILABLE", True):
+            client = RedisClient.__new__(RedisClient)
+            client._client = MockRedis()
+            client._health_status = HealthStatus()
 
-        assert client.ping() is True
-        assert client._health_status.connected is True
+            assert client.ping() is True
+            assert client._health_status.connected is True
 
     def test_get_set(self):
         """Test basic get and set operations."""
