@@ -43,7 +43,7 @@ class TestPositionSizingFix:
         """Single contract position should skip 30% profit-taking level."""
         from execution.bot_managed_positions import BotPositionManager
 
-        manager = BotPositionManager(algorithm=None)
+        manager = BotPositionManager(algorithm=None, enable_logging=False)
 
         # 1 contract at 30% should return 0 (skip)
         result = manager._calculate_close_quantity(
@@ -56,7 +56,7 @@ class TestPositionSizingFix:
         """Single contract position can be fully closed (100%)."""
         from execution.bot_managed_positions import BotPositionManager
 
-        manager = BotPositionManager(algorithm=None)
+        manager = BotPositionManager(algorithm=None, enable_logging=False)
 
         # 1 contract at 100% should return 1
         result = manager._calculate_close_quantity(
@@ -69,7 +69,7 @@ class TestPositionSizingFix:
         """Large positions should have normal profit-taking."""
         from execution.bot_managed_positions import BotPositionManager
 
-        manager = BotPositionManager(algorithm=None)
+        manager = BotPositionManager(algorithm=None, enable_logging=False)
 
         # 10 contracts at 30% should return 3
         result = manager._calculate_close_quantity(
@@ -82,7 +82,7 @@ class TestPositionSizingFix:
         """Two contracts at 30% should close at least 1."""
         from execution.bot_managed_positions import BotPositionManager
 
-        manager = BotPositionManager(algorithm=None)
+        manager = BotPositionManager(algorithm=None, enable_logging=False)
 
         # 2 contracts at 30% = 0.6 -> int(0.6) = 0 -> max(0, 1) = 1
         result = manager._calculate_close_quantity(
@@ -97,7 +97,7 @@ class TestPositionSizingFix:
         """Test boundary conditions for minimum close."""
         from execution.bot_managed_positions import BotPositionManager
 
-        manager = BotPositionManager(algorithm=None)
+        manager = BotPositionManager(algorithm=None, enable_logging=False)
 
         # 4 contracts at 50% = 2, should close 2
         result = manager._calculate_close_quantity(
@@ -567,6 +567,7 @@ class TestPositionRollingImplementation:
                 target_dte=30,
                 strategy=RollStrategy.ATM_ADJUST,
             ),
+            enable_logging=False,
         )
 
         # Verify roll config is stored

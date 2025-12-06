@@ -261,3 +261,186 @@ Track agent decisions in `logs/agent_decisions.jsonl`:
 ```json
 {"timestamp": "2025-12-06T14:00:00Z", "agent": "overnight", "action": "commit", "files": 5}
 ```
+
+---
+
+## Testing Best Practices for Agents
+
+### Prevent Test Pollution
+
+Tests must not write to production files. Use these patterns:
+
+```python
+# GOOD: Disable logging in tests
+manager = create_bot_position_manager(algorithm, enable_logging=False)
+
+# GOOD: Use temp directories
+@pytest.fixture
+def components(self, algorithm, tmp_path):
+    return {
+        "manager": create_manager(storage_path=tmp_path),
+    }
+
+# BAD: Uses default paths that write to repo
+manager = BotPositionManager(algorithm=None)  # Writes to bot_positions.json!
+```
+
+### Test Isolation Checklist
+
+| Check | How to Verify |
+|-------|---------------|
+| No file pollution | `git status` clean after tests |
+| Temp paths used | Search for `tmp_path` fixture usage |
+| Logging disabled | Search for `enable_logging=False` |
+| Mocks for external | `@patch` decorators present |
+
+---
+
+## Agent Safety Protocols
+
+### Pre-Commit Validation
+
+Agents should validate changes before committing:
+
+```python
+# Run validation checks
+python scripts/check_layer_violations.py --strict
+python scripts/qa_validator.py --check debug --check integrity
+python scripts/algorithm_validator.py algorithms/*.py
+```
+
+### Skip Hooks During Overnight Sessions
+
+When running overnight with background processes:
+```bash
+# Skip hooks that might conflict with running processes
+SKIP=qa-validator git commit -m "overnight: checkpoint"
+
+# Or skip all for emergency commits
+git commit --no-verify -m "emergency: fix critical bug"
+```
+
+### Circuit Breaker Integration
+
+Agents must respect trading halts:
+
+```python
+from models.circuit_breaker import get_circuit_breaker
+
+breaker = get_circuit_breaker()
+if not breaker.can_trade():
+    logger.warning("Trading halted - skipping autonomous actions")
+    return
+```
+
+---
+
+## Multi-Agent Communication
+
+### Handoff Protocol
+
+When one agent hands off to another:
+
+1. **Commit checkpoint**: `git commit -m "handoff: <agent> → <next-agent>"`
+2. **Update state file**: Write to `.claude/state/handoff.json`
+3. **Log context**: Include reasoning in commit message
+
+```json
+// .claude/state/handoff.json
+{
+  "from_agent": "overnight",
+  "to_agent": "morning",
+  "timestamp": "2025-12-06T06:00:00Z",
+  "context": {
+    "completed": ["backtest SPY strategy", "updated indicators"],
+    "pending": ["review iron condor performance"],
+    "warnings": ["circuit breaker triggered at 3am"]
+  }
+}
+```
+
+### Shared Resource Access
+
+| Resource | Lock Type | Location |
+|----------|-----------|----------|
+| bot_positions.json | fcntl LOCK_EX | runtime |
+| registry.json | git merge | commit time |
+| config/settings.json | human approval | manual |
+
+---
+
+## Performance Optimization
+
+### Reduce Hook Execution Time
+
+```yaml
+# Exclude large files from ALL hooks
+exclude: |
+  llm/prompts/registry\.json|
+  \.hypothesis/|
+  reasoning_chains/|
+  \.backups/
+```
+
+### Parallel Validation
+
+```bash
+# Run validations in parallel
+python scripts/check_layer_violations.py &
+python scripts/qa_validator.py &
+wait  # Wait for all to complete
+```
+
+### Memory-Efficient Git Operations
+
+```bash
+# Avoid loading large files in memory
+git diff --stat HEAD  # May crash on large repos
+git status --short    # Safer alternative
+
+# Clean up if git becomes slow
+git gc --prune=now
+git repack -a -d
+```
+
+---
+
+## Troubleshooting
+
+### Bus Error During Git Operations
+
+```bash
+# Remove stale lock files
+rm -f .git/index.lock
+
+# Run garbage collection
+git gc --prune=now
+
+# If persists, re-clone or use orphan branch
+```
+
+### Pre-commit Hook Failures
+
+| Error | Solution |
+|-------|----------|
+| `ruff` failures | Fix or `SKIP=ruff git commit` |
+| `mypy` type errors | Fix or `SKIP=mypy git commit` |
+| `qa-validator` modified files | `SKIP=qa-validator git commit` |
+| Large file detected | Add to `.gitignore` or use LFS |
+
+### Agent Conflict with Human Edits
+
+```bash
+# Save agent work
+git stash
+
+# Apply human changes
+git pull origin main
+
+# Reapply agent work
+git stash pop
+
+# Resolve conflicts manually, then:
+git add -A
+git commit -m "merge: resolved human/agent conflicts"
+```
