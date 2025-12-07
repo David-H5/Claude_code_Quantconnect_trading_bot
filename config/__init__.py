@@ -36,7 +36,7 @@ import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Optional
 
 
 logger = logging.getLogger(__name__)
@@ -340,6 +340,37 @@ class ConfigManager:
                 return default
 
         return value
+
+    def _load_dataclass_config(self, section: str, dataclass_type: type) -> Any:
+        """
+        Generic config loader for simple dataclasses.
+
+        Uses dataclass field defaults when config values are missing.
+        For complex dataclasses with nested objects or transformations,
+        use dedicated getter methods instead.
+
+        Args:
+            section: Config section name (e.g., "risk_management")
+            dataclass_type: Dataclass type to instantiate
+
+        Returns:
+            Instance of dataclass_type with config values
+
+        Example:
+            config = self._load_dataclass_config("risk_management", RiskConfig)
+        """
+        from dataclasses import fields
+
+        raw = self._raw_config.get(section, {})
+        kwargs = {}
+
+        for f in fields(dataclass_type):
+            value = raw.get(f.name)
+            if value is not None:
+                kwargs[f.name] = value
+            # else: use dataclass default
+
+        return dataclass_type(**kwargs)
 
     def get_risk_config(self) -> RiskConfig:
         """Get risk management configuration."""

@@ -29,6 +29,7 @@ def __getattr__(name: str) -> ModuleType:
     while deferring the actual import until access time.
     """
     submodules = [
+        "base_options_bot",
         "basic_buy_hold",
         "simple_momentum",
         "hybrid_options_bot",
@@ -41,6 +42,7 @@ def __getattr__(name: str) -> ModuleType:
 
 
 __all__ = [
+    "base_options_bot",
     "basic_buy_hold",
     "hybrid_options_bot",
     "options_trading_bot",

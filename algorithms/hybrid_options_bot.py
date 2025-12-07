@@ -33,9 +33,6 @@ try:
     from AlgorithmImports import *
 except ImportError:
     # Stubs for development/testing
-    class QCAlgorithm:
-        pass
-
     class Resolution:
         Daily = "Daily"
         Hour = "Hour"
@@ -60,6 +57,8 @@ from pathlib import Path
 
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from algorithms.base_options_bot import BaseOptionsBot
 
 from api import OrderQueueAPI
 from config import get_config
@@ -97,7 +96,7 @@ from observability.monitoring.system.resource import create_resource_monitor
 from utils.storage_monitor import create_storage_monitor
 
 
-class HybridOptionsBot(QCAlgorithm):
+class HybridOptionsBot(BaseOptionsBot):
     """
     Semi-autonomous hybrid options trading algorithm.
 
@@ -108,97 +107,29 @@ class HybridOptionsBot(QCAlgorithm):
     4. Bot-managed positions (automated profit-taking/rolling)
 
     All positions tracked uniformly regardless of source.
+
+    Extends BaseOptionsBot which provides:
+    - Configuration loading
+    - Risk management (RiskLimits, RiskManager, CircuitBreaker)
+    - Resource monitoring
+    - Object store persistence
     """
 
-    def Initialize(self) -> None:
-        """Initialize algorithm parameters and all hybrid modules."""
-        # =====================================================================
-        # BASIC SETUP
-        # =====================================================================
+    def _setup_basic(self) -> None:
+        """Override base setup for hybrid-specific dates."""
         self.SetStartDate(2024, 11, 1)  # Conservative 1-month backtest
         self.SetEndDate(2024, 11, 30)
         self.SetCash(100000)
 
-        # Brokerage selection
         # CRITICAL: Charles Schwab allows ONLY ONE algorithm per account
-        # Deploying a second algorithm will automatically stop the first one
         self.SetBrokerageModel(BrokerageName.CharlesSchwab, AccountType.Margin)
 
-        # =====================================================================
-        # CONFIGURATION
-        # =====================================================================
-        try:
-            self.config = get_config()
-            self.Debug("✅ Configuration loaded successfully")
-        except FileNotFoundError:
-            self.config = None
-            self.Debug("⚠️  Config file not found, using defaults")
-
-        # =====================================================================
-        # RISK MANAGEMENT
-        # =====================================================================
-        risk_config = self._get_config("risk_management", {})
-
-        # Risk limits
-        self.risk_limits = RiskLimits(
-            max_position_size=risk_config.get("max_position_size_pct", 0.25),
-            max_daily_loss=risk_config.get("max_daily_loss_pct", 0.03),
-            max_drawdown=risk_config.get("max_drawdown_pct", 0.10),
-            max_risk_per_trade=risk_config.get("max_risk_per_trade_pct", 0.02),
-        )
-
-        # Risk manager
-        self.risk_manager = RiskManager(
-            starting_equity=self.Portfolio.TotalPortfolioValue,
-            limits=self.risk_limits,
-        )
-        self.Debug(f"✅ RiskManager initialized (max position: {self.risk_limits.max_position_size:.0%})")
-
-        # Circuit breaker
-        breaker_config = CircuitBreakerConfig(
-            max_daily_loss_pct=risk_config.get("max_daily_loss_pct", 0.03),
-            max_drawdown_pct=risk_config.get("max_drawdown_pct", 0.10),
-            max_consecutive_losses=risk_config.get("max_consecutive_losses", 5),
-            require_human_reset=risk_config.get("require_human_reset", True),
-        )
-        self.circuit_breaker = TradingCircuitBreaker(
-            config=breaker_config,
-            alert_callback=self._on_circuit_breaker_alert,
-        )
-        self.Debug(f"✅ Circuit Breaker initialized (max daily loss: {breaker_config.max_daily_loss_pct:.1%})")
-
+    def _setup_strategy_specific(self) -> None:
+        """Initialize hybrid architecture components."""
         # =====================================================================
         # LLM SENTIMENT INTEGRATION (UPGRADE-014)
         # =====================================================================
         self._setup_sentiment_components()
-
-        # =====================================================================
-        # RESOURCE & STORAGE MONITORING
-        # =====================================================================
-        resource_config = self._get_config("quantconnect", {}).get("resource_limits", {})
-        self.resource_monitor = create_resource_monitor(
-            config=resource_config,
-            circuit_breaker=self.circuit_breaker,
-        )
-        self.Debug(f"✅ Resource monitor initialized for node: {self._get_node_info()}")
-
-        # Object Store for persistence
-        object_store_config = self._get_config("quantconnect", {}).get("object_store", {})
-        if object_store_config.get("enabled", False):
-            self.object_store_manager = create_object_store_manager(
-                algorithm=self,
-                config=object_store_config,
-            )
-            self.storage_monitor = create_storage_monitor(
-                object_store_manager=self.object_store_manager,
-                config=object_store_config,
-                circuit_breaker=self.circuit_breaker,
-            )
-            self.Debug(f"✅ Object Store initialized: {object_store_config.get('tier', 'unknown')} tier")
-        else:
-            self.object_store_manager = None
-            self.storage_monitor = None
-            self.Debug("⚠️  Object Store disabled (templates/positions won't persist)")
 
         # =====================================================================
         # HYBRID ARCHITECTURE - EXECUTORS
@@ -277,14 +208,16 @@ class HybridOptionsBot(QCAlgorithm):
         # =====================================================================
         # TRACKING
         # =====================================================================
-        self._last_check_time = self.Time
+        self._last_strategy_check_time = self.Time
+        self._last_recurring_check_time = self.Time
+        self._last_cb_log_time = self.Time  # Circuit breaker log throttle
         self._last_resource_check = self.Time
         self._position_count_by_source = defaultdict(int)
         self._daily_pnl = 0.0
         self._peak_equity = self.Portfolio.TotalPortfolioValue
 
-        # No warmup needed for Greeks (IV-based, PR #6720)
-        # But warm up for any technical indicators if used
+        # Greeks use IV and require no warmup (LEAN PR #6720).
+        # Uncomment below only if adding technical indicators that need history:
         # self.SetWarmUp(timedelta(days=30))
 
         # =====================================================================
@@ -324,10 +257,10 @@ class HybridOptionsBot(QCAlgorithm):
         # 1. CIRCUIT BREAKER CHECK
         # =================================================================
         if not self.circuit_breaker.can_trade():
-            # Trading halted by circuit breaker
-            if (self.Time - self._last_check_time).total_seconds() > 3600:
+            # Trading halted by circuit breaker - log once per hour
+            if (self.Time - self._last_cb_log_time).total_seconds() > 3600:
                 self.Debug("⚠️  Trading halted by circuit breaker")
-                self._last_check_time = self.Time
+                self._last_cb_log_time = self.Time
             return
 
         # =================================================================
@@ -478,30 +411,14 @@ class HybridOptionsBot(QCAlgorithm):
                 self.Debug(f"❌ Failed to subscribe to {ticker}: {e}")
 
     def _setup_schedules(self) -> None:
-        """Schedule recurring tasks."""
-        # Check autonomous strategies every 5 minutes during market hours
-        self.Schedule.On(
-            self.DateRules.EveryDay(), self.TimeRules.Every(timedelta(minutes=5)), self._scheduled_strategy_check
-        )
+        """Schedule recurring tasks.
 
-        # Check recurring templates every hour
-        if self.recurring_manager:
-            self.Schedule.On(
-                self.DateRules.EveryDay(), self.TimeRules.Every(timedelta(hours=1)), self._scheduled_recurring_check
-            )
-
+        Note: Strategy and recurring checks are handled in OnData via
+        _should_check_strategies() and _should_check_recurring() with
+        their own timing logic. No scheduled backups needed.
+        """
         # Daily risk review at market close
         self.Schedule.On(self.DateRules.EveryDay(), self.TimeRules.BeforeMarketClose("SPY", 5), self._daily_risk_review)
-
-    def _scheduled_strategy_check(self) -> None:
-        """Scheduled check for autonomous strategies."""
-        # Strategy checks happen in OnData, this is just a backup trigger
-        pass
-
-    def _scheduled_recurring_check(self) -> None:
-        """Scheduled check for recurring templates."""
-        # Recurring checks happen in OnData, this is just a backup trigger
-        pass
 
     def _daily_risk_review(self) -> None:
         """Daily review of risk metrics and positions."""
@@ -563,14 +480,18 @@ class HybridOptionsBot(QCAlgorithm):
             return False  # Reject on error (fail safe)
 
     def _should_check_strategies(self) -> bool:
-        """Determine if it's time to check autonomous strategies."""
-        # Check every 5 minutes
-        return (self.Time - self._last_check_time).total_seconds() >= 300
+        """Determine if it's time to check autonomous strategies (every 5 min)."""
+        if (self.Time - self._last_strategy_check_time).total_seconds() >= 300:
+            self._last_strategy_check_time = self.Time
+            return True
+        return False
 
     def _should_check_recurring(self) -> bool:
-        """Determine if it's time to check recurring templates."""
-        # Check every hour
-        return (self.Time - self._last_check_time).total_seconds() >= 3600
+        """Determine if it's time to check recurring templates (every 1 hour)."""
+        if (self.Time - self._last_recurring_check_time).total_seconds() >= 3600:
+            self._last_recurring_check_time = self.Time
+            return True
+        return False
 
     def _check_resources(self) -> None:
         """Check resource usage and log warnings."""
@@ -901,8 +822,9 @@ class HybridOptionsBot(QCAlgorithm):
             "ensemble_enabled": self.llm_ensemble is not None,
         }
 
-    def _on_circuit_breaker_alert(self, message: str, urgency: str) -> None:
+    def _on_circuit_breaker_alert(self, message: str, details: dict) -> None:
         """Handle circuit breaker alerts."""
+        urgency = details.get("reason", "UNKNOWN")
         self.Debug(f"🚨 CIRCUIT BREAKER ALERT [{urgency}]: {message}")
 
         # Could integrate with notification system here
@@ -910,12 +832,6 @@ class HybridOptionsBot(QCAlgorithm):
         # - Discord/Slack webhooks
         # - SMS via Twilio
         # For now, just log
-
-    def _get_config(self, section: str, default: Any) -> Any:
-        """Get configuration section safely."""
-        if self.config:
-            return self.config.get(section, default)
-        return default
 
     def _setup_sentiment_components(self) -> None:
         """Initialize LLM sentiment integration components (UPGRADE-014)."""

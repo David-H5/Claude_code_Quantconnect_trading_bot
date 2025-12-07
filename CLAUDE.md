@@ -29,6 +29,8 @@ Semi-autonomous options trading bot with LLM-powered analysis.
 
 ### RIC Loop (Complex Tasks)
 
+See [RIC Loop Workflow](#ric-loop-workflow-complex-tasks) below for full details.
+
 | Command | Description |
 |---------|-------------|
 | `/ric-start <task>` | Start RIC Loop session |

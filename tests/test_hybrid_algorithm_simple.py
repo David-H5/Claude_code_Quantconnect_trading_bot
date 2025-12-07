@@ -62,7 +62,9 @@ def test_hybrid_algorithm_has_required_methods():
             methods = [m.name for m in node.body if isinstance(m, ast.FunctionDef)]
 
             # Required QuantConnect methods
-            assert "Initialize" in methods, "Initialize method not found"
+            # Initialize is inherited from BaseOptionsBot, so we check for the override hooks
+            assert "_setup_basic" in methods, "_setup_basic method not found (Initialize override hook)"
+            assert "_setup_strategy_specific" in methods, "_setup_strategy_specific method not found (Initialize hook)"
             assert "OnData" in methods, "OnData method not found"
             assert "OnOrderEvent" in methods, "OnOrderEvent method not found"
             assert "OnEndOfAlgorithm" in methods, "OnEndOfAlgorithm method not found"

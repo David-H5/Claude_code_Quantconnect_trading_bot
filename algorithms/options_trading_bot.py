@@ -22,9 +22,6 @@ try:
     from AlgorithmImports import *
 except ImportError:
     # Stubs for development
-    class QCAlgorithm:
-        pass
-
     class Resolution:
         Daily = "Daily"
         Hour = "Hour"
@@ -49,27 +46,17 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from config import get_config
+from algorithms.base_options_bot import BaseOptionsBot
+
 from execution import (
     create_profit_taking_model,
     create_smart_execution_model,
 )
 from indicators import TechnicalAlphaModel as TechAlpha
-from models import (
-    CircuitBreakerConfig,
-    RiskLimits,
-    RiskManager,
-    TradingCircuitBreaker,
-)
-from utils.object_store import (
-    StorageCategory,
-    create_object_store_manager,
-)
-from observability.monitoring.system.resource import create_resource_monitor
-from utils.storage_monitor import create_storage_monitor
+from utils.object_store import StorageCategory
 
 
-class OptionsTradingBot(QCAlgorithm):
+class OptionsTradingBot(BaseOptionsBot):
     """
     Main trading algorithm with full framework integration.
 
@@ -79,82 +66,19 @@ class OptionsTradingBot(QCAlgorithm):
     3. Portfolio Construction - Options-focused allocation
     4. Risk Management - Circuit breaker + profit taking
     5. Execution - Smart cancel/replace
+
+    Extends BaseOptionsBot which provides:
+    - Configuration loading
+    - Risk management (RiskLimits, RiskManager, CircuitBreaker)
+    - Resource monitoring
+    - Object store persistence
     """
 
-    def Initialize(self) -> None:
-        """Initialize algorithm parameters and framework components."""
-        # Basic setup
-        self.SetStartDate(2024, 1, 1)
-        self.SetEndDate(2024, 12, 31)
-        self.SetCash(100000)
-
-        # Brokerage selection
-        # CRITICAL: Charles Schwab allows ONLY ONE algorithm per account
-        # Deploying a second algorithm will automatically stop the first one
-        # All strategies must be combined into this single algorithm
-        self.SetBrokerageModel(BrokerageName.CharlesSchwab, AccountType.Margin)
-
-        # Load configuration
-        try:
-            self.config = get_config()
-        except FileNotFoundError:
-            self.config = None
-            self.Debug("Config file not found, using defaults")
-
-        # Initialize risk limits
-        risk_config = self._get_config("risk_management", {})
-        self.risk_limits = RiskLimits(
-            max_position_size=risk_config.get("max_position_size_pct", 0.25),
-            max_daily_loss=risk_config.get("max_daily_loss_pct", 0.03),
-            max_drawdown=risk_config.get("max_drawdown_pct", 0.10),
-            max_risk_per_trade=risk_config.get("max_risk_per_trade_pct", 0.02),
-        )
-
-        # Initialize risk manager
-        self.risk_manager = RiskManager(
-            starting_equity=self.Portfolio.TotalPortfolioValue,
-            limits=self.risk_limits,
-        )
-
-        # Initialize circuit breaker
-        breaker_config = CircuitBreakerConfig(
-            max_daily_loss_pct=risk_config.get("max_daily_loss_pct", 0.03),
-            max_drawdown_pct=risk_config.get("max_drawdown_pct", 0.10),
-            max_consecutive_losses=risk_config.get("max_consecutive_losses", 5),
-            require_human_reset=risk_config.get("require_human_reset", True),
-        )
-        self.circuit_breaker = TradingCircuitBreaker(
-            config=breaker_config,
-            alert_callback=self._on_circuit_breaker_alert,
-        )
-
-        # Initialize resource monitor
-        resource_config = self._get_config("quantconnect", {}).get("resource_limits", {})
-        self.resource_monitor = create_resource_monitor(
-            config=resource_config,
-            circuit_breaker=self.circuit_breaker,
-        )
-        self.Debug(f"Resource monitor initialized for node: {self._get_node_info()}")
-
-        # Initialize Object Store manager
-        object_store_config = self._get_config("quantconnect", {}).get("object_store", {})
-        if object_store_config.get("enabled", False):
-            self.object_store_manager = create_object_store_manager(
-                algorithm=self,
-                config=object_store_config,
-            )
-            self.storage_monitor = create_storage_monitor(
-                object_store_manager=self.object_store_manager,
-                config=object_store_config,
-                circuit_breaker=self.circuit_breaker,
-            )
-            self.Debug(f"Object Store initialized: {object_store_config.get('tier', 'unknown')} tier")
-
-            # Load any saved trading state
+    def _setup_strategy_specific(self) -> None:
+        """Initialize options trading specific components."""
+        # Load any saved trading state if Object Store is enabled
+        if self.object_store_manager:
             self._restore_trading_state()
-        else:
-            self.object_store_manager = None
-            self.storage_monitor = None
 
         # Initialize profit-taking model
         profit_config = self._get_config("profit_taking", {})
@@ -199,33 +123,7 @@ class OptionsTradingBot(QCAlgorithm):
         # Initial resource check
         self._check_resources()
 
-        self.Debug("Options Trading Bot initialized")
-
-    def _get_config(self, section: str, default: Any) -> Any:
-        """Get configuration section safely."""
-        if self.config:
-            return self.config.get(section, default)
-        return default
-
-    def _get_node_info(self) -> str:
-        """Get current node information from config."""
-        qc_config = self._get_config("quantconnect", {})
-        nodes = qc_config.get("compute_nodes", {})
-
-        # Determine which node we're running on based on context
-        # In live trading, use live_trading node; otherwise use backtesting
-        if hasattr(self, "LiveMode") and self.LiveMode:
-            node = nodes.get("live_trading", {})
-            node_type = "live_trading"
-        else:
-            node = nodes.get("backtesting", {})
-            node_type = "backtesting"
-
-        model = node.get("model", "unknown")
-        ram_gb = node.get("ram_gb", 0)
-        cores = node.get("cores", 0)
-
-        return f"{model} ({cores} cores, {ram_gb}GB RAM) [{node_type}]"
+        self.Debug("Options Trading Bot strategy initialized")
 
     def _setup_universe(self) -> None:
         """Set up the trading universe."""
@@ -633,36 +531,9 @@ class OptionsTradingBot(QCAlgorithm):
                         # from scanners import create_options_scanner
                         # opportunities = self.options_scanner.scan_chain(...)
 
-            # Example: Multi-leg strategy using OptionStrategies factory methods
-            # (Uncomment and customize for your strategy)
-            """
-            # Get ATM calls for butterfly
-            expiry = min([c.Expiry for c in chain])
-            calls = sorted([c for c in chain
-                if c.Expiry == expiry and c.Right == OptionRight.Call],
-                key=lambda x: x.Strike)
-
-            if len(calls) >= 5:
-                # Create butterfly using factory method
-                strategy = OptionStrategies.butterfly_call(
-                    chain.Symbol,
-                    calls[0].Strike,   # Lower strike
-                    calls[2].Strike,   # Middle strike (ATM)
-                    calls[4].Strike,   # Upper strike
-                    expiry
-                )
-
-                # Execute atomically with automatic position grouping
-                # self.buy(strategy, 1)
-
-                # OR use ComboLimitOrder for price control:
-                legs = [
-                    Leg.Create(calls[0].Symbol, 1),
-                    Leg.Create(calls[2].Symbol, -2),
-                    Leg.Create(calls[4].Symbol, 1),
-                ]
-                # self.ComboLimitOrder(legs, quantity=1, limit_price=net_debit)
-            """
+            # For multi-leg strategies (butterflies, condors, spreads), see:
+            # - docs/OPTIONS_PATTERNS.md for strategy examples
+            # - OptionStrategies factory methods for atomic execution
 
     def _execute_signal(self, signal: dict[str, Any], data: Slice) -> None:
         """Execute a trading signal."""
@@ -849,7 +720,17 @@ class OptionsTradingBot(QCAlgorithm):
 
 class QuantConnectOptionsBot(OptionsTradingBot):
     """
-    Alias for deployment compatibility.
+    Deployment alias for QuantConnect cloud.
+
+    QuantConnect's deployment system expects specific class names.
+    This alias allows deploying OptionsTradingBot under the name
+    that matches the project configuration.
+
+    Usage:
+        # In QuantConnect deployment config:
+        "algorithm-type-name": "QuantConnectOptionsBot"
+
+    Note: This is functionally identical to OptionsTradingBot.
     """
 
     pass
