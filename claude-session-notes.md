@@ -132,12 +132,31 @@ Focus on consolidating state management, fixing critical flaws, and improving ma
 | scripts/health_check.py | HTTP health endpoints |
 | config/overnight.yaml | Centralized config |
 
-### OVERNIGHT-002 Completed Items
+### OVERNIGHT-002 Completed Items (2025-12-06)
+
 1. ✅ Created utils/overnight_state.py with file locking
 2. ✅ Fixed exception suppression in hook_utils.py
 3. ✅ Created centralized configuration system (overnight.yaml + loader)
 4. ✅ Created utils/progress_parser.py
 5. ✅ Fixed git --no-verify bypass
+6. ✅ Added Claude CLI availability check in auto-resume.sh
+7. ✅ Created scripts/health_check.py with /health and /status endpoints
+8. ✅ Created docs/INDEX.md documentation index
+9. ✅ Fixed session-history.jsonl test capture (run_tests function)
+10. ✅ Fixed compaction-history.jsonl checkpoint tracking
+11. ✅ Migrated code to use unified state manager
+12. ✅ Added tests/test_overnight_state.py (9 tests)
+13. ✅ Added tests/test_overnight_config.py (11 tests)
+14. ✅ Added tests/test_progress_parser.py (15 tests)
+
+**Status**: ✅ ALL CRITICAL FIXES COMPLETE
+
+### Deferred Items (Low Priority)
+
+- H1: watchdog.py CPU check blocks 1s
+- H2: run_overnight.sh --print assumption
+- H3: notify.py deprecated utcnow()
+- H4: session_state_manager hard limit 20 notes
 
 ---
 

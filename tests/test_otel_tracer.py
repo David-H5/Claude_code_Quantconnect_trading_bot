@@ -118,9 +118,9 @@ class TestGenAISpan:
             gen_ai_request_model="gpt-4",
         )
 
-        span.end(error="Connection timeout")
+        span.end(status=SpanStatus.ERROR, message="Connection timeout")
         assert span.status == SpanStatus.ERROR
-        assert "Connection timeout" in span.error_message
+        assert span.status_message == "Connection timeout"
 
     def test_duration_calculation(self):
         """Test duration is calculated correctly."""
@@ -304,10 +304,10 @@ class TestGenAISystem:
         systems = [
             GenAISystem.ANTHROPIC,
             GenAISystem.OPENAI,
-            GenAISystem.MISTRAL,
-            GenAISystem.GOOGLE,
-            GenAISystem.COHERE,
-            GenAISystem.OTHER,
+            GenAISystem.AZURE_OPENAI,
+            GenAISystem.AWS_BEDROCK,
+            GenAISystem.GOOGLE_VERTEX,
+            GenAISystem.CUSTOM,
         ]
         assert len(systems) == 6
 

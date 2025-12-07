@@ -350,6 +350,9 @@ class TestRolling:
     @pytest.mark.unit
     def test_roll_execution(self, manager):
         """Test position rolling."""
+        from unittest.mock import patch
+        from execution.bot_managed_positions import RollResult
+
         position = manager.add_position(
             position_id="pos_1",
             symbol="SPY",
@@ -360,12 +363,36 @@ class TestRolling:
             legs=[],
         )
 
-        # Execute roll
-        action = manager._execute_roll(position)
+        # Mock the internal methods that _execute_roll depends on
+        target_expiry = datetime.now()
+        roll_result = RollResult(
+            success=True,
+            old_position_id="pos_1",
+            new_position_id="pos_1_rolled",
+        )
 
-        assert action == ManagementAction.ROLL
-        assert manager.stats["rolls"] == 1
-        assert len(position.management_history) == 1
+        def mock_execute_roll(pos, expiry, strikes):
+            # The real method would call record_action, so we do the same
+            pos.record_action(
+                ManagementAction.ROLL,
+                {"reason": f"DTE roll to {expiry.date()}", "new_position_id": "pos_1_rolled"},
+            )
+            return roll_result
+
+        with (
+            patch.object(manager, "_find_roll_expiration", return_value=target_expiry),
+            patch.object(manager, "_get_underlying_price", return_value=450.0),
+            patch.object(manager, "_calculate_roll_strikes", return_value={"call": 460, "put": 440}),
+            patch.object(manager, "_get_position_value", return_value=100.0),
+            patch.object(manager, "_estimate_new_position_cost", return_value=50.0),
+            patch.object(manager, "_execute_close_then_open_roll", side_effect=mock_execute_roll),
+        ):
+            # Execute roll
+            action = manager._execute_roll(position)
+
+            assert action == ManagementAction.ROLL
+            assert manager.stats["rolls"] == 1
+            assert len(position.management_history) == 1
 
 
 class TestPositionManagement:

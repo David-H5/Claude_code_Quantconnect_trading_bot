@@ -215,10 +215,15 @@ class TestCostOptimizer:
         )
 
         # Spend 65% of budget
+        # Opus pricing: $0.015/1k input, $0.075/1k output
+        # Need ~$0.60 for 60% of $1 budget
+        # 15000 input * 0.015/1000 = $0.225
+        # 5000 output * 0.075/1000 = $0.375
+        # Total = $0.60 = 60%
         optimizer.track_cost(
             model="claude-opus-4-20250514",
-            tokens_in=5000,  # Enough to exceed 60%
-            tokens_out=2000,
+            tokens_in=15000,
+            tokens_out=5000,
         )
 
         status = optimizer.get_budget_status()

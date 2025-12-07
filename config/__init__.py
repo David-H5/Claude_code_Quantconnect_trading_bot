@@ -7,6 +7,27 @@ May be imported by: Layers 2-4
 
 Provides centralized configuration loading, validation, and access
 for all trading bot components.
+
+Configuration System Boundaries:
+--------------------------------
+This module handles TRADING configuration:
+- Brokerage settings (Schwab API)
+- Risk management (position limits, daily loss)
+- Order execution (slippage, fill parameters)
+- Scanner settings (options, movement)
+- LLM integration (providers, ensemble weights)
+
+For CLAUDE CODE SESSION configuration, use:
+    from utils.overnight_config import OvernightConfig, get_overnight_config
+
+The overnight system handles:
+- Session duration limits
+- Continuation/restart settings
+- Progress tracking
+- Notifications (Discord/Slack)
+- RIC Loop integration
+
+See also: config/overnight.yaml for overnight settings
 """
 
 import json

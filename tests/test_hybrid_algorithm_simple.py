@@ -10,18 +10,21 @@ from pathlib import Path
 
 import pytest
 
+# Get the project root directory (parent of tests/)
+PROJECT_ROOT = Path(__file__).parent.parent
+ALGO_FILE = PROJECT_ROOT / "algorithms" / "hybrid_options_bot.py"
+
 
 @pytest.mark.unit
 def test_hybrid_algorithm_file_exists():
     """Test that hybrid_options_bot.py file exists."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
-    assert algo_file.exists(), "hybrid_options_bot.py file not found"
+    assert ALGO_FILE.exists(), f"hybrid_options_bot.py file not found at {ALGO_FILE}"
 
 
 @pytest.mark.unit
 def test_hybrid_algorithm_valid_python():
     """Test that hybrid_options_bot.py is valid Python syntax."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -34,7 +37,7 @@ def test_hybrid_algorithm_valid_python():
 @pytest.mark.unit
 def test_hybrid_algorithm_has_class():
     """Test that HybridOptionsBot class is defined."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -47,7 +50,7 @@ def test_hybrid_algorithm_has_class():
 @pytest.mark.unit
 def test_hybrid_algorithm_has_required_methods():
     """Test that HybridOptionsBot has required QuantConnect methods."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -82,7 +85,7 @@ def test_hybrid_algorithm_has_required_methods():
 @pytest.mark.unit
 def test_hybrid_algorithm_imports():
     """Test that all required imports are present."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -96,7 +99,7 @@ def test_hybrid_algorithm_imports():
 @pytest.mark.unit
 def test_hybrid_algorithm_docstring():
     """Test that HybridOptionsBot has a comprehensive docstring."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -120,7 +123,7 @@ def test_hybrid_algorithm_docstring():
 @pytest.mark.unit
 def test_initialize_method_structure():
     """Test that Initialize method has required components."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -139,7 +142,7 @@ def test_initialize_method_structure():
 @pytest.mark.unit
 def test_ondata_method_structure():
     """Test that OnData method processes all components."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -155,7 +158,7 @@ def test_ondata_method_structure():
 @pytest.mark.unit
 def test_risk_management_integration():
     """Test that risk management is integrated."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -171,7 +174,7 @@ def test_risk_management_integration():
 @pytest.mark.unit
 def test_scheduler_integration():
     """Test that scheduled tasks are configured."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -184,7 +187,7 @@ def test_scheduler_integration():
 @pytest.mark.unit
 def test_charles_schwab_warning():
     """Test that Charles Schwab single-algorithm warning is present."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -197,7 +200,7 @@ def test_charles_schwab_warning():
 @pytest.mark.unit
 def test_module_integration_comments():
     """Test that all 9 modules are referenced."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -217,7 +220,7 @@ def test_module_integration_comments():
 @pytest.mark.unit
 def test_resource_monitoring_integrated():
     """Test that resource monitoring is integrated."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -230,7 +233,7 @@ def test_resource_monitoring_integrated():
 @pytest.mark.unit
 def test_object_store_integration():
     """Test that Object Store integration is present."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -242,7 +245,7 @@ def test_object_store_integration():
 @pytest.mark.unit
 def test_configuration_loading():
     """Test that configuration is loaded."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -255,7 +258,7 @@ def test_configuration_loading():
 @pytest.mark.unit
 def test_error_handling_present():
     """Test that error handling is implemented."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -268,7 +271,7 @@ def test_error_handling_present():
 @pytest.mark.unit
 def test_debug_logging_present():
     """Test that debug logging is used."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 
@@ -281,7 +284,7 @@ def test_debug_logging_present():
 @pytest.mark.unit
 def test_code_length_reasonable():
     """Test that algorithm is comprehensive but not excessively long."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         lines = f.readlines()
 
@@ -297,7 +300,7 @@ def test_code_length_reasonable():
 @pytest.mark.unit
 def test_no_syntax_errors_in_methods():
     """Test that all methods are syntactically valid."""
-    algo_file = Path("algorithms/hybrid_options_bot.py")
+    algo_file = ALGO_FILE
     with open(algo_file) as f:
         code = f.read()
 

@@ -402,6 +402,29 @@ class ValueNetwork:
         output = self._matmul(current, self.weights[-1], self.biases[-1])
         return output[0]
 
+    def get_parameters(self) -> list[float]:
+        """Flatten all parameters into single list."""
+        params = []
+        for w in self.weights:
+            for row in w:
+                params.extend(row)
+        for b in self.biases:
+            params.extend(b)
+        return params
+
+    def set_parameters(self, params: list[float]) -> None:
+        """Set parameters from flattened list."""
+        idx = 0
+        for layer_idx, w in enumerate(self.weights):
+            for row_idx in range(len(w)):
+                for col_idx in range(len(w[0])):
+                    self.weights[layer_idx][row_idx][col_idx] = params[idx]
+                    idx += 1
+        for layer_idx, b in enumerate(self.biases):
+            for i in range(len(b)):
+                self.biases[layer_idx][i] = params[idx]
+                idx += 1
+
 
 class RLRebalancer:
     """

@@ -22,6 +22,7 @@ from llm.retraining import (
     ValidationResult,
     create_retraining_pipeline,
 )
+from models.exceptions.data import DataMissingError
 
 
 class TestDriftSeverity:
@@ -422,7 +423,7 @@ class TestRetrainingPipeline:
     @pytest.mark.unit
     def test_run_retrain_job_not_found(self, pipeline):
         """Test running non-existent job."""
-        with pytest.raises(ValueError):
+        with pytest.raises(DataMissingError, match="job_id"):
             pipeline.run_retrain_job("unknown_job", [])
 
     @pytest.mark.unit

@@ -18,6 +18,7 @@ from execution.fill_ml_model import (
     TrainingResult,
     create_fill_ml_model,
 )
+from models.exceptions.data import DataValidationError
 
 
 class TestFillFeatures:
@@ -249,7 +250,7 @@ class TestFillMLModel:
             for _ in range(5)
         ]
 
-        with pytest.raises(ValueError, match="at least 10 records"):
+        with pytest.raises(DataValidationError, match="at least 10 records"):
             model.train(few_records)
 
     def test_prediction_after_training(self, model, training_data, sample_features):

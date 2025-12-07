@@ -8,6 +8,8 @@ Part of UPGRADE-010 Sprint 4 - Test Coverage.
 import numpy as np
 import pytest
 
+from models.exceptions.data import DataValidationError
+from models.exceptions.strategy import IndicatorError
 from models.tgarch import (
     TGARCHFitResult,
     TGARCHModel,
@@ -177,7 +179,7 @@ class TestTGARCHModel:
 
     def test_forecast_unfitted_model(self, model):
         """Test forecasting with unfitted model."""
-        with pytest.raises(ValueError, match="[Ff]it|[Tt]rain"):
+        with pytest.raises(IndicatorError, match="[Ff]it"):
             model.forecast(steps=1)
 
     def test_simulate_paths(self, model, returns_series):
@@ -285,7 +287,7 @@ class TestTGARCHEdgeCases:
         model = TGARCHModel()
         short_returns = np.random.normal(0, 0.01, 20)
 
-        with pytest.raises(ValueError, match="[Oo]bservation|[Mm]inimum"):
+        with pytest.raises(DataValidationError, match="[Oo]bservation"):
             model.fit(short_returns)
 
 

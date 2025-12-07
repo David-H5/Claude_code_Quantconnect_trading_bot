@@ -10,6 +10,31 @@ BLOCKS operations that exceed configured risk thresholds.
 
 UPGRADE-015 Phase 4: Hook System Implementation
 
+Validation Layer Architecture:
+------------------------------
+This hook is a SAFETY NET at the Claude Code tool boundary, providing
+defense-in-depth alongside application-level validation:
+
+    [Claude Tool Call] → [THIS HOOK] → [Application Code] → [PreTradeValidator]
+                              ↓                                    ↓
+                         BLOCK early                        Validate business rules
+                         (tool boundary)                    (application level)
+
+This hook (risk_validator.py):
+    - Operates at Claude Code tool boundary
+    - Catches ALL trading tool calls before execution
+    - Simple, fast checks with hard limits
+    - Cannot be bypassed by application code
+
+execution/pre_trade_validator.py:
+    - Operates at application level
+    - Rich validation with circuit breaker integration
+    - Complex business rule validation
+    - Called by trading code before order submission
+
+BOTH validators should pass for a trade to execute safely.
+This provides defense-in-depth against trading errors.
+
 Usage:
     Called as PreToolUse hook before broker/trading tool calls.
     Reads tool input from stdin, validates against risk rules.

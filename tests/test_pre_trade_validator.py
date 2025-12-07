@@ -5,7 +5,7 @@ These tests verify the pre-trade validation system correctly
 enforces position limits, risk constraints, and data quality checks.
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock
 
 import pytest
@@ -233,8 +233,8 @@ class TestDataFreshnessCheck:
 
     def test_fails_stale_data(self, validator):
         """Validation fails when price data is stale."""
-        # Manually make price stale
-        validator._price_cache["SPY"] = (450.0, datetime.utcnow() - timedelta(seconds=10))
+        # Manually make price stale (use timezone-aware datetime)
+        validator._price_cache["SPY"] = (450.0, datetime.now(timezone.utc) - timedelta(seconds=10))
 
         order = Order(symbol="SPY", quantity=10, side="buy", order_type="limit")
         result = validator.validate(order)

@@ -5,6 +5,32 @@ This module provides pre-trade validation to enforce position limits,
 risk constraints, and data quality checks before order submission.
 
 All execution paths MUST call the validator before submitting orders.
+
+Validation Layer Architecture:
+------------------------------
+This module provides APPLICATION-LEVEL validation with rich business logic:
+
+    [Claude Tool Call] → [Hook Validator] → [Application Code] → [THIS MODULE]
+                              ↓                                       ↓
+                         BLOCK early                           Rich validation
+                         (simple limits)                       (circuit breaker,
+                                                               data quality, etc.)
+
+This module (pre_trade_validator.py):
+    - Operates at application level
+    - Integrates with circuit breaker for halt conditions
+    - Complex validation (liquidity, data freshness, duplicates)
+    - Called by trading code before order submission
+    - Provides detailed validation results for logging/auditing
+
+.claude/hooks/trading/risk_validator.py:
+    - Operates at Claude Code tool boundary
+    - Simple, fast hard limit checks
+    - Cannot be bypassed by application code
+    - First line of defense
+
+BOTH validators should pass for a trade to execute safely.
+This provides defense-in-depth against trading errors.
 """
 
 import logging

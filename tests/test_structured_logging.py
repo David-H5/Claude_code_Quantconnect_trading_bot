@@ -25,7 +25,7 @@ from utils.log_handlers import (
     CompressedRotatingFileHandler,
     create_rotating_file_handler,
 )
-from utils.structured_logger import (
+from observability.logging.structured import (
     ExecutionEventType,
     LogCategory,
     LogEvent,

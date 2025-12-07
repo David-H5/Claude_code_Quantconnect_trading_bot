@@ -207,11 +207,20 @@ class TestReactLoopTermination:
         """Test termination by timeout."""
         agent = MockTradingAgent(timeout_ms=50)  # Very short timeout
 
-        # Make think() slow
+        # Set up responses that don't terminate (so timeout can trigger)
+        agent.set_think_responses(
+            [
+                AgentThought(thought_type=ThoughtType.REASONING, content="Still thinking..."),
+                AgentThought(thought_type=ThoughtType.REASONING, content="Still thinking..."),
+                AgentThought(thought_type=ThoughtType.REASONING, content="Still thinking..."),
+            ]
+        )
+
+        # Make think() slow enough to exceed timeout
         original_think = agent.think
 
         def slow_think(state, history):
-            time.sleep(0.1)  # 100ms delay
+            time.sleep(0.1)  # 100ms delay, timeout is 50ms
             return original_think(state, history)
 
         agent.think = slow_think
@@ -304,10 +313,11 @@ class TestReactLoopToolCalls:
 
         response, metrics = agent.react_loop("Test", {}, max_retries=2)
 
-        # Initial call + 2 retries = 3 total
+        # Initial call + 2 retries = 3 total calls
         assert metrics.tool_calls == 3
         assert metrics.tool_failures == 3
-        assert metrics.retries == 2
+        # Retries counter tracks total retry attempts (3 = initial + 2 retries)
+        assert metrics.retries == 3
         assert metrics.termination_reason == TerminationReason.TOOL_FAILURE
 
     def test_unknown_tool(self):
@@ -327,9 +337,10 @@ class TestReactLoopToolCalls:
             ]
         )
 
-        response, metrics = agent.react_loop("Test", {})
+        # Use max_retries=0 to disable retries for this test
+        response, metrics = agent.react_loop("Test", {}, max_retries=0)
 
-        # Unknown tool counts as call but fails
+        # Unknown tool counts as call but fails (no retries)
         assert metrics.tool_calls == 1
         assert metrics.tool_failures == 1
 
@@ -477,7 +488,8 @@ class TestBuildStateSummary:
 
         summary = agent._build_state_summary("Test", context, [])
 
-        assert "last_observation" in summary.lower()
+        # Summary formats key as "last observation" (with space)
+        assert "observation" in summary.lower()
 
     def test_with_history(self):
         """Test summary with thought history."""

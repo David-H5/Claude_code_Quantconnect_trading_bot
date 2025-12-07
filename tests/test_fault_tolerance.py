@@ -440,8 +440,9 @@ class TestServiceDegradationManager:
         for i in range(10):
             manager.register_service(f"service_{i}")
 
-        # Mark 60% as unhealthy
-        for i in range(6):
+        # Mark 40% as unhealthy (need >= 50% healthy for DEGRADED)
+        # With 4 unhealthy, 6 healthy = 60% healthy ratio
+        for i in range(4):
             manager.update_service_health(
                 f"service_{i}",
                 HealthStatus.UNHEALTHY,

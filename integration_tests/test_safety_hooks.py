@@ -17,7 +17,9 @@ from pathlib import Path
 import pytest
 
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Get project root (parent of integration_tests/)
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
 
 
 class TestRiskValidatorHook:
@@ -25,12 +27,12 @@ class TestRiskValidatorHook:
 
     def test_risk_validator_exists(self):
         """Test that risk validator hook file exists."""
-        hook_path = Path(".claude/hooks/trading/risk_validator.py")
+        hook_path = PROJECT_ROOT / ".claude/hooks/trading/risk_validator.py"
         assert hook_path.exists(), "risk_validator.py hook not found"
 
     def test_risk_validator_syntax(self):
         """Test risk validator hook has valid Python syntax."""
-        hook_path = Path(".claude/hooks/trading/risk_validator.py")
+        hook_path = PROJECT_ROOT / ".claude/hooks/trading/risk_validator.py"
         code = hook_path.read_text()
 
         # Should compile without syntax errors
@@ -38,7 +40,7 @@ class TestRiskValidatorHook:
 
     def test_risk_validator_has_main(self):
         """Test risk validator hook has main function or entry point."""
-        hook_path = Path(".claude/hooks/trading/risk_validator.py")
+        hook_path = PROJECT_ROOT / ".claude/hooks/trading/risk_validator.py"
         code = hook_path.read_text()
 
         # Should have entry point
@@ -50,12 +52,12 @@ class TestLogTradeHook:
 
     def test_log_trade_exists(self):
         """Test that log trade hook file exists."""
-        hook_path = Path(".claude/hooks/trading/log_trade.py")
+        hook_path = PROJECT_ROOT / ".claude/hooks/trading/log_trade.py"
         assert hook_path.exists(), "log_trade.py hook not found"
 
     def test_log_trade_syntax(self):
         """Test log trade hook has valid Python syntax."""
-        hook_path = Path(".claude/hooks/trading/log_trade.py")
+        hook_path = PROJECT_ROOT / ".claude/hooks/trading/log_trade.py"
         code = hook_path.read_text()
 
         compile(code, str(hook_path), "exec")
@@ -66,12 +68,12 @@ class TestLoadContextHook:
 
     def test_load_context_exists(self):
         """Test that load context hook file exists."""
-        hook_path = Path(".claude/hooks/trading/load_trading_context.py")
+        hook_path = PROJECT_ROOT / ".claude/hooks/trading/load_trading_context.py"
         assert hook_path.exists(), "load_trading_context.py hook not found"
 
     def test_load_context_syntax(self):
         """Test load context hook has valid Python syntax."""
-        hook_path = Path(".claude/hooks/trading/load_trading_context.py")
+        hook_path = PROJECT_ROOT / ".claude/hooks/trading/load_trading_context.py"
         code = hook_path.read_text()
 
         compile(code, str(hook_path), "exec")
@@ -82,12 +84,12 @@ class TestParseBacktestHook:
 
     def test_parse_backtest_exists(self):
         """Test that parse backtest hook file exists."""
-        hook_path = Path(".claude/hooks/trading/parse_backtest.py")
+        hook_path = PROJECT_ROOT / ".claude/hooks/trading/parse_backtest.py"
         assert hook_path.exists(), "parse_backtest.py hook not found"
 
     def test_parse_backtest_syntax(self):
         """Test parse backtest hook has valid Python syntax."""
-        hook_path = Path(".claude/hooks/trading/parse_backtest.py")
+        hook_path = PROJECT_ROOT / ".claude/hooks/trading/parse_backtest.py"
         code = hook_path.read_text()
 
         compile(code, str(hook_path), "exec")
@@ -98,12 +100,12 @@ class TestAlgoChangeGuardHook:
 
     def test_algo_change_guard_exists(self):
         """Test that algo change guard hook file exists."""
-        hook_path = Path(".claude/hooks/validation/algo_change_guard.py")
+        hook_path = PROJECT_ROOT / ".claude/hooks/validation/algo_change_guard.py"
         assert hook_path.exists(), "algo_change_guard.py hook not found"
 
     def test_algo_change_guard_syntax(self):
         """Test algo change guard hook has valid Python syntax."""
-        hook_path = Path(".claude/hooks/validation/algo_change_guard.py")
+        hook_path = PROJECT_ROOT / ".claude/hooks/validation/algo_change_guard.py"
         code = hook_path.read_text()
 
         compile(code, str(hook_path), "exec")
@@ -114,12 +116,12 @@ class TestHooksConfiguration:
 
     def test_settings_exists(self):
         """Test that settings.json exists."""
-        settings_path = Path(".claude/settings.json")
+        settings_path = PROJECT_ROOT / ".claude/settings.json"
         assert settings_path.exists(), "settings.json not found"
 
     def test_settings_valid_json(self):
         """Test that settings.json is valid JSON."""
-        settings_path = Path(".claude/settings.json")
+        settings_path = PROJECT_ROOT / ".claude/settings.json"
         content = settings_path.read_text()
 
         # Should parse without error
@@ -128,7 +130,7 @@ class TestHooksConfiguration:
 
     def test_hooks_section_exists(self):
         """Test that hooks section exists in settings."""
-        settings_path = Path(".claude/settings.json")
+        settings_path = PROJECT_ROOT / ".claude/settings.json"
         content = settings_path.read_text()
         settings = json.loads(content)
 
@@ -136,7 +138,7 @@ class TestHooksConfiguration:
 
     def test_pretooluse_hooks_configured(self):
         """Test that PreToolUse hooks are configured."""
-        settings_path = Path(".claude/settings.json")
+        settings_path = PROJECT_ROOT / ".claude/settings.json"
         content = settings_path.read_text()
         settings = json.loads(content)
 
@@ -145,7 +147,7 @@ class TestHooksConfiguration:
 
     def test_posttooluse_hooks_configured(self):
         """Test that PostToolUse hooks are configured."""
-        settings_path = Path(".claude/settings.json")
+        settings_path = PROJECT_ROOT / ".claude/settings.json"
         content = settings_path.read_text()
         settings = json.loads(content)
 
@@ -158,7 +160,7 @@ class TestCircuitBreakerIntegration:
 
     def test_circuit_breaker_module_exists(self):
         """Test that circuit breaker module exists."""
-        circuit_breaker_path = Path("models/circuit_breaker.py")
+        circuit_breaker_path = PROJECT_ROOT / "models/circuit_breaker.py"
         assert circuit_breaker_path.exists(), "circuit_breaker.py not found"
 
     def test_circuit_breaker_import(self):
@@ -176,8 +178,8 @@ class TestCircuitBreakerIntegration:
 
         assert breaker.can_trade() is True
 
-        # Trigger halt
-        breaker.halt_trading(reason="Test halt")
+        # Trigger halt (method is halt_all_trading)
+        breaker.halt_all_trading(reason="Test halt")
 
         assert breaker.can_trade() is False
 
@@ -232,20 +234,20 @@ class TestHookDirectory:
 
     def test_hooks_directory_exists(self):
         """Test that .claude/hooks directory exists."""
-        hooks_dir = Path(".claude/hooks")
+        hooks_dir = PROJECT_ROOT / ".claude/hooks"
         assert hooks_dir.exists(), ".claude/hooks directory not found"
         assert hooks_dir.is_dir()
 
     def test_hooks_directory_not_empty(self):
         """Test that hooks directory has files (in subdirectories)."""
-        hooks_dir = Path(".claude/hooks")
+        hooks_dir = PROJECT_ROOT / ".claude/hooks"
         # Hooks are now in subdirectories
         hook_files = list(hooks_dir.glob("**/*.py"))
         assert len(hook_files) > 0, "No Python files in hooks directory"
 
     def test_all_hooks_have_valid_syntax(self):
         """Test that all hooks have valid Python syntax."""
-        hooks_dir = Path(".claude/hooks")
+        hooks_dir = PROJECT_ROOT / ".claude/hooks"
 
         for hook_file in hooks_dir.glob("**/*.py"):
             code = hook_file.read_text()

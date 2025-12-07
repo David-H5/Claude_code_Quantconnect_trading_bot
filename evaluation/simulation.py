@@ -209,8 +209,8 @@ class UserSimulator:
         self.scenario_categories = scenario_categories
         self.randomize = randomize
 
-        if seed is not None:
-            random.seed(seed)
+        # Use per-instance random for reproducibility across instances
+        self._rng = random.Random(seed)
 
         # Load scenarios
         self._scenarios = self._load_scenarios()
@@ -232,7 +232,7 @@ class UserSimulator:
             all_scenarios = [s for s in all_scenarios if "adversarial" in s.tags]
 
         if self.randomize:
-            random.shuffle(all_scenarios)
+            self._rng.shuffle(all_scenarios)
 
         return all_scenarios
 
@@ -245,13 +245,13 @@ class UserSimulator:
         if not candidates:
             return None
 
-        return random.choice(candidates)
+        return self._rng.choice(candidates)
 
     def generate_scenarios(self, count: int = 10) -> list[Scenario]:
         """Generate multiple scenarios."""
         if len(self._scenarios) <= count:
             return self._scenarios.copy()
-        return random.sample(self._scenarios, count)
+        return self._rng.sample(self._scenarios, count)
 
     def mutate_query(self, query: str) -> str:
         """
@@ -262,7 +262,7 @@ class UserSimulator:
         if self.behavior == UserBehavior.NOVICE:
             # Add uncertainty markers
             prefixes = ["I'm not sure but ", "Can you help me ", "I think I want to "]
-            return random.choice(prefixes) + query.lower()
+            return self._rng.choice(prefixes) + query.lower()
 
         elif self.behavior == UserBehavior.ADVERSARIAL:
             # Add potential edge cases
@@ -272,7 +272,7 @@ class UserSimulator:
                 query.replace(" ", "  "),  # Extra spaces
                 "URGENT!!! " + query,  # Urgency markers
             ]
-            return random.choice(mutations)
+            return self._rng.choice(mutations)
 
         return query
 
@@ -281,7 +281,7 @@ class UserSimulator:
         base_context = {
             "user_experience": self.behavior.value,
             "timestamp": datetime.now().isoformat(),
-            "session_id": f"sim-{random.randint(1000, 9999)}",
+            "session_id": f"sim-{self._rng.randint(1000, 9999)}",
         }
 
         if self.behavior == UserBehavior.EXPERT:

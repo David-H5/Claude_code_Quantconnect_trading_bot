@@ -10,6 +10,7 @@ from unittest.mock import patch
 import pytest
 
 from llm.agents.base import AgentResponse, AgentRole, TradingAgent
+from models.exceptions.agent import AgentConfigurationError
 from llm.agents.registry import (
     ORCHESTRATION_CAPABILITY,
     RISK_ASSESSMENT_CAPABILITY,
@@ -162,7 +163,7 @@ class TestAgentRegistry:
             capabilities=[TECHNICAL_ANALYSIS_CAPABILITY],
         )
 
-        with pytest.raises(ValueError, match="already registered"):
+        with pytest.raises(AgentConfigurationError, match="already registered"):
             registry.register(
                 agent=mock_analyst,
                 capabilities=[TECHNICAL_ANALYSIS_CAPABILITY],

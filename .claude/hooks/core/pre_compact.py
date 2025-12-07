@@ -218,8 +218,18 @@ def estimate_context_usage() -> dict:
     return stats
 
 
-def log_compaction_event(backup_path: Path | None, stats: dict):
-    """Log compaction event to history file."""
+def log_compaction_event(
+    backup_path: Path | None,
+    stats: dict,
+    checkpoint_created: bool = False,
+):
+    """Log compaction event to history file.
+
+    Args:
+        backup_path: Path to backed up transcript
+        stats: Context usage statistics
+        checkpoint_created: Whether git checkpoint was created
+    """
     logs_dir = Path("logs")
     logs_dir.mkdir(exist_ok=True)
 
@@ -227,7 +237,8 @@ def log_compaction_event(backup_path: Path | None, stats: dict):
     event = {
         **stats,
         "backup_path": str(backup_path) if backup_path else None,
-        "checkpoint_created": backup_path is not None,
+        "checkpoint_created": checkpoint_created,
+        "transcript_backed_up": backup_path is not None,
     }
 
     try:
@@ -279,13 +290,13 @@ def main():
     save_session_state()
 
     # Create checkpoint commit
-    create_checkpoint()
+    checkpoint_created = create_checkpoint()
 
     # Update progress file
     update_progress_file()
 
     # Log compaction event
-    log_compaction_event(backup_path, stats)
+    log_compaction_event(backup_path, stats, checkpoint_created)
 
     # Send notification
     if HAS_NOTIFICATIONS:

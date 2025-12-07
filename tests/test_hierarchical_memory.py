@@ -312,14 +312,13 @@ class TestConvenienceFunctions:
         """Test that get_memory returns singleton."""
         import scripts.hierarchical_memory as hm
 
-        # Monkeypatch default dir to temp
-        monkeypatch.setattr(
-            hm.HierarchicalMemory,
-            "__init__",
-            lambda self, memory_dir="logs/memory", **kwargs: HierarchicalMemory.__init__(
-                self, memory_dir=str(tmp_path), **kwargs
-            ),
-        )
+        # Store original __init__ before patching to avoid recursion
+        original_init = hm.HierarchicalMemory.__init__
+
+        def patched_init(self, memory_dir="logs/memory", **kwargs):
+            return original_init(self, memory_dir=str(tmp_path), **kwargs)
+
+        monkeypatch.setattr(hm.HierarchicalMemory, "__init__", patched_init)
 
         mem1 = get_memory()
         mem2 = get_memory()

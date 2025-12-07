@@ -28,34 +28,30 @@ class TestIVSurfaceIntegration:
         """Test IV surface module imports correctly."""
         from analytics import create_iv_surface
 
-        surface = create_iv_surface()
+        surface = create_iv_surface(underlying_price=450.0)
         assert surface is not None
 
     def test_iv_surface_data_loading(self):
         """Test IV surface can accept data."""
-        from datetime import datetime
-
         from analytics import create_iv_surface
 
-        surface = create_iv_surface()
+        surface = create_iv_surface(underlying_price=450.0)
 
-        # Add sample data points
-        surface.add_data_point(
+        # Add sample data points (expiry_days is days to expiration as int)
+        surface.add_point(
             strike=450.0,
-            expiry=datetime(2025, 3, 21),
+            expiry_days=30,
             iv=0.20,
-            option_type="call",
         )
 
-        surface.add_data_point(
+        surface.add_point(
             strike=455.0,
-            expiry=datetime(2025, 3, 21),
+            expiry_days=30,
             iv=0.22,
-            option_type="call",
         )
 
         # Should have data
-        assert surface.get_data_count() >= 2
+        assert surface.get_stats()["num_points"] >= 2
 
 
 class TestGreeksCalculatorIntegration:
@@ -72,26 +68,25 @@ class TestGreeksCalculatorIntegration:
         """Test Greeks calculations produce valid results."""
         from analytics import create_greeks_calculator
 
-        calc = create_greeks_calculator()
+        calc = create_greeks_calculator(risk_free_rate=0.05)
 
-        greeks = calc.calculate_all(
-            spot_price=450.0,
-            strike_price=455.0,
+        greeks = calc.calculate(
+            spot=450.0,
+            strike=455.0,
             time_to_expiry=30 / 365,  # 30 days
-            risk_free_rate=0.05,
-            volatility=0.20,
+            iv=0.20,
             option_type="call",
         )
 
-        # All Greeks should be calculated
-        assert "delta" in greeks
-        assert "gamma" in greeks
-        assert "theta" in greeks
-        assert "vega" in greeks
-        assert "rho" in greeks
+        # All Greeks should be calculated (GreeksResult is a dataclass)
+        assert greeks.delta is not None
+        assert greeks.gamma is not None
+        assert greeks.theta is not None
+        assert greeks.vega is not None
+        assert greeks.rho is not None
 
         # Delta should be between -1 and 1
-        assert -1 <= greeks["delta"] <= 1
+        assert -1 <= greeks.delta <= 1
 
 
 class TestPricingModelsIntegration:
@@ -99,28 +94,28 @@ class TestPricingModelsIntegration:
 
     def test_black_scholes_import(self):
         """Test Black-Scholes model imports correctly."""
-        from analytics import create_black_scholes
+        from analytics import BlackScholes, create_pricer
 
-        model = create_black_scholes()
+        model = create_pricer(model="black_scholes")
         assert model is not None
+        assert isinstance(model, BlackScholes)
 
     def test_black_scholes_pricing(self):
         """Test Black-Scholes pricing produces valid results."""
-        from analytics import create_black_scholes
+        from analytics import create_pricer
 
-        model = create_black_scholes()
+        model = create_pricer(model="black_scholes", risk_free_rate=0.05)
 
-        price = model.price(
-            spot_price=450.0,
-            strike_price=455.0,
+        result = model.price(
+            spot=450.0,
+            strike=455.0,
             time_to_expiry=30 / 365,
-            risk_free_rate=0.05,
-            volatility=0.20,
+            iv=0.20,
             option_type="call",
         )
 
-        # Price should be positive
-        assert price > 0
+        # Price should be positive (PricingResult has .price attribute)
+        assert result.price > 0
 
 
 class TestWalkForwardIntegration:
@@ -128,36 +123,37 @@ class TestWalkForwardIntegration:
 
     def test_walk_forward_import(self):
         """Test walk-forward module imports correctly."""
-        from backtesting import create_walk_forward_optimizer
+        from backtesting import create_walk_forward_analyzer
 
-        optimizer = create_walk_forward_optimizer()
-        assert optimizer is not None
+        analyzer = create_walk_forward_analyzer()
+        assert analyzer is not None
 
     def test_walk_forward_window_generation(self):
         """Test walk-forward window generation."""
         from datetime import datetime
 
-        import numpy as np
+        from backtesting import create_walk_forward_analyzer
 
-        from backtesting import create_walk_forward_optimizer
-
-        optimizer = create_walk_forward_optimizer(
-            training_ratio=0.70,
-            window_type="rolling",
+        analyzer = create_walk_forward_analyzer(
+            method="rolling",
+            in_sample_days=60,
+            out_sample_days=15,
+            num_windows=3,
         )
 
-        # Generate sample data
-        dates = [datetime(2024, 1, i + 1) for i in range(100)]
-        data = np.random.randn(100)
+        # Generate windows for a date range
+        start_date = datetime(2024, 1, 1)
+        end_date = datetime(2024, 12, 31)
 
-        windows = optimizer.generate_windows(dates, data)
+        windows = analyzer.generate_windows(start_date, end_date)
 
+        # Windows are tuples of (in_start, in_end, out_start, out_end)
         assert len(windows) > 0
         for window in windows:
-            assert "train_start" in window
-            assert "train_end" in window
-            assert "test_start" in window
-            assert "test_end" in window
+            assert len(window) == 4  # (in_start, in_end, out_start, out_end)
+            in_start, in_end, out_start, out_end = window
+            assert in_start < in_end
+            assert out_start < out_end
 
 
 class TestMonteCarloIntegration:
@@ -176,7 +172,7 @@ class TestMonteCarloIntegration:
 
         simulator = create_monte_carlo_simulator(
             num_simulations=100,
-            confidence_level=0.95,
+            num_periods=252,
         )
 
         # Sample returns
@@ -204,10 +200,8 @@ class TestParameterSensitivityIntegration:
 
     def test_parameter_sensitivity_analysis(self):
         """Test parameter sensitivity analysis."""
-        from backtesting import (
-            ParameterRange,
-            create_parameter_sensitivity,
-        )
+        from backtesting import create_parameter_sensitivity
+        from backtesting.parameter_sensitivity import ParameterRange
 
         analyzer = create_parameter_sensitivity()
 
@@ -280,7 +274,7 @@ class TestOverfittingGuardIntegration:
         result = guard.calculate_deflated_sharpe(
             sharpe_ratio=1.5,
             num_trials=100,
-            track_record_length=252,
+            track_record_months=12,  # 12 months (1 year)
             skewness=0.0,
             kurtosis=3.0,
         )
@@ -294,34 +288,30 @@ class TestFullAnalyticsPipeline:
 
     def test_options_analytics_pipeline(self):
         """Test complete options analytics pipeline."""
-        from datetime import datetime
-
         from analytics import create_greeks_calculator, create_iv_surface
 
         # Create components
-        iv_surface = create_iv_surface()
+        iv_surface = create_iv_surface(underlying_price=450.0)
         greeks_calc = create_greeks_calculator()
 
-        # Add IV surface data
+        # Add IV surface data (expiry_days is days to expiration as int)
         for strike in range(440, 460, 5):
-            iv_surface.add_data_point(
+            iv_surface.add_point(
                 strike=float(strike),
-                expiry=datetime(2025, 3, 21),
+                expiry_days=30,
                 iv=0.20 + (strike - 450) * 0.001,
-                option_type="call",
             )
 
         # Calculate Greeks using surface IV
-        greeks = greeks_calc.calculate_all(
-            spot_price=450.0,
-            strike_price=450.0,
+        greeks = greeks_calc.calculate(
+            spot=450.0,
+            strike=450.0,
             time_to_expiry=30 / 365,
-            risk_free_rate=0.05,
-            volatility=0.20,
+            iv=0.20,
             option_type="call",
         )
 
-        assert greeks["delta"] is not None
+        assert greeks.delta is not None
 
     def test_backtesting_pipeline(self):
         """Test complete backtesting pipeline."""
@@ -350,7 +340,7 @@ class TestFullAnalyticsPipeline:
         guard_result = guard.calculate_deflated_sharpe(
             sharpe_ratio=1.5,
             num_trials=10,
-            track_record_length=len(returns),
+            track_record_months=12,  # 12 months (1 year)
         )
 
         assert regime is not None

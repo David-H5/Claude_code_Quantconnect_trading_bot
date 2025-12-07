@@ -21,7 +21,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from compliance.audit_logger import (
+from observability.logging.audit import (
     AuditCategory,
     AuditEntry,
     AuditLevel,

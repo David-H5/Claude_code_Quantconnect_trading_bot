@@ -76,8 +76,9 @@ def test_client(mock_order_queue, mock_ws_manager):
     # Patch the module-level variables before importing routes
     import api.rest_server as rest_module
 
-    rest_module._order_queue = mock_order_queue
-    rest_module._ws_manager = mock_ws_manager
+    # Use ThreadSafeRef.set() to properly inject mocks
+    rest_module._order_queue.set(mock_order_queue)
+    rest_module._ws_manager.set(mock_ws_manager)
 
     # Import and include routers
     from api.routes import health, orders, positions, templates
@@ -94,9 +95,9 @@ def test_client(mock_order_queue, mock_ws_manager):
     with TestClient(app) as client:
         yield client
 
-    # Cleanup
-    rest_module._order_queue = None
-    rest_module._ws_manager = None
+    # Cleanup - use clear() to remove the mocks
+    rest_module._order_queue.clear()
+    rest_module._ws_manager.clear()
 
 
 @pytest.fixture
@@ -106,8 +107,15 @@ def test_client_no_queue():
 
     import api.rest_server as rest_module
 
-    rest_module._order_queue = None
-    rest_module._ws_manager = None
+    # Save original ThreadSafeRef objects
+    original_order_queue = rest_module._order_queue
+    original_ws_manager = rest_module._ws_manager
+
+    # Clear the refs (but don't replace with None to preserve the ThreadSafeRef objects)
+    if original_order_queue is not None:
+        original_order_queue.clear()
+    if original_ws_manager is not None:
+        original_ws_manager.clear()
 
     app = FastAPI(title="Test Trading Bot API")
 
@@ -120,6 +128,8 @@ def test_client_no_queue():
 
     with TestClient(app) as client:
         yield client
+
+    # No need to restore - the ThreadSafeRef objects are still intact, just cleared
 
 
 # ============================================================================

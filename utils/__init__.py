@@ -64,7 +64,7 @@ from .object_store import (
     create_object_store_manager,
     create_sentiment_persistence,
 )
-from .resource_monitor import (
+from observability.monitoring.system.resource import (
     ResourceAlert,
     ResourceMetrics,
     ResourceMonitor,
@@ -75,7 +75,7 @@ from .storage_monitor import (
     StorageMonitor,
     create_storage_monitor,
 )
-from .structured_logger import (
+from observability.logging.structured import (
     ExecutionEventType,
     LogCategory,
     LogEvent,
@@ -87,7 +87,7 @@ from .structured_logger import (
     get_logger,
     set_logger,
 )
-from .system_monitor import (
+from observability.monitoring.system.health import (
     HealthStatus,
     ServiceCheck,
     ServiceState,

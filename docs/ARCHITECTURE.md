@@ -17,10 +17,9 @@ This document describes the directory structure and key modules of the QuantConn
 │   │   └── hook_utils.py
 │   ├── validation/        # Code and document validators
 │   ├── research/          # Research tracking hooks
-│   ├── trading/           # Trading-specific hooks
+│   ├── trading/           # Trading-specific hooks (risk_validator.py)
 │   ├── formatting/        # Code formatting hooks
-│   ├── agents/            # Agent orchestration hooks
-│   └── deprecated/        # Legacy hooks (do not use)
+│   └── agents/            # Agent orchestration hooks
 ├── state/                 # Runtime state files
 │   ├── ric.json           # RIC Loop state
 │   ├── doc_updates.json   # Documentation tracking
@@ -74,7 +73,24 @@ models/         # Risk models
 agents_deprecated/  # DEPRECATED: Use llm/agents/ instead
 
 utils/          # Helper functions
-scripts/        # Utility scripts (backup, validation, pipeline)
+├── overnight_state.py     # Unified state manager (file locking)
+├── overnight_config.py    # Session configuration loader
+└── progress_parser.py     # Progress file parser
+
+scripts/        # Utility scripts
+├── health_check.py        # HTTP health endpoints
+├── auto-resume.sh         # Session auto-resume
+└── run_overnight.sh       # Overnight session runner
+
+observability/  # Logging and monitoring (CANONICAL LOCATIONS)
+├── logging/
+│   ├── structured.py      # StructuredLogger (use this, not utils/)
+│   └── audit.py           # AuditLogger (use this, not compliance/)
+└── monitoring/
+    └── system/
+        ├── health.py      # SystemMonitor (use this, not utils/)
+        └── resource.py    # ResourceMonitor (use this, not utils/)
+
 tests/          # Unit and integration tests
 docs/prompts/   # Prompt framework (versioned)
 .backups/       # Automatic backups (DO NOT DELETE)
@@ -118,6 +134,10 @@ ui/
 
 ## Configuration System
 
+The codebase uses TWO separate configuration systems for different purposes:
+
+### Trading Configuration (`config/`)
+
 All trading parameters are configurable via `config/settings.json`:
 
 ```python
@@ -132,8 +152,6 @@ max_daily_loss = config.get("risk_management.max_daily_loss_pct")
 profit_config = config.get_profit_taking_config()
 ```
 
-### Key Configuration Sections
-
 | Section | Description |
 |---------|-------------|
 | `brokerage` | Schwab API credentials and settings |
@@ -145,6 +163,27 @@ profit_config = config.get_profit_taking_config()
 | `llm_integration` | Provider configs, ensemble weights |
 | `technical_indicators` | Indicator parameters |
 | `ui` | Dashboard theme and layout |
+
+### Overnight/Session Configuration (`config/overnight.yaml`)
+
+Claude Code session settings are in `config/overnight.yaml`:
+
+```python
+from utils.overnight_config import get_overnight_config
+
+config = get_overnight_config()
+max_runtime = config.max_runtime_hours
+discord_url = config.discord_webhook
+```
+
+| Setting | Description |
+|---------|-------------|
+| `max_runtime_hours` | Maximum session duration |
+| `max_continuations` | Max auto-continuations |
+| `max_restarts` | Max crash restarts |
+| `discord_webhook` | Notification URL |
+| `ric_mode` | RIC Loop enforcement level |
+| `progress_file` | Task tracking file |
 
 ## Branch Strategy
 

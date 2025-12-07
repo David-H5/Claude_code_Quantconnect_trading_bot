@@ -22,7 +22,7 @@ from utils.alerting_service import (
     SlackChannel,
     create_alerting_service,
 )
-from utils.system_monitor import (
+from observability.monitoring.system.health import (
     HealthStatus,
     ServiceState,
     SystemMonitor,

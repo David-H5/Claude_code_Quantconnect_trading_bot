@@ -93,7 +93,7 @@ from utils.object_store import (
     create_object_store_manager,
     create_sentiment_persistence,
 )
-from utils.resource_monitor import create_resource_monitor
+from observability.monitoring.system.resource import create_resource_monitor
 from utils.storage_monitor import create_storage_monitor
 
 

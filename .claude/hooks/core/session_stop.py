@@ -639,12 +639,104 @@ def should_continue() -> tuple[bool, str, str]:
     return True, status["exit_reason"], prompt
 
 
-def get_session_stats() -> dict:
-    """Calculate session statistics."""
+def run_tests() -> dict[str, Any]:
+    """Run tests and capture results.
+
+    Returns:
+        Dict with passed, failed, total counts and exit_code
+    """
+    try:
+        result = subprocess.run(
+            ["python3", "-m", "pytest", "tests/", "-q", "--tb=no"],
+            capture_output=True,
+            text=True,
+            timeout=300,
+            cwd=Path(__file__).parent.parent.parent.parent,
+        )
+
+        # Parse pytest output
+        output = result.stdout + result.stderr
+        passed = 0
+        failed = 0
+
+        # Look for summary line like "119 passed, 2 failed"
+        import re
+        match = re.search(r"(\d+) passed", output)
+        if match:
+            passed = int(match.group(1))
+        match = re.search(r"(\d+) failed", output)
+        if match:
+            failed = int(match.group(1))
+
+        return {
+            "passed": passed,
+            "failed": failed,
+            "total": passed + failed,
+            "exit_code": result.returncode,
+        }
+    except subprocess.TimeoutExpired:
+        return {"passed": 0, "failed": 0, "total": 0, "exit_code": -1, "error": "timeout"}
+    except Exception as e:
+        return {"passed": 0, "failed": 0, "total": 0, "exit_code": -1, "error": str(e)}
+
+
+def calculate_runtime_hours(session_start: str | None) -> float | None:
+    """Calculate session runtime in hours.
+
+    Args:
+        session_start: ISO format timestamp string
+
+    Returns:
+        Runtime in hours or None if can't calculate
+    """
+    if not session_start:
+        return None
+    try:
+        from datetime import timezone
+
+        # Handle timezone-aware and naive timestamps
+        if "+" in session_start or session_start.endswith("Z"):
+            start = datetime.fromisoformat(session_start.replace("Z", "+00:00"))
+            now = datetime.now(timezone.utc)
+        else:
+            start = datetime.fromisoformat(session_start)
+            now = datetime.now()
+
+        delta = now - start
+        return round(delta.total_seconds() / 3600, 2)
+    except Exception:
+        return None
+
+
+def write_session_history(stats: dict[str, Any]) -> None:
+    """Write session stats to history file.
+
+    Args:
+        stats: Session statistics dictionary
+    """
+    history_file = Path(__file__).parent.parent.parent.parent / "logs" / "session-history.jsonl"
+    try:
+        history_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(history_file, "a") as f:
+            f.write(json.dumps(stats) + "\n")
+    except Exception as e:
+        print(f"Warning: Could not write session history: {e}")
+
+
+def get_session_stats(state: dict | None = None) -> dict:
+    """Calculate session statistics.
+
+    Args:
+        state: Optional state dict with session_start for runtime calculation
+    """
+    from datetime import timezone
+
     stats = {
-        "end_time": datetime.now().isoformat(),
+        "end_time": datetime.now(timezone.utc).isoformat(),
         "commits_made": 0,
         "files_changed": 0,
+        "tests_passed": None,
+        "runtime_hours": None,
     }
 
     try:
@@ -670,6 +762,13 @@ def get_session_stats() -> dict:
             stats["files_changed"] = len([f for f in result.stdout.strip().split("\n") if f])
     except Exception:
         pass
+
+    # Run tests and capture results
+    stats["tests_passed"] = run_tests()
+
+    # Calculate runtime if state provided
+    if state and "session_start" in state:
+        stats["runtime_hours"] = calculate_runtime_hours(state.get("session_start"))
 
     return stats
 
@@ -747,9 +846,15 @@ def main():
     print("=" * 60)
     print(f"Exit reason: {reason}")
 
-    # Cleanup
-    stats = get_session_stats()
+    # Load state for session stats
+    state = load_state()
+
+    # Calculate stats (includes test run and runtime)
+    stats = get_session_stats(state)
     create_final_checkpoint()
+
+    # Write session history
+    write_session_history(stats)
 
     # Clear state file for next session
     # Uses unified state file from OvernightStateManager
@@ -762,6 +867,8 @@ def main():
         LEGACY_STATE_FILE.unlink()
 
     print(f"Session stats: commits={stats['commits_made']}, files={stats['files_changed']}")
+    if stats.get("tests_passed"):
+        print(f"Tests: {stats['tests_passed'].get('passed', 0)} passed, {stats['tests_passed'].get('failed', 0)} failed")
     return 0
 
 

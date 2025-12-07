@@ -34,17 +34,17 @@ class TestMCPMarketDataServer:
         from mcp.market_data_server import MarketDataServer
 
         server = MarketDataServer()
-        tools = server.get_tools()
+        tools = server.list_tools()
 
-        # Verify expected tools exist
+        # Verify expected tools exist (match actual registered tool names)
         tool_names = [t["name"] for t in tools]
         expected_tools = [
             "get_quote",
             "get_option_chain",
-            "get_historical_data",
-            "get_iv_rank",
+            "get_greeks",
+            "get_historical",
+            "get_iv_surface",
             "get_market_status",
-            "get_earnings_calendar",
         ]
 
         for expected in expected_tools:
@@ -66,7 +66,7 @@ class TestMCPBrokerServer:
         from mcp.broker_server import BrokerServer
 
         server = BrokerServer()
-        tools = server.get_tools()
+        tools = server.list_tools()
 
         tool_names = [t["name"] for t in tools]
         expected_tools = [
@@ -84,9 +84,10 @@ class TestMCPBrokerServer:
     def test_broker_paper_mode_only(self):
         """Test that broker defaults to paper trading mode."""
         from mcp.broker_server import BrokerServer
+        from mcp.schemas import TradingMode
 
         server = BrokerServer()
-        assert server.is_paper_mode() is True
+        assert server.trading_mode == TradingMode.PAPER
 
 
 class TestMCPPortfolioServer:
@@ -104,15 +105,15 @@ class TestMCPPortfolioServer:
         from mcp.portfolio_server import PortfolioServer
 
         server = PortfolioServer()
-        tools = server.get_tools()
+        tools = server.list_tools()
 
         tool_names = [t["name"] for t in tools]
         expected_tools = [
-            "get_portfolio_summary",
-            "get_portfolio_positions",
-            "get_portfolio_performance",
+            "get_portfolio",
+            "get_exposure",
             "get_risk_metrics",
-            "get_allocation",
+            "get_pnl",
+            "get_holdings_summary",
         ]
 
         for expected in expected_tools:
@@ -134,15 +135,15 @@ class TestMCPBacktestServer:
         from mcp.backtest_server import BacktestServer
 
         server = BacktestServer()
-        tools = server.get_tools()
+        tools = server.list_tools()
 
         tool_names = [t["name"] for t in tools]
         expected_tools = [
             "run_backtest",
+            "get_backtest_status",
             "get_backtest_results",
+            "parse_backtest_report",
             "list_backtests",
-            "compare_backtests",
-            "get_backtest_trades",
         ]
 
         for expected in expected_tools:
@@ -183,7 +184,7 @@ class TestMCPServerCoordination:
             BacktestServer(),
         ]
 
-        total_tools = sum(len(s.get_tools()) for s in servers)
+        total_tools = sum(len(s.list_tools()) for s in servers)
 
         # Should have at least 22 tools (6+6+5+5)
         assert total_tools >= 22, f"Expected 22+ tools, got {total_tools}"

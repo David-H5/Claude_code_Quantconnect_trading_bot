@@ -8,6 +8,7 @@ Part of UPGRADE-010 Sprint 4 - Test Coverage.
 import numpy as np
 import pytest
 
+from models.exceptions.data import DataMissingError
 from models.monte_carlo import (
     STRESS_SCENARIOS,
     DrawdownAnalysis,
@@ -169,7 +170,7 @@ class TestMonteCarloStressTesterSprint4:
 
     def test_stress_test_invalid_scenario(self, tester, returns_history):
         """Test invalid scenario name."""
-        with pytest.raises(ValueError, match="Unknown scenario"):
+        with pytest.raises(DataMissingError, match="scenario_name"):
             tester.stress_test(100000.0, returns_history, "invalid_scenario")
 
     def test_scenario_comparison(self, tester, returns_history):

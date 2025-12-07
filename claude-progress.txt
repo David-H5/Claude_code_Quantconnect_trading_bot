@@ -157,58 +157,105 @@ Execute comprehensive 6-phase refactoring plan from COMPREHENSIVE_REFACTOR_PLAN.
 - Note: Full transcript backed up before summarization
 
 ================================================================================
-## OVERNIGHT-002: Overnight System Refactoring
+## OVERNIGHT-002: Overnight System Refactoring ✅ COMPLETE
 ================================================================================
 # Priority: HIGH - Infrastructure improvement
 # Source: docs/OVERNIGHT_SYSTEM_ANALYSIS.md
 # Estimated Effort: 3-5 days
+# Completed: 2025-12-06
+# Status: All critical fixes complete, high-priority items deferred
 
 ### Phase 1: State Consolidation (P0 - Critical)
 - [x] Create utils/overnight_state.py with OvernightStateManager
 - [x] Add file locking (fcntl) for concurrent access safety
 - [x] Consolidate 5 state files into 1 unified state
-- [ ] Migrate existing code to use unified state manager
-- [ ] Add tests for state consolidation
+- [x] Migrate existing code to use unified state manager
+- [x] Add tests for state consolidation (tests/test_overnight_state.py)
 
 ### Phase 2: Centralized Configuration (P0 - Critical)
 - [x] Create config/overnight.yaml with all settings
 - [x] Create utils/overnight_config.py with OvernightConfig class
 - [x] Add environment variable expansion support
-- [ ] Replace magic numbers across overnight scripts
-- [ ] Add tests for configuration loading
+- [x] Replace magic numbers across overnight scripts
+- [x] Add tests for configuration loading (tests/test_overnight_config.py)
 
 ### Phase 3: Progress Parser Unification (P1 - High)
 - [x] Create utils/progress_parser.py
 - [x] Implement ProgressData, Task, Category dataclasses
-- [ ] Replace duplicate parsing code in session_stop.py
-- [ ] Replace duplicate parsing code in hook_utils.py
-- [ ] Replace duplicate parsing code in auto-resume.sh
-- [ ] Add tests for progress parser
+- [x] Replace duplicate parsing code in session_stop.py
+- [x] Replace duplicate parsing code in hook_utils.py
+- [x] Replace duplicate parsing code in auto-resume.sh
+- [x] Add tests for progress parser (tests/test_progress_parser.py)
 
 ### Phase 4: Fix Critical Issues (P0 - Critical)
 - [x] Fix exception suppression in hook_utils.py:440
 - [x] Fix git commit --no-verify bypass in session_stop.py:645
-- [ ] Add Claude CLI availability check in auto-resume.sh
+- [x] Add Claude CLI availability check in auto-resume.sh (check_claude_cli function)
 - [x] Add file locking to all state operations
 
 ### Phase 5: Add Health Check API (P1 - High)
-- [ ] Create scripts/health_check.py with HTTP server
-- [ ] Implement /health and /status endpoints
-- [ ] Integrate with watchdog.py monitoring
-- [ ] Add documentation for health check API
+- [x] Create scripts/health_check.py with HTTP server
+- [x] Implement /health and /status endpoints
+- [x] Integrate with watchdog.py monitoring
+- [x] Add documentation for health check API (docs/INDEX.md)
 
 ### Identified Flaws Summary:
-| ID | Location | Issue | Severity |
-|----|----------|-------|----------|
-| C1 | hook_utils.py:440 | Suppresses ALL exceptions | Critical |
-| C2 | session_stop.py:645 | git --no-verify bypass | Critical |
-| C3 | auto-resume.sh:288 | No Claude CLI check | Critical |
-| C4 | All state files | No file locking | Critical |
-| H1 | watchdog.py:309 | CPU check blocks 1s | High |
-| H2 | run_overnight.sh:706 | Assumes --print exists | High |
-| H3 | notify.py:101 | deprecated utcnow() | High |
-| H4 | session_state_manager:99 | Hard limit 20 notes | High |
-| H5 | 5 state files | Fragmented state | High |
+| ID | Location | Issue | Severity | Status |
+|----|----------|-------|----------|--------|
+| C1 | hook_utils.py:440 | Suppresses ALL exceptions | Critical | ✅ FIXED |
+| C2 | session_stop.py:645 | git --no-verify bypass | Critical | ✅ FIXED |
+| C3 | auto-resume.sh:288 | No Claude CLI check | Critical | ✅ FIXED |
+| C4 | All state files | No file locking | Critical | ✅ FIXED |
+| H1 | watchdog.py:309 | CPU check blocks 1s | High | Deferred |
+| H2 | run_overnight.sh:706 | Assumes --print exists | High | Deferred |
+| H3 | notify.py:101 | deprecated utcnow() | High | Deferred |
+| H4 | session_state_manager:99 | Hard limit 20 notes | High | Deferred |
+| H5 | 5 state files | Fragmented state | High | ✅ FIXED |
+
+================================================================================
+## CONSOLIDATE-001: Codebase Deduplication Plan
+================================================================================
+# Priority: P1 - Technical Debt Reduction
+# Source: docs/CONSOLIDATION_PLAN.md
+# Created: 2025-12-06
+
+### Summary of Redundancy Found
+
+| System | Canonical Location | Duplicates | Status |
+|--------|-------------------|------------|--------|
+| Logging | observability/logging/ | 4 deprecated wrappers | Pending removal |
+| Monitoring | observability/monitoring/ | 6+ fragmented monitors | Needs unification |
+| Validation | execution/pre_trade_validator | Hook duplicate | Document boundary |
+| Configuration | config/__init__.py | overnight_config.py | Keep separate |
+| Decision Logging | llm/decision_logger | Adapters incomplete | Sprint 1.5 |
+
+### Phase 1: Remove Deprecated Wrappers (P0) ✅ COMPLETE
+- [x] Remove utils/structured_logger.py (wrapper)
+- [x] Remove compliance/audit_logger.py (wrapper)
+- [x] Remove utils/system_monitor.py (wrapper)
+- [x] Remove utils/resource_monitor.py (wrapper)
+- [x] Scan and update all imports first
+
+### Phase 2: Clean Deprecated Directories (P0) ✅ COMPLETE
+- [x] Remove .claude/hooks/deprecated/ (8.7MB mypy_cache)
+- [x] Remove .claude/deprecated/ (RIC_ENFORCEMENT.md - superseded)
+- [x] Remove CLAUDE.md.backup (104KB)
+
+### Phase 3: Documentation (P1) ✅ COMPLETE
+- [x] Document config vs overnight_config boundary (config/__init__.py, utils/overnight_config.py)
+- [x] Document validator hook vs module relationship (risk_validator.py, pre_trade_validator.py)
+- [x] Update ARCHITECTURE.md with canonical locations (observability/, overnight system)
+
+### Phase 4: Monitoring Consolidation (P2)
+- [ ] Create observability/monitoring/trading/
+- [ ] Move slippage_monitor.py
+- [ ] Move greeks_monitor.py
+- [ ] Move correlation_monitor.py
+- [ ] Move var_monitor.py
+
+### Phase 5: Decision Logger Integration (P2)
+- [ ] Link DecisionLogger with ReasoningLogger
+- [ ] Use observability adapters for output
 
 ================================================================================
 ## OVERNIGHT-003: Research-Based Refactoring Plan v2
@@ -295,4 +342,9 @@ Key patterns from web research:
 
 ## Context Compaction
 - Time: 2025-12-06T15:04:25.395460
+- Note: Full transcript backed up before summarization
+
+
+## Context Compaction
+- Time: 2025-12-06T15:37:20.685723
 - Note: Full transcript backed up before summarization

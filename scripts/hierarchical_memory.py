@@ -509,10 +509,11 @@ Cross-session patterns and knowledge:
             score = entry.access_count * 10 + 50  # Base score for long-term
             entries.append((score, entry))
 
-        # Add medium-term
-        for _key, entry in self._medium_term.items():
-            score = entry.access_count * 5 + 30  # Lower base for medium-term
-            entries.append((score, entry))
+        # Add medium-term (skip when filtering by category - medium-term has no category)
+        if not category:
+            for _key, entry in self._medium_term.items():
+                score = entry.access_count * 5 + 30  # Lower base for medium-term
+                entries.append((score, entry))
 
         # Sort by score
         entries.sort(key=lambda x: x[0], reverse=True)

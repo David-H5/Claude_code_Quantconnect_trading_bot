@@ -7,6 +7,9 @@ import pytest
 
 from utils.overnight_config import OvernightConfig
 
+# Get project root for correct file paths
+PROJECT_ROOT = Path(__file__).parent.parent
+
 
 class TestOvernightConfig:
     """Tests for OvernightConfig."""
@@ -88,12 +91,12 @@ class TestConfigFromYaml:
 
     def test_yaml_file_exists(self) -> None:
         """Test that the config YAML file exists."""
-        config_path = Path("config/overnight.yaml")
-        assert config_path.exists(), "config/overnight.yaml should exist"
+        config_path = PROJECT_ROOT / "config" / "overnight.yaml"
+        assert config_path.exists(), f"config/overnight.yaml should exist at {config_path}"
 
     def test_yaml_is_valid(self) -> None:
         """Test that the YAML file is valid."""
-        config_path = Path("config/overnight.yaml")
+        config_path = PROJECT_ROOT / "config" / "overnight.yaml"
         if config_path.exists():
             import yaml
 

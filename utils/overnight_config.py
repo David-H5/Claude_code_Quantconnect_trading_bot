@@ -4,6 +4,21 @@ Centralized Overnight Configuration
 Loads configuration from config/overnight.yaml with environment variable expansion.
 Part of OVERNIGHT-002 refactoring based on docs/OVERNIGHT_SYSTEM_ANALYSIS.md
 
+Configuration System Boundaries:
+--------------------------------
+This module handles CLAUDE CODE SESSION configuration:
+- Session duration limits (max_runtime_hours)
+- Continuation/restart settings (max_continuations, max_restarts)
+- Progress tracking (progress_file, session_notes)
+- Notifications (Discord/Slack webhooks)
+- RIC Loop integration (ric_mode, ric_state)
+- Resource monitoring thresholds
+
+For TRADING configuration (brokerage, risk, execution), use:
+    from config import get_config, ConfigManager
+
+See also: config/__init__.py for trading configuration
+
 Usage:
     from utils.overnight_config import OvernightConfig, get_overnight_config
 

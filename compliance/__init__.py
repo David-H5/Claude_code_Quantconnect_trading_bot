@@ -27,7 +27,7 @@ from compliance.anti_manipulation import (
     ManipulationType,
     create_anti_manipulation_monitor,
 )
-from compliance.audit_logger import (
+from observability.logging.audit import (
     AuditEntry,
     AuditLevel,
     AuditLogger,

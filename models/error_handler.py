@@ -410,7 +410,7 @@ class ErrorHandler:
             return
 
         # Map severity to log level
-        from utils.structured_logger import LogCategory, LogLevel
+        from observability.logging.structured import LogCategory, LogLevel
 
         level_map = {
             ErrorSeverity.DEBUG: LogLevel.DEBUG,
@@ -737,7 +737,7 @@ class ErrorHandler:
         # Log alert
         if self.logger:
             try:
-                from utils.structured_logger import LogCategory, LogLevel
+                from observability.logging.structured import LogCategory, LogLevel
 
                 self.logger.log(
                     category=LogCategory.SYSTEM,
