@@ -92,10 +92,12 @@ def test_hybrid_algorithm_imports():
         code = f.read()
 
     # Check for key imports
+    # BaseOptionsBot provides: models, config, risk management, resource monitoring
+    assert "from algorithms.base_options_bot import BaseOptionsBot" in code
     assert "from execution import" in code or "import execution" in code
     assert "from api import" in code or "import api" in code
-    assert "from models import" in code or "import models" in code
-    assert "from config import" in code or "import config" in code
+    # LLM integration imports
+    assert "from llm import" in code or "import llm" in code
 
 
 @pytest.mark.unit
@@ -226,10 +228,11 @@ def test_resource_monitoring_integrated():
     with open(algo_file) as f:
         code = f.read()
 
-    # Check for resource monitoring
+    # Check for resource monitoring (provided via BaseOptionsBot or local implementation)
     assert "resource_monitor" in code
-    assert "create_resource_monitor" in code or "ResourceMonitor" in code
     assert "_check_resources" in code
+    # Either imports from base class or has local method
+    assert "BaseOptionsBot" in code or "create_resource_monitor" in code
 
 
 @pytest.mark.unit
@@ -239,9 +242,10 @@ def test_object_store_integration():
     with open(algo_file) as f:
         code = f.read()
 
-    # Check for Object Store
+    # Check for Object Store (provided via BaseOptionsBot or local implementation)
     assert "object_store" in code.lower()
-    assert "create_object_store_manager" in code or "ObjectStoreManager" in code
+    # Either uses base class or has local create call
+    assert "BaseOptionsBot" in code or "create_object_store_manager" in code
 
 
 @pytest.mark.unit

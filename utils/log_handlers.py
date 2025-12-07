@@ -6,11 +6,44 @@ Provides:
 - Object Store handler for persistence
 - Async handler wrapper for non-blocking logging
 - Memory buffer handler for batch processing
+- LogPrefix constants for standardized debug messages
 
 UPGRADE-009: Structured Logging (December 2025)
 """
 
 from __future__ import annotations
+
+
+# ============================================================================
+# Log Prefix Constants (for QuantConnect Debug messages)
+# ============================================================================
+
+
+class LogPrefix:
+    """
+    Standardized log prefixes for consistent debug message formatting.
+
+    Usage in QuantConnect algorithms:
+        from utils.log_handlers import LogPrefix
+
+        self.Debug(f"{LogPrefix.OK} Configuration loaded")
+        self.Debug(f"{LogPrefix.WARN} Config file not found")
+        self.Debug(f"{LogPrefix.ERR} Failed to initialize")
+
+    These replace inconsistent emoji usage with standardized prefixes.
+    """
+
+    OK = "OK:"
+    WARN = "WARN:"
+    ERR = "ERR:"
+    INFO = "INFO:"
+
+    # Additional prefixes for common scenarios
+    ALERT = "ALERT:"
+    TRADE = "TRADE:"
+    CIRCUIT = "CIRCUIT:"
+    RESOURCE = "RESOURCE:"
+    SENTIMENT = "SENTIMENT:"
 
 import gzip
 import json

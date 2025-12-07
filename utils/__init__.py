@@ -42,6 +42,7 @@ from .log_handlers import (
     AsyncHandler,
     CallbackHandler,
     CompressedRotatingFileHandler,
+    LogPrefix,
     ObjectStoreHandler,
     create_async_file_handler,
     create_callback_handler,
@@ -143,6 +144,7 @@ __all__ = [
     "set_logger",
     # Log Handlers
     "CompressedRotatingFileHandler",
+    "LogPrefix",
     "ObjectStoreHandler",
     "AsyncHandler",
     "CallbackHandler",

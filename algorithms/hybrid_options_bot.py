@@ -58,10 +58,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from algorithms.base_options_bot import BaseOptionsBot
+from algorithms.base_options_bot import BaseOptionsBot, CheckIntervals
 
 from api import OrderQueueAPI
-from config import get_config
 from execution import (
     create_bot_position_manager,
     create_manual_legs_executor,
@@ -81,19 +80,10 @@ from llm import (
     create_sentiment_filter,
     create_signal_from_ensemble,
 )
-from models import (
-    CircuitBreakerConfig,
-    RiskLimits,
-    RiskManager,
-    TradingCircuitBreaker,
-)
 from utils.object_store import (
     StorageCategory,
-    create_object_store_manager,
     create_sentiment_persistence,
 )
-from observability.monitoring.system.resource import create_resource_monitor
-from utils.storage_monitor import create_storage_monitor
 
 
 class HybridOptionsBot(BaseOptionsBot):
@@ -224,17 +214,27 @@ class HybridOptionsBot(BaseOptionsBot):
         # INITIALIZATION COMPLETE
         # =====================================================================
         self._check_resources()
-        self.Debug("=" * 80)
-        self.Debug("✅ HYBRID OPTIONS BOT INITIALIZED SUCCESSFULLY")
-        self.Debug(f"   Autonomous: {self.options_executor is not None}")
-        self.Debug(f"   Manual: {self.manual_executor is not None}")
-        self.Debug(f"   Bot Manager: {self.bot_manager is not None}")
-        self.Debug(f"   Recurring: {self.recurring_manager is not None}")
-        self.Debug(f"   Object Store: {self.object_store_manager is not None}")
-        self.Debug(f"   Sentiment Filter: {self.sentiment_filter is not None}")
-        self.Debug(f"   News Alerts: {self.news_alert_manager is not None}")
-        self.Debug(f"   LLM Guardrails: {self.llm_guardrails is not None}")
-        self.Debug("=" * 80)
+
+        # Condense component status into summary lines
+        components = {
+            "Autonomous": self.options_executor,
+            "Manual": self.manual_executor,
+            "BotMgr": self.bot_manager,
+            "Recurring": self.recurring_manager,
+            "ObjStore": self.object_store_manager,
+            "Sentiment": self.sentiment_filter,
+            "NewsAlerts": self.news_alert_manager,
+            "Guardrails": self.llm_guardrails,
+        }
+        enabled = [k for k, v in components.items() if v is not None]
+        disabled = [k for k, v in components.items() if v is None]
+
+        self.Debug("=" * 60)
+        self.Debug("HYBRID OPTIONS BOT INITIALIZED")
+        self.Debug(f"  Enabled: {', '.join(enabled) if enabled else 'None'}")
+        if disabled:
+            self.Debug(f"  Disabled: {', '.join(disabled)}")
+        self.Debug("=" * 60)
 
     def OnData(self, slice: Slice) -> None:
         """
@@ -258,7 +258,7 @@ class HybridOptionsBot(BaseOptionsBot):
         # =================================================================
         if not self.circuit_breaker.can_trade():
             # Trading halted by circuit breaker - log once per hour
-            if (self.Time - self._last_cb_log_time).total_seconds() > 3600:
+            if (self.Time - self._last_cb_log_time).total_seconds() > CheckIntervals.CIRCUIT_BREAKER_LOG:
                 self.Debug("⚠️  Trading halted by circuit breaker")
                 self._last_cb_log_time = self.Time
             return
@@ -294,7 +294,7 @@ class HybridOptionsBot(BaseOptionsBot):
         # =================================================================
         # 7. MONITOR RESOURCES (every 30 seconds)
         # =================================================================
-        if (self.Time - self._last_resource_check).total_seconds() > 30:
+        if (self.Time - self._last_resource_check).total_seconds() > CheckIntervals.RESOURCE:
             self._check_resources()
             self._last_resource_check = self.Time
 
@@ -481,14 +481,14 @@ class HybridOptionsBot(BaseOptionsBot):
 
     def _should_check_strategies(self) -> bool:
         """Determine if it's time to check autonomous strategies (every 5 min)."""
-        if (self.Time - self._last_strategy_check_time).total_seconds() >= 300:
+        if (self.Time - self._last_strategy_check_time).total_seconds() >= CheckIntervals.STRATEGY:
             self._last_strategy_check_time = self.Time
             return True
         return False
 
     def _should_check_recurring(self) -> bool:
         """Determine if it's time to check recurring templates (every 1 hour)."""
-        if (self.Time - self._last_recurring_check_time).total_seconds() >= 3600:
+        if (self.Time - self._last_recurring_check_time).total_seconds() >= CheckIntervals.RECURRING:
             self._last_recurring_check_time = self.Time
             return True
         return False
@@ -519,7 +519,7 @@ class HybridOptionsBot(BaseOptionsBot):
 
         # Only check sentiment every 5 minutes to manage API costs
         if hasattr(self, "_last_sentiment_check"):
-            if (self.Time - self._last_sentiment_check).total_seconds() < 300:
+            if (self.Time - self._last_sentiment_check).total_seconds() < CheckIntervals.SENTIMENT:
                 return
 
         self._last_sentiment_check = self.Time

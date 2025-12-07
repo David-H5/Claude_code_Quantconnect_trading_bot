@@ -49,6 +49,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from algorithms.base_options_bot import BaseOptionsBot
 
 from execution import (
+    ExecutionOrder,
+    ProfitTakeOrder,
     create_profit_taking_model,
     create_smart_execution_model,
 )
@@ -650,11 +652,11 @@ class OptionsTradingBot(BaseOptionsBot):
         # Liquidate all positions
         self.Liquidate()
 
-    def _on_profit_take_order(self, order: Any) -> None:
+    def _on_profit_take_order(self, order: ProfitTakeOrder) -> None:
         """Handle profit-take order callback."""
         self.Debug(f"Profit-take triggered: {order.symbol} at {order.current_gain_pct:.1%}")
 
-    def _on_order_event(self, order: Any, action: str) -> None:
+    def _on_order_event(self, order: ExecutionOrder, action: str) -> None:
         """Handle smart execution order events."""
         self.Debug(f"Order {action}: {order.order_id} for {order.symbol}")
 

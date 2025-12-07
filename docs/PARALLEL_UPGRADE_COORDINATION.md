@@ -1,8 +1,12 @@
 # Parallel Upgrade Coordination System (PUCS)
 
-**Version:** 1.0
+**Version:** 1.1 (Consolidated)
 **Date:** December 6, 2025
 **Status:** Proposal
+**Supersedes:** [PARALLEL_AGENT_COORDINATION.md](PARALLEL_AGENT_COORDINATION.md)
+
+> **Note:** This document consolidates best practices from both the original
+> PARALLEL_AGENT_COORDINATION.md and new research into a single comprehensive guide.
 
 ## Executive Summary
 
@@ -163,43 +167,99 @@ Layer 1: Infrastructure → config/, observability/, utils/, compliance/
 
 ### 3.3 Lock Manager
 
-The Lock Manager prevents simultaneous modifications to the same files:
+The Lock Manager prevents simultaneous modifications to the same files.
+
+**Lock File Format:**
+
+```json
+// .claude/state/file_locks.json
+{
+  "locks": {
+    "llm/sentiment.py": {
+      "agent": "agent-llm-1",
+      "stream": "llm",
+      "acquired": "2025-12-06T10:00:00Z",
+      "expires": "2025-12-06T11:00:00Z",
+      "task": "Consolidate sentiment to package"
+    }
+  },
+  "version": 1
+}
+```
+
+**Working Implementation (using fcntl for atomic operations):**
 
 ```python
-class LockManager:
-    """Prevents parallel agents from modifying same files."""
+# scripts/agent_lock.py
+import json
+import fcntl
+from datetime import datetime, timedelta
+from pathlib import Path
 
-    LOCK_TYPES = {
-        "EXCLUSIVE": "No other agent can modify",
-        "SHARED_READ": "Multiple agents can read",
-        "INTENT": "Agent plans to modify soon"
-    }
+LOCK_FILE = Path(".claude/state/file_locks.json")
+LOCK_DURATION_MINUTES = 60
 
-    def acquire_lock(self, agent_id: str, file_path: str,
-                     lock_type: str = "EXCLUSIVE",
-                     duration_min: int = 30) -> LockResult:
-        """
-        Attempt to acquire a lock on a file.
+def acquire_lock(file_path: str, agent_id: str, stream: str, task: str) -> bool:
+    """Acquire exclusive lock on a file for an agent."""
+    with open(LOCK_FILE, "r+") as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            locks = json.load(f)
 
-        Returns:
-            LockResult with:
-            - granted: bool
-            - wait_time: seconds until lock available (if not granted)
-            - queue_position: position in wait queue
-        """
-        pass
+            # Check if file is already locked
+            if file_path in locks["locks"]:
+                lock = locks["locks"][file_path]
+                expires = datetime.fromisoformat(lock["expires"])
+                if datetime.now() < expires:
+                    return False  # Still locked
 
-    def release_lock(self, agent_id: str, file_path: str) -> bool:
-        """Release a previously acquired lock."""
-        pass
+            # Acquire lock
+            locks["locks"][file_path] = {
+                "agent": agent_id,
+                "stream": stream,
+                "acquired": datetime.now().isoformat(),
+                "expires": (datetime.now() + timedelta(minutes=LOCK_DURATION_MINUTES)).isoformat(),
+                "task": task
+            }
 
-    def check_lock(self, file_path: str) -> LockStatus:
-        """Check current lock status of a file."""
-        pass
+            f.seek(0)
+            json.dump(locks, f, indent=2)
+            f.truncate()
+            return True
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
 
-    def get_queue(self, file_path: str) -> list[QueueEntry]:
-        """Get queue of agents waiting for a file."""
-        pass
+def release_lock(file_path: str, agent_id: str) -> bool:
+    """Release lock on a file."""
+    with open(LOCK_FILE, "r+") as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            locks = json.load(f)
+            if file_path in locks["locks"]:
+                if locks["locks"][file_path]["agent"] == agent_id:
+                    del locks["locks"][file_path]
+                    f.seek(0)
+                    json.dump(locks, f, indent=2)
+                    f.truncate()
+                    return True
+            return False
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+
+def check_lock(file_path: str) -> dict | None:
+    """Check if a file is locked."""
+    with open(LOCK_FILE, "r") as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_SH)
+        try:
+            locks = json.load(f)
+            if file_path in locks["locks"]:
+                lock = locks["locks"][file_path]
+                expires = datetime.fromisoformat(lock["expires"])
+                if datetime.now() < expires:
+                    return lock
+            return None
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
 ```
 
 ### 3.4 Intent Signal System
@@ -242,48 +302,141 @@ class IntentSignal:
         pass
 ```
 
-### 3.5 Cross-Logger
+### 3.5 Cross-Logger (JSONL Append-Only)
 
-All agent actions are logged to a shared cross-log for visibility:
+All agent actions are logged to shared JSONL files (append-only for safe concurrent writes):
+
+**Log Files:**
+
+```text
+.claude/state/
+├── agent_activity.jsonl     # All agent actions (append-only)
+├── conflict_warnings.jsonl  # Conflict alerts (append-only)
+└── handoffs.json           # Handoff context between agents
+```
+
+**Activity Log Format:**
+
+```jsonl
+{"timestamp": "2025-12-06T10:00:00Z", "agent": "exec-agent-1", "stream": "execution", "action": "started", "task": "Fill predictor enhancement"}
+{"timestamp": "2025-12-06T10:01:00Z", "agent": "exec-agent-1", "stream": "execution", "action": "locked", "file": "execution/fill_predictor.py"}
+{"timestamp": "2025-12-06T10:30:00Z", "agent": "exec-agent-1", "stream": "execution", "action": "completed", "files_modified": 3, "tests_passed": true}
+{"timestamp": "2025-12-06T10:31:00Z", "agent": "exec-agent-1", "stream": "execution", "action": "released", "file": "execution/fill_predictor.py"}
+```
+
+**Conflict Warning Log:**
+
+```jsonl
+{"timestamp": "2025-12-06T10:15:00Z", "agent": "llm-agent-2", "warning": "news_analyzer.py imports from sentiment.py - llm-agent-1 has lock", "severity": "medium"}
+{"timestamp": "2025-12-06T10:20:00Z", "agent": "risk-agent-1", "warning": "volatility_surface.py depends on risk_manager.py - change in progress", "severity": "high"}
+```
+
+**Implementation:**
 
 ```python
-class CrossLogger:
-    """Centralized logging for all parallel agent activities."""
+# scripts/cross_logger.py
+import json
+from datetime import datetime
+from pathlib import Path
+import fcntl
 
-    LOG_LEVELS = ["DEBUG", "INFO", "CHANGE", "CONFLICT", "ERROR"]
+ACTIVITY_LOG = Path(".claude/state/agent_activity.jsonl")
+CONFLICT_LOG = Path(".claude/state/conflict_warnings.jsonl")
 
-    def log(self, agent_id: str, work_stream: str,
-            level: str, action: str,
-            files: list[str] = None,
-            details: dict = None) -> str:
-        """
-        Log an action to the cross-log.
+def log_activity(agent_id: str, stream: str, action: str, **kwargs) -> None:
+    """Append activity to JSONL log (thread-safe)."""
+    entry = {
+        "timestamp": datetime.now().isoformat(),
+        "agent": agent_id,
+        "stream": stream,
+        "action": action,
+        **kwargs
+    }
+    _append_jsonl(ACTIVITY_LOG, entry)
 
-        Example:
-            log("exec-agent-1", "execution", "CHANGE",
-                "Modified fill_predictor.py",
-                files=["execution/fill_predictor.py"],
-                details={"lines_changed": 45, "functions_added": 2})
-        """
-        pass
+def log_conflict(agent_id: str, warning: str, severity: str = "medium") -> None:
+    """Log a potential conflict warning."""
+    entry = {
+        "timestamp": datetime.now().isoformat(),
+        "agent": agent_id,
+        "warning": warning,
+        "severity": severity
+    }
+    _append_jsonl(CONFLICT_LOG, entry)
 
-    def get_stream_log(self, work_stream: str,
-                       since: datetime = None) -> list[LogEntry]:
-        """Get all log entries for a work stream."""
-        pass
+def _append_jsonl(file_path: Path, entry: dict) -> None:
+    """Append entry to JSONL file with file locking."""
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(file_path, "a") as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            f.write(json.dumps(entry) + "\n")
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
 
-    def get_file_history(self, file_path: str) -> list[LogEntry]:
-        """Get modification history for a specific file."""
-        pass
+def get_stream_log(stream: str, since: datetime = None) -> list[dict]:
+    """Get all log entries for a work stream."""
+    entries = []
+    if ACTIVITY_LOG.exists():
+        with open(ACTIVITY_LOG, "r") as f:
+            for line in f:
+                entry = json.loads(line.strip())
+                if entry.get("stream") == stream:
+                    if since is None or datetime.fromisoformat(entry["timestamp"]) >= since:
+                        entries.append(entry)
+    return entries
+```
 
-    def detect_patterns(self) -> list[Pattern]:
-        """
-        Detect patterns that might indicate issues:
-        - Same file modified by multiple agents
-        - High conflict rate
-        - Abandoned locks
-        """
-        pass
+### 3.6 Handoff System
+
+For sequential dependencies between streams, handoffs provide context:
+
+**Handoff Format:**
+
+```json
+// .claude/state/handoffs.json
+{
+  "handoffs": [
+    {
+      "from_agent": "risk-agent-1",
+      "to_agents": ["exec-agent-1", "api-agent-1"],
+      "timestamp": "2025-12-06T11:00:00Z",
+      "completed_tasks": ["Risk manager refactoring", "Circuit breaker updates"],
+      "context": {
+        "new_interfaces": ["RiskEnforcementChain"],
+        "breaking_changes": ["RiskManager.validate() signature changed to validate(order, context)"],
+        "test_status": "all 47 tests passing",
+        "notes": "Dependent modules should update imports and call signatures"
+      }
+    }
+  ]
+}
+```
+
+**Usage:**
+
+```python
+def record_handoff(from_agent: str, to_agents: list[str],
+                   completed_tasks: list[str], context: dict) -> None:
+    """Record handoff context for dependent agents."""
+    handoff_file = Path(".claude/state/handoffs.json")
+
+    with open(handoff_file, "r+") as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            data = json.load(f)
+            data["handoffs"].append({
+                "from_agent": from_agent,
+                "to_agents": to_agents,
+                "timestamp": datetime.now().isoformat(),
+                "completed_tasks": completed_tasks,
+                "context": context
+            })
+            f.seek(0)
+            json.dump(data, f, indent=2)
+            f.truncate()
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
 ```
 
 ---
@@ -366,23 +519,43 @@ class DependencyChecker:
 
 ## 5. Git Integration
 
-### 5.1 Branch Strategy
+### 5.1 Git Worktree Strategy (Preferred)
+
+**Why Worktrees?** Each parallel stream gets its own working directory, providing true isolation with no merge conflicts until explicit merge:
+
+```bash
+# Create worktrees for parallel streams (from main repo)
+git worktree add ../trading-bot-stream-exec feature/stream-execution
+git worktree add ../trading-bot-stream-llm feature/stream-llm
+git worktree add ../trading-bot-stream-scan feature/stream-scanners
+git worktree add ../trading-bot-stream-risk feature/stream-risk
+git worktree add ../trading-bot-stream-back feature/stream-backtesting
+git worktree add ../trading-bot-stream-obs feature/stream-observability
+git worktree add ../trading-bot-stream-api feature/stream-api
+```
+
+**Directory Structure:**
 
 ```
-main
- └── develop
-      ├── pucs/session-20251206-001  (coordination branch)
-      │    ├── stream/execution-001
-      │    ├── stream/llm-001
-      │    ├── stream/scanners-001
-      │    ├── stream/risk-001
-      │    ├── stream/backtesting-001
-      │    ├── stream/observability-001
-      │    └── stream/api-001
-      └── (other feature branches)
+/home/user/projects/
+├── Claude_code_Quantconnect_trading_bot/  (main repo)
+├── trading-bot-stream-exec/               (execution worktree)
+├── trading-bot-stream-llm/                (llm worktree)
+├── trading-bot-stream-scan/               (scanners worktree)
+└── ...
 ```
 
-### 5.2 Commit Protocol
+### 5.2 Branch Naming Convention
+
+```
+feature/stream-{NAME}-{description}
+├── feature/stream-execution-fill-predictor
+├── feature/stream-llm-sentiment-analysis
+├── feature/stream-risk-circuit-breaker
+└── ...
+```
+
+### 5.3 Commit Protocol
 
 ```bash
 # Format: [PUCS-<stream>] <type>: <description>
@@ -392,8 +565,24 @@ main
 [PUCS-llm] fix: Correct sentiment analysis threshold
 [PUCS-risk] refactor: Simplify circuit breaker logic
 
-# Merge strategy: Each stream merges to coordination branch
-# Final review merges coordination branch to develop
+# Merge strategy: Each stream merges to develop via PR
+# Use --no-ff to preserve stream history
+```
+
+### 5.4 Merge Order (Dependency-Based)
+
+```
+Phase 1 (Parallel - No Dependencies):
+  └── Streams: observability, scanners, backtesting
+
+Phase 2 (After Phase 1):
+  └── Streams: execution, llm, risk
+
+Phase 3 (After Phase 2):
+  └── Streams: api
+
+Phase 4 (After All):
+  └── Applications: algorithms, ui, mcp
 ```
 
 ### 5.3 Automated Conflict Prevention
@@ -585,12 +774,58 @@ class CoordinatorMessage:
 
 ---
 
-## 9. Usage Example
+## 9. State Initialization
+
+Before starting a PUCS session, initialize the required state files:
+
+```bash
+#!/bin/bash
+# scripts/init_pucs_state.sh
+
+mkdir -p .claude/state/logs
+
+# Initialize file locks
+echo '{"locks": {}, "version": 1}' > .claude/state/file_locks.json
+
+# Initialize orchestrator state
+echo '{"streams": {}, "started_at": null}' > .claude/state/orchestrator_state.json
+
+# Initialize handoffs
+echo '{"handoffs": []}' > .claude/state/handoffs.json
+
+# Create empty activity logs (JSONL - append-only)
+touch .claude/state/agent_activity.jsonl
+touch .claude/state/conflict_warnings.jsonl
+
+echo "PUCS state initialized!"
+```
+
+**Required State Files:**
+
+```text
+.claude/state/
+├── file_locks.json          # Current file locks
+├── agent_activity.jsonl     # Activity log (append-only)
+├── conflict_warnings.jsonl  # Conflict warnings (append-only)
+├── handoffs.json           # Handoff context
+├── orchestrator_state.json # Orchestrator state
+└── logs/
+    ├── exec-agent-1.log
+    ├── llm-agent-1.log
+    └── ...
+```
+
+---
+
+## 10. Usage Example
 
 ### Starting a PUCS Session
 
 ```bash
-# 1. Initialize a new PUCS session
+# 1. Initialize state files
+./scripts/init_pucs_state.sh
+
+# 2. Initialize a new PUCS session
 python scripts/pucs.py init --session "PUCS-20251206-001"
 
 # 2. Launch parallel agents for each stream
@@ -791,10 +1026,18 @@ conflict_resolution:
 - [Agent-MCP Framework](https://github.com/rinadelph/Agent-MCP)
 - [Git Branching Strategies](https://www.abtasty.com/blog/git-branching-strategies/)
 - [Agentic Swarm Coding](https://www.augmentcode.com/guides/what-is-agentic-swarm-coding-definition-architecture-and-use-cases)
+- [Simon Willison: Parallel Coding Agent Lifestyle](https://simonwillison.net/2025/Oct/5/parallel-coding-agents/)
+- [AI Native Dev: Parallelizing AI Coding Agents](https://ainativedev.io/news/how-to-parallelize-ai-coding-agents)
+- [Metacircuits: Managing Parallel Coding Agents](https://metacircuits.substack.com/p/managing-parallel-coding-agents-without)
+- [Parallel AI Development with Git Worktrees](https://medium.com/@ooi_yee_fei/parallel-ai-development-with-git-worktrees-f2524afc3e33)
+- [Solving Parallel Workflow Conflicts](https://raminmammadzada.medium.com/solving-parallel-workflow-conflicts-between-ai-agents-and-developers-in-shared-codebases-286504422125)
+- [Claude Flow Framework](https://github.com/ruvnet/claude-flow)
+- [Running Claude Agents in Parallel](https://www.curiouslychase.com/ai-development/running-claude-agents-in-parallel-with-git-worktrees)
 
 ### Project Documentation
 
 - [docs/ARCHITECTURE.md](ARCHITECTURE.md) - Project architecture
+- [docs/PARALLEL_AGENT_COORDINATION.md](PARALLEL_AGENT_COORDINATION.md) - Original coordination doc (superseded)
 - [.claude/hooks/agents/agent_orchestrator.py](../.claude/hooks/agents/agent_orchestrator.py) - Existing agent orchestration
 - [.claude/RIC_CONTEXT.md](../.claude/RIC_CONTEXT.md) - RIC Loop integration
 

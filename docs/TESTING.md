@@ -686,14 +686,41 @@ def test_zero_equity_handling():
    - Use `assert_dataclass_to_dict()` helper instead of duplicating
    - Use `assert_config_defaults()` for all config tests
    - Use `assert_factory_creates_valid()` for factory tests
+   - Import mocks from `tests/mocks/` instead of redefining
 
 2. **Medium Priority (Next Sprint)**
    - Create base test classes for monitors (8 files share patterns)
    - Create base test classes for optimizers (7 files share patterns)
+   - Run duplicate analysis with `analyze_test_duplicates()`
 
 3. **Low Priority (Technical Debt)**
    - Reorganize root-level tests into module directories
    - Add more parametrized test cases
+
+### New Framework Components (Latest)
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| Mock Registry | `tests/mocks/__init__.py` | Central import for all mocks |
+| QC Mocks | `tests/mocks/quantconnect.py` | `MockQCAlgorithm`, `MockQCPortfolio`, etc. |
+| Duplicate Finder | `tests/analysis/duplicate_finder.py` | `DuplicateFinder`, `analyze_test_duplicates()` |
+
+**Mock Consolidation Example:**
+```python
+# BEFORE (duplicated in multiple files)
+class MockPortfolio:
+    def __init__(self):
+        self.TotalPortfolioValue = 100000.0
+
+# AFTER (import from centralized location)
+from tests.mocks.quantconnect import MockQCPortfolio
+```
+
+**Duplicate Analysis Example:**
+```python
+from tests.analysis import analyze_test_duplicates
+print(analyze_test_duplicates("tests/"))
+```
 
 ## Safety-Critical Test Gaps (Action Items)
 
@@ -897,11 +924,11 @@ Before committing new tests:
 ### Final Metrics
 
 ```
-Test Suite Statistics (Updated):
+Test Suite Statistics (Final):
 ├── Total Tests:              3,604+
-├── Test Files:               130+ (added state machines, performance, snapshots)
-├── Shared Fixtures:          319
-├── Safety-Critical Tests:    ~478 circuit breaker + ~117 boundary tests
+├── Test Files:               135+ (added state machines, performance, snapshots, mocks, analysis)
+├── Shared Fixtures:          342 across 92 files
+├── Safety-Critical Tests:    ~85 core safety + ~62 regression markers
 ├── Tests with Assertions:    98%
 ├── Skip Rate:                0.8%
 ├── Coverage:                 67%
@@ -910,12 +937,15 @@ Test Suite Statistics (Updated):
 │   ├── Hypothesis Strategies: 15+ property-based generators
 │   ├── State Machines:       2 (Order lifecycle, Circuit breaker)
 │   ├── Assertion Helpers:    6 (safety, range, dataclass, config, factory)
-│   └── Market Generators:    3 (crash, volatile, gap scenarios)
+│   ├── Market Generators:    3 (crash, volatile, gap scenarios)
+│   ├── Mock Registry:        1 centralized + 10+ QC mocks
+│   └── Duplicate Analyzer:   1 (DuplicateFinder tool)
 └── Recommended Actions:
-    ├── Consolidate:          ~140 duplicate patterns → parametrized tests
+    ├── Consolidate:          ~85 files with duplicate patterns → parametrized tests
+    ├── Use Mocks:            Import from tests/mocks/ instead of redefining
     ├── Use Builders:         Replace manual setup with fluent API
     ├── Property-Based:       Extend to all validators
-    └── Performance:          Add @benchmark to critical paths
+    └── Run Analysis:         Use DuplicateFinder to identify opportunities
 ```
 
 ### Test Coverage by Category

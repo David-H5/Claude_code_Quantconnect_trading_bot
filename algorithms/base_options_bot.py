@@ -62,6 +62,23 @@ from utils.object_store import create_object_store_manager
 from utils.storage_monitor import create_storage_monitor
 
 
+class CheckIntervals:
+    """
+    Standardized interval constants for scheduled checks.
+
+    Usage:
+        if (self.Time - self._last_check).total_seconds() >= CheckIntervals.STRATEGY:
+            ...
+    """
+
+    STRATEGY = 300  # 5 minutes - autonomous strategy checks
+    RECURRING = 3600  # 1 hour - recurring template checks
+    SENTIMENT = 300  # 5 minutes - sentiment analysis
+    RESOURCE = 30  # 30 seconds - resource monitoring
+    CIRCUIT_BREAKER_LOG = 3600  # 1 hour - throttle CB log messages
+    NEWS_CACHE = 1800  # 30 minutes - news cache expiry
+
+
 class BaseOptionsBot(QCAlgorithm):
     """
     Base class for options trading algorithms.
@@ -79,7 +96,7 @@ class BaseOptionsBot(QCAlgorithm):
     """
 
     # Override in subclass for different check intervals
-    RESOURCE_CHECK_INTERVAL_SECONDS = 30
+    RESOURCE_CHECK_INTERVAL_SECONDS = CheckIntervals.RESOURCE
 
     def Initialize(self) -> None:
         """Initialize common algorithm components."""
