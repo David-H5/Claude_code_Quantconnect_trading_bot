@@ -1,229 +1,822 @@
 # Parallel Upgrade Coordination System (PUCS)
 
-**Version:** 1.1 (Consolidated)
-**Date:** December 6, 2025
-**Status:** Proposal
-**Supersedes:** [PARALLEL_AGENT_COORDINATION.md](PARALLEL_AGENT_COORDINATION.md)
+**Version:** 2.0 (Unified Framework)
+**Date:** December 7, 2025
+**Status:** Active
+**Supersedes:** v1.1, PARALLEL_AGENT_COORDINATION.md
 
-> **Note:** This document consolidates best practices from both the original
-> PARALLEL_AGENT_COORDINATION.md and new research into a single comprehensive guide.
+> **Key Change in v2.0:** This version integrates with existing codebase infrastructure
+> instead of proposing duplicate systems. All coordination now leverages the existing
+> agent orchestrator, logging, and state management systems.
+
+---
 
 ## Executive Summary
 
-This document proposes a **Parallel Upgrade Coordination System (PUCS)** to enable multiple AI agents to work on the codebase simultaneously without conflicts. Based on analysis of 30,587 lines of code across 150+ modules and industry best practices, we identify **7 independent work streams** and propose coordination mechanisms to maximize parallelization while preventing merge conflicts.
+The **Parallel Upgrade Coordination System (PUCS)** enables multiple AI agents to work on the codebase simultaneously without conflicts. This unified framework integrates with existing infrastructure:
+
+| Component | Existing System | PUCS Extension |
+|-----------|-----------------|----------------|
+| Orchestration | `agent_orchestrator.py` | Work stream routing |
+| Logging | `AgentLogger` | Stream-aware logging |
+| State | `OvernightStateManager` | File lock tracking |
+| Handoffs | `.claude/state/handoff.json` | Multi-agent handoffs |
+| Circuit Breaker | `AgentCircuitBreaker` | Stream-level breakers |
+| Tracing | `Tracer`, `LLMTracer` | Stream correlation |
 
 ---
 
-## 1. Codebase Analysis Summary
+## 0. Prerequisites: Codebase Consolidation
 
-### 1.1 Architecture Layers
+> **IMPORTANT**: Before implementing PUCS, the following consolidation tasks MUST be completed.
+> These resolve existing conflicts that would otherwise be amplified by PUCS.
 
+### 0.1 Consolidation Checklist
+
+```text
+┌─────────────────────────────────────────────────────────────────────────────┐
+│              PUCS PREREQUISITE CONSOLIDATION CHECKLIST                       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  PHASE 1: BLOCKING ISSUES (Must complete before PUCS)          Est: 2 days  │
+│  ──────────────────────────────────────────────────────────────────────────  │
+│  [ ] P0-1. Merge DecisionLogger + DecisionTracer                             │
+│  [ ] P0-2. Consolidate State Managers (3 → 1)                                │
+│  [ ] P0-3. Delete deprecated models/retry_handler.py                         │
+│  [ ] P0-4. Create BaseCircuitBreaker shared class                            │
+│                                                                              │
+│  PHASE 2: RECOMMENDED FIXES (Should complete)                   Est: 2 days  │
+│  ──────────────────────────────────────────────────────────────────────────  │
+│  [ ] P1-1. Create shared ValidationResult class                              │
+│  [ ] P1-2. Use canonical parse_progress_file() everywhere                    │
+│  [ ] P1-3. Consolidate webhook configurations                                │
+│  [ ] P1-4. Delete config/watchdog.json (duplicate)                           │
+│  [ ] P1-5. Create shared env_expansion.py utility                            │
+│  [ ] P1-6. Delete llm/tools/finbert.py (duplicate)                           │
+│                                                                              │
+│  PHASE 3: CLEANUP (Can run parallel with PUCS)                  Est: 1 day   │
+│  ──────────────────────────────────────────────────────────────────────────  │
+│  [ ] P2-1. Consolidate path configurations                                   │
+│  [ ] P2-2. Merge logging configurations                                      │
+│  [ ] P2-3. Organize state files with registry                                │
+│  [ ] P2-4. Update deprecated module imports                                  │
+│  [ ] P2-5. Delete deprecated re-export modules                               │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
-Layer 4: Applications   → algorithms/, ui/, api/
-Layer 3: Business Logic → execution/, evaluation/, mcp/
-Layer 2: Core Analysis  → llm/, models/, scanners/, indicators/, backtesting/
-Layer 1: Infrastructure → config/, observability/, utils/, compliance/
+
+### 0.2 Phase 1: Blocking Issues (P0)
+
+These MUST be resolved before PUCS implementation to prevent creating additional duplicate systems.
+
+#### P0-1. Merge DecisionLogger + DecisionTracer
+
+**Problem**: Two systems track agent decisions with different data structures.
+
+| System | File | Output |
+|--------|------|--------|
+| DecisionLogger | `llm/decision_logger.py` (727 lines) | `decision_logs/*.json` |
+| DecisionTracer | `observability/decision_tracer.py` (352 lines) | `logs/decisions/*.json` |
+
+**Conflict Details**:
+
+- THREE different `ReasoningStep` definitions exist in codebase
+- Different output directories (`decision_logs/` vs `logs/decisions/`)
+- Different outcome enums (PENDING/EXECUTED/REJECTED vs TIMEOUT/ERROR/OVERRIDDEN)
+- `ReasoningLogger` in `llm/reasoning_logger.py` has optional (not mandatory) link
+
+**Resolution Steps**:
+
+```bash
+# Step 1: Enhance DecisionLogger with DecisionTracer features
+# Add to llm/decision_logger.py:
+# - inputs/outputs fields to ReasoningStep
+# - timestamp per reasoning step
+# - export_to_file() method matching DecisionTracer
+
+# Step 2: Update imports
+grep -r "from observability.decision_tracer import" --include="*.py" | \
+  xargs sed -i 's/from observability.decision_tracer import/from llm.decision_logger import/g'
+
+# Step 3: Delete DecisionTracer
+rm observability/decision_tracer.py
+
+# Step 4: Update observability/logging/adapters/decision.py to use DecisionLogger only
 ```
 
-### 1.2 Module Statistics
+**Verification**:
 
-| Category | Files | Lines | Independence |
-|----------|-------|-------|--------------|
-| Execution | 18 | ~3,000 | 95% |
-| LLM/Agents | 40 | ~8,000 | 90% |
-| Scanners | 5 | ~1,200 | 98% |
-| Models | 22 | ~4,500 | 85% |
-| Evaluation | 30+ | ~5,000 | 100% |
-| Observability | 16 | ~2,500 | 100% |
-| API | 10+ | ~2,000 | 90% |
-
-### 1.3 Critical Shared Files (Require Coordination)
-
-| File | Used By | Risk |
-|------|---------|------|
-| `config/__init__.py` | ALL modules | HIGH |
-| `models/circuit_breaker.py` | algorithms, execution, api | HIGH |
-| `models/risk_manager.py` | algorithms, execution, api | HIGH |
-| `algorithms/base_options_bot.py` | all algorithms | MEDIUM |
-| `llm/agents/base.py` | all agents | MEDIUM |
+```bash
+# Ensure no remaining imports
+grep -r "decision_tracer" --include="*.py"
+# Run tests
+pytest tests/test_decision_logger.py -v
+```
 
 ---
 
-## 2. Identified Parallel Work Streams
+#### P0-2. Consolidate State Managers
 
-### Work Stream 1: Execution Optimization
-**Files:** `execution/` (18 modules)
-**Focus:** Order execution, fill prediction, slippage monitoring
-**Dependencies:** config, models/risk_manager
-**Test Suite:** `test_cancel_optimizer.py`, `test_fill_predictor.py`, `test_slippage_monitor.py`
-**Recommended Team Size:** 3-4 agents
+**Problem**: Three separate state managers with overlapping data.
 
-### Work Stream 2: LLM Agents & Sentiment
-**Files:** `llm/` (40 modules)
-**Focus:** Multi-agent consensus, debate mechanism, sentiment analysis
-**Dependencies:** config, minimal external
-**Test Suite:** `test_multi_agent.py`, `test_debate_mechanism.py`, `test_llm_sentiment.py`
-**Recommended Team Size:** 4-5 agents
+| Manager | File | State File | Has Locking |
+|---------|------|------------|-------------|
+| SessionStateManager | `scripts/session_state_manager.py` | `logs/session_state.json` | No |
+| OvernightStateManager | `utils/overnight_state.py` | `logs/overnight_state.json` | Yes (fcntl) |
+| RICStateManager | `.claude/hooks/core/ric.py:6198` | `.claude/state/ric.json` | No |
 
-### Work Stream 3: Market Scanning
-**Files:** `scanners/` + `indicators/` (7 modules)
-**Focus:** Options scanning, movement detection, technical indicators
-**Dependencies:** config, llm (movement_scanner only)
-**Test Suite:** `test_options_scanner.py`, `test_unusual_activity_scanner.py`
-**Recommended Team Size:** 2-3 agents
+**Resolution Steps**:
 
-### Work Stream 4: Risk Management
-**Files:** `models/risk*.py`, `models/circuit_breaker.py`, `compliance/`
-**Focus:** Risk models, position limits, trading halts
-**Dependencies:** config, observability
-**Test Suite:** `test_circuit_breaker.py`, `test_risk_management.py`
-**Recommended Team Size:** 1-2 agents (HIGH RISK - careful coordination)
+```bash
+# Step 1: Keep OvernightStateManager as canonical (has file locking)
+# File: utils/overnight_state.py
 
-### Work Stream 5: Backtesting & Evaluation
-**Files:** `backtesting/` + `evaluation/` (35 modules)
-**Focus:** Strategy backtesting, walk-forward analysis, agent evaluation
-**Dependencies:** models (loosely coupled)
-**Test Suite:** `test_monte_carlo.py`, `test_walk_forward.py`, `test_agent_contest.py`
-**Recommended Team Size:** 2-3 agents
-
-### Work Stream 6: Observability & Monitoring
-**Files:** `observability/` (16 modules)
-**Focus:** Logging, tracing, metrics, anomaly detection
-**Dependencies:** None (orthogonal)
-**Test Suite:** `test_structured_logging.py`, `test_otel_tracer.py`
-**Recommended Team Size:** 2-3 agents
-
-### Work Stream 7: API & Integration
-**Files:** `api/` + `mcp/` (13 modules)
-**Focus:** REST API, WebSocket, MCP servers
-**Dependencies:** execution, models/risk_manager
-**Test Suite:** `test_order_queue_api.py`, `test_rest_api.py`
-**Recommended Team Size:** 2-3 agents
-
----
-
-## 3. Coordination System Design
-
-### 3.1 Architecture Overview
-
+# Step 2: Update SessionStateManager to delegate to OvernightStateManager
+# In scripts/session_state_manager.py, add deprecation:
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     PUCS COORDINATOR                            │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │   Lock      │  │   Intent    │  │   Cross     │             │
-│  │   Manager   │  │   Signal    │  │   Logger    │             │
-│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘             │
-│         │                │                │                     │
-│         └────────────────┴────────────────┘                     │
-│                          │                                      │
-│                   ┌──────▼──────┐                               │
-│                   │   State     │                               │
-│                   │   Store     │                               │
-│                   └──────┬──────┘                               │
-└──────────────────────────┼──────────────────────────────────────┘
-                           │
-     ┌─────────────────────┼─────────────────────┐
-     │                     │                     │
-┌────▼────┐          ┌─────▼────┐          ┌─────▼────┐
-│ Stream  │          │ Stream   │          │ Stream   │
-│ Agent 1 │          │ Agent 2  │          │ Agent N  │
-└─────────┘          └──────────┘          └──────────┘
-```
-
-### 3.2 State Store Schema
-
-```json
-{
-  "session_id": "PUCS-20251206-001",
-  "started_at": "2025-12-06T10:00:00Z",
-  "streams": {
-    "execution": {
-      "status": "active",
-      "agents": ["exec-agent-1", "exec-agent-2"],
-      "locked_files": [
-        {
-          "path": "execution/fill_predictor.py",
-          "agent": "exec-agent-1",
-          "intent": "Adding ML model feature",
-          "locked_at": "2025-12-06T10:15:00Z",
-          "expires_at": "2025-12-06T10:45:00Z"
-        }
-      ],
-      "completed_tasks": 5,
-      "pending_tasks": 12
-    }
-  },
-  "critical_files": {
-    "config/__init__.py": {
-      "status": "locked",
-      "owner": "risk-agent-1",
-      "queue": ["llm-agent-3", "exec-agent-1"]
-    }
-  },
-  "conflicts": [],
-  "cross_log": []
-}
-```
-
-### 3.3 Lock Manager
-
-The Lock Manager prevents simultaneous modifications to the same files.
-
-**Lock File Format:**
-
-```json
-// .claude/state/file_locks.json
-{
-  "locks": {
-    "llm/sentiment.py": {
-      "agent": "agent-llm-1",
-      "stream": "llm",
-      "acquired": "2025-12-06T10:00:00Z",
-      "expires": "2025-12-06T11:00:00Z",
-      "task": "Consolidate sentiment to package"
-    }
-  },
-  "version": 1
-}
-```
-
-**Working Implementation (using fcntl for atomic operations):**
 
 ```python
-# scripts/agent_lock.py
+# scripts/session_state_manager.py - UPDATE TO:
+"""DEPRECATED: Use utils.overnight_state.OvernightStateManager instead."""
+import warnings
+from utils.overnight_state import OvernightStateManager
+
+warnings.warn(
+    "SessionStateManager is deprecated. Use OvernightStateManager from utils.overnight_state",
+    DeprecationWarning,
+    stacklevel=2
+)
+
+# Re-export for backwards compatibility
+SessionStateManager = OvernightStateManager
+```
+
+```bash
+# Step 3: Update RICStateManager to NOT duplicate session tracking
+# RICStateManager should ONLY manage RIC-specific state (phase, insights, throttles)
+# Session-level state should read from OvernightStateManager
+
+# Step 4: Update imports
+grep -r "from scripts.session_state_manager import" --include="*.py"
+# Update each to use: from utils.overnight_state import OvernightStateManager
+```
+
+**Verification**:
+
+```bash
+pytest tests/test_overnight_state.py -v
+```
+
+---
+
+#### P0-3. Delete Deprecated Retry Handler
+
+**Problem**: `models/retry_handler.py` is deprecated but has same-named classes.
+
+| Module | Status | Replacement |
+|--------|--------|-------------|
+| `models/retry_handler.py` | DEPRECATED | `utils.error_handling` |
+| `agent_orchestrator.py:90-159` | ACTIVE | Different purpose (agents) |
+
+**Resolution Steps**:
+
+```bash
+# Step 1: Find all imports
+grep -r "from models.retry_handler import" --include="*.py"
+grep -r "from models import retry_handler" --include="*.py"
+
+# Step 2: Update each import to use utils.error_handling
+# Change: from models.retry_handler import RetryConfig, retry_with_backoff
+# To:     from utils.error_handling import RetryConfig, retry_with_backoff
+
+# Step 3: Delete the deprecated module
+rm models/retry_handler.py
+
+# Step 4: Update models/__init__.py if it exports retry_handler
+```
+
+**Verification**:
+
+```bash
+pytest tests/test_error_handling.py -v
+python -c "from utils.error_handling import RetryConfig, retry_with_backoff; print('OK')"
+```
+
+---
+
+#### P0-4. Create BaseCircuitBreaker Shared Class
+
+**Problem**: Two circuit breakers with no shared code.
+
+| Breaker | File | Purpose |
+|---------|------|---------|
+| TradingCircuitBreaker | `models/circuit_breaker.py:102` | Trading risk limits |
+| AgentCircuitBreaker | `agent_orchestrator.py:224` | Agent failure tracking |
+
+**Resolution Steps**:
+
+```python
+# Create: models/base_circuit_breaker.py
+
+from abc import ABC, abstractmethod
+from enum import Enum
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional
+
+class CircuitState(Enum):
+    CLOSED = "closed"      # Normal operation
+    OPEN = "open"          # Tripped, blocking
+    HALF_OPEN = "half_open"  # Testing recovery
+
+@dataclass
+class BaseCircuitBreakerConfig:
+    """Shared configuration for all circuit breakers."""
+    failure_threshold: int = 5
+    recovery_timeout_seconds: int = 300
+    half_open_max_calls: int = 3
+
+class BaseCircuitBreaker(ABC):
+    """Abstract base for all circuit breaker implementations."""
+
+    def __init__(self, config: BaseCircuitBreakerConfig):
+        self.config = config
+        self._state = CircuitState.CLOSED
+        self._failure_count = 0
+        self._last_failure_time: Optional[datetime] = None
+        self._half_open_calls = 0
+
+    @property
+    def state(self) -> CircuitState:
+        return self._state
+
+    def is_open(self) -> bool:
+        return self._state == CircuitState.OPEN
+
+    def can_execute(self) -> bool:
+        """Check if execution is allowed."""
+        if self._state == CircuitState.CLOSED:
+            return True
+        if self._state == CircuitState.OPEN:
+            return self._should_attempt_reset()
+        if self._state == CircuitState.HALF_OPEN:
+            return self._half_open_calls < self.config.half_open_max_calls
+        return False
+
+    def record_success(self) -> None:
+        """Record successful execution."""
+        if self._state == CircuitState.HALF_OPEN:
+            self._half_open_calls += 1
+            if self._half_open_calls >= self.config.half_open_max_calls:
+                self._reset()
+        self._failure_count = 0
+
+    def record_failure(self) -> None:
+        """Record failed execution."""
+        self._failure_count += 1
+        self._last_failure_time = datetime.now()
+        if self._failure_count >= self.config.failure_threshold:
+            self._trip()
+
+    def _trip(self) -> None:
+        """Open the circuit breaker."""
+        self._state = CircuitState.OPEN
+        self._on_trip()
+
+    def _reset(self) -> None:
+        """Reset to closed state."""
+        self._state = CircuitState.CLOSED
+        self._failure_count = 0
+        self._half_open_calls = 0
+        self._on_reset()
+
+    def _should_attempt_reset(self) -> bool:
+        """Check if enough time passed to attempt recovery."""
+        if self._last_failure_time is None:
+            return True
+        elapsed = (datetime.now() - self._last_failure_time).total_seconds()
+        if elapsed >= self.config.recovery_timeout_seconds:
+            self._state = CircuitState.HALF_OPEN
+            self._half_open_calls = 0
+            return True
+        return False
+
+    @abstractmethod
+    def _on_trip(self) -> None:
+        """Hook called when circuit trips. Override for specific behavior."""
+        pass
+
+    @abstractmethod
+    def _on_reset(self) -> None:
+        """Hook called when circuit resets. Override for specific behavior."""
+        pass
+```
+
+```bash
+# Step 2: Update TradingCircuitBreaker to extend BaseCircuitBreaker
+# Step 3: Update AgentCircuitBreaker to extend BaseCircuitBreaker
+# Step 4: PUCS StreamCircuitBreaker will extend AgentCircuitBreaker
+```
+
+---
+
+### 0.3 Phase 2: Recommended Fixes (P1)
+
+These should be completed to avoid confusion during PUCS implementation.
+
+#### P1-1. Create Shared ValidationResult Class
+
+**Problem**: 4 separate `ValidationResult` classes.
+
+**Solution**:
+
+```python
+# Create: models/validation.py
+
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
+
+class ValidationSeverity(Enum):
+    ERROR = "error"
+    WARNING = "warning"
+    INFO = "info"
+
+@dataclass
+class ValidationIssue:
+    message: str
+    severity: ValidationSeverity = ValidationSeverity.ERROR
+    location: str | None = None
+    suggestion: str | None = None
+
+@dataclass
+class ValidationResult:
+    """Unified validation result for all validators."""
+    passed: bool
+    issues: list[ValidationIssue] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def error_count(self) -> int:
+        return sum(1 for i in self.issues if i.severity == ValidationSeverity.ERROR)
+
+    @property
+    def warning_count(self) -> int:
+        return sum(1 for i in self.issues if i.severity == ValidationSeverity.WARNING)
+```
+
+**Migration**: Update all 4 files to import from `models.validation`.
+
+---
+
+#### P1-2. Use Canonical parse_progress_file()
+
+**Problem**: 4 implementations of `parse_progress_file()`.
+
+**Solution**:
+
+```bash
+# Canonical location: utils/progress_parser.py
+
+# Update these files to import from canonical location:
+# 1. .claude/hooks/core/session_stop.py
+# 2. .claude/hooks/validation/validate_category_docs.py
+# 3. scripts/preload_upgrade_guide.py
+
+# Add to each:
+from utils.progress_parser import parse_progress_file
+# Remove local implementation
+```
+
+---
+
+#### P1-3 to P1-6. Quick Fixes
+
+| Task | Action | Command |
+|------|--------|---------|
+| P1-3 | Consolidate webhooks | Move all to `config/__init__.py:NotificationConfig` |
+| P1-4 | Delete watchdog.json | `rm config/watchdog.json` |
+| P1-5 | Create env_expansion.py | `touch utils/env_expansion.py` with unified pattern |
+| P1-6 | Delete FinBERT duplicate | `rm llm/tools/finbert.py` |
+
+---
+
+### 0.4 Phase 3: Cleanup (P2)
+
+Can run in parallel with PUCS implementation.
+
+#### Deprecated Modules to Update
+
+| Deprecated Module | New Location | Files Using It |
+|-------------------|--------------|----------------|
+| `evaluation/agent_metrics.py` | `observability.metrics.collectors.agent` | 4 files |
+| `utils/alerting_service.py` | `observability.alerting.service` | 3 files |
+| `utils/storage_monitor.py` | `observability.monitoring.system.storage` | 1 file |
+| `models/correlation_monitor.py` | `observability.monitoring.trading.correlation` | TBD |
+| `models/var_monitor.py` | `observability.monitoring.trading.var` | TBD |
+| `models/greeks_monitor.py` | `observability.monitoring.trading.greeks` | TBD |
+
+**Migration Script**:
+
+```bash
+#!/bin/bash
+# scripts/migrate_deprecated_imports.sh
+
+# Update evaluation/agent_metrics imports
+find . -name "*.py" -exec sed -i \
+  's/from evaluation.agent_metrics import/from observability.metrics.collectors.agent import/g' {} \;
+
+# Update utils/alerting_service imports
+find . -name "*.py" -exec sed -i \
+  's/from utils.alerting_service import/from observability.alerting.service import/g' {} \;
+
+# Update utils/storage_monitor imports
+find . -name "*.py" -exec sed -i \
+  's/from utils.storage_monitor import/from observability.monitoring.system.storage import/g' {} \;
+
+echo "Import migration complete. Run tests to verify."
+```
+
+---
+
+### 0.5 Verification
+
+After completing consolidation, verify with:
+
+```bash
+# 1. No duplicate decision tracking
+grep -r "DecisionTracer" --include="*.py" | grep -v "test_" | wc -l  # Should be 0
+
+# 2. No deprecated retry imports
+grep -r "from models.retry_handler" --include="*.py" | wc -l  # Should be 0
+
+# 3. State managers consolidated
+python -c "from utils.overnight_state import OvernightStateManager; print('OK')"
+
+# 4. All tests pass
+pytest tests/ -v --tb=short
+
+# 5. No circular imports
+python -c "import config; import utils.overnight_state; import llm.decision_logger; print('No circular imports')"
+```
+
+---
+
+### 0.6 Consolidation vs PUCS Timeline
+
+```text
+Week 1                          Week 2                          Week 3
+├─────────────────────────────┼─────────────────────────────────┼──────────────────────────────┤
+│ Phase 1 (P0)                │ Phase 2 (P1)                    │ PUCS Implementation          │
+│ ├─ Merge DecisionLogger     │ ├─ ValidationResult class       │ ├─ Stream Lock Manager       │
+│ ├─ Consolidate State Mgrs   │ ├─ parse_progress_file()        │ ├─ Intent Signal System      │
+│ ├─ Delete retry_handler     │ ├─ Webhook consolidation        │ ├─ PUCS CLI                  │
+│ └─ BaseCircuitBreaker       │ └─ Quick fixes                  │ └─ Git worktree setup        │
+│                             │                                 │                              │
+│ ─────────── GATE ─────────► │ ─────────── GATE ─────────────► │                              │
+│ Must pass before Week 2     │ Recommended before Week 3       │ Phase 3 runs parallel        │
+└─────────────────────────────┴─────────────────────────────────┴──────────────────────────────┘
+```
+
+---
+
+## 1. Architecture Integration
+
+### 1.1 System Hierarchy
+
+```text
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    EXISTING: Agent Orchestrator v1.5                     │
+│               (.claude/hooks/agents/agent_orchestrator.py)               │
+│                                                                          │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐       │
+│  │ ModelSelector    │  │ AgentCircuit     │  │ RetryConfig +    │       │
+│  │ (Haiku/Sonnet/   │  │ Breaker          │  │ FallbackRouter   │       │
+│  │ Opus)            │  │ (failure mgmt)   │  │ (resilience)     │       │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘       │
+│                                                                          │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐       │
+│  │ Tracer           │  │ TokenTracker     │  │ ResearchPersister│       │
+│  │ (ExecutionTrace) │  │ (cost tracking)  │  │ (docs/research/) │       │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘       │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                    ┌────────────▼────────────┐
+                    │   NEW: PUCS Extension   │
+                    │   (Work Stream Layer)   │
+                    └────────────┬────────────┘
+                                 │
+     ┌───────────────────────────┼───────────────────────────┐
+     │                           │                           │
+┌────▼────┐     ┌────────────────▼────────────────┐     ┌────▼────┐
+│ Stream  │     │     EXISTING: AgentLogger       │     │ Stream  │
+│ Lock    │     │  (observability/logging/agent.py)    │ Intent  │
+│ Manager │     └─────────────────────────────────┘     │ Signal  │
+└─────────┘                                             └─────────┘
+```
+
+### 1.2 Codebase Analysis Summary
+
+Based on analysis of **30,587 lines of code** across **150+ modules**:
+
+| Category | Files | Lines | Independence | Existing Orchestration |
+|----------|-------|-------|--------------|------------------------|
+| Execution | 18 | ~3,000 | 95% | None |
+| LLM/Agents | 40 | ~8,000 | 90% | `multi_agent_consensus.py` |
+| Scanners | 5 | ~1,200 | 98% | None |
+| Models | 22 | ~4,500 | 85% | None |
+| Evaluation | 30+ | ~5,000 | 100% | `orchestration_pipeline.py` |
+| Observability | 16 | ~2,500 | 100% | None |
+| API | 10+ | ~2,000 | 90% | None |
+
+---
+
+## 2. Work Streams
+
+### 2.1 Stream Definitions
+
+Seven independent work streams, each mapped to existing orchestrator capabilities:
+
+| Stream ID | Directory Pattern | Agent Templates | Dependencies |
+|-----------|-------------------|-----------------|--------------|
+| `EXEC` | `execution/**/*.py` | `implementer`, `refactorer` | config, models |
+| `LLM` | `llm/**/*.py` | `architect`, `implementer` | config |
+| `SCAN` | `scanners/**/*.py`, `indicators/**/*.py` | `implementer` | config, llm |
+| `RISK` | `models/risk*.py`, `compliance/**/*.py` | `risk_reviewer`, `implementer` | config |
+| `BACK` | `backtesting/**/*.py`, `evaluation/**/*.py` | `implementer`, `test_analyzer` | models |
+| `OBS` | `observability/**/*.py` | `implementer` | None |
+| `API` | `api/**/*.py`, `mcp/**/*.py` | `implementer`, `security_scanner` | execution, models |
+
+### 2.2 Stream Configuration
+
+```yaml
+# config/pucs_streams.yaml
+
+streams:
+  EXEC:
+    name: "Execution Optimization"
+    files_pattern: "execution/**/*.py"
+    max_agents: 4
+    agent_templates: ["implementer", "refactorer", "test_analyzer"]
+    dependencies: ["config", "models"]
+    critical_files:
+      - "execution/smart_execution.py"
+      - "execution/profit_taking.py"
+    test_pattern: "tests/test_*execution*.py"
+
+  LLM:
+    name: "LLM Agents & Sentiment"
+    files_pattern: "llm/**/*.py"
+    max_agents: 5
+    agent_templates: ["architect", "implementer", "security_scanner"]
+    dependencies: ["config"]
+    critical_files:
+      - "llm/agents/base.py"
+      - "llm/agents/supervisor.py"
+    test_pattern: "tests/test_*llm*.py"
+
+  SCAN:
+    name: "Market Scanning"
+    files_pattern: "scanners/**/*.py,indicators/**/*.py"
+    max_agents: 3
+    agent_templates: ["implementer"]
+    dependencies: ["config", "llm"]
+    test_pattern: "tests/test_*scanner*.py"
+
+  RISK:
+    name: "Risk Management"
+    files_pattern: "models/risk*.py,models/circuit*.py,compliance/**/*.py"
+    max_agents: 2
+    critical: true
+    agent_templates: ["risk_reviewer", "implementer"]
+    dependencies: ["config"]
+    test_pattern: "tests/test_*risk*.py"
+
+  BACK:
+    name: "Backtesting & Evaluation"
+    files_pattern: "backtesting/**/*.py,evaluation/**/*.py"
+    max_agents: 3
+    agent_templates: ["implementer", "test_analyzer"]
+    dependencies: ["models"]
+    test_pattern: "tests/test_*backtest*.py"
+
+  OBS:
+    name: "Observability"
+    files_pattern: "observability/**/*.py"
+    max_agents: 3
+    agent_templates: ["implementer"]
+    dependencies: []
+    test_pattern: "tests/test_*observability*.py"
+
+  API:
+    name: "API & Integration"
+    files_pattern: "api/**/*.py,mcp/**/*.py"
+    max_agents: 3
+    agent_templates: ["implementer", "security_scanner"]
+    dependencies: ["execution", "models"]
+    test_pattern: "tests/test_*api*.py"
+```
+
+---
+
+## 3. Integration with Existing Systems
+
+### 3.1 AgentLogger Integration (NOT a new logger)
+
+PUCS extends the **existing** `AgentLogger` class:
+
+```python
+# observability/logging/agent.py - EXISTING (719 lines)
+# Location: /home/dshooter/projects/Claude_code_Quantconnect_trading_bot/observability/logging/agent.py
+
+from observability.logging.agent import AgentLogger
+
+# Create stream-aware logger (uses existing AgentLogger)
+logger = AgentLogger(
+    agent_id="exec-agent-1",
+    session_id="PUCS-20251207-001"
+)
+
+# Log stream assignment (new field, existing method)
+logger.log(
+    level=LogLevel.INFO,
+    message="Agent assigned to EXEC stream",
+    category=LogCategory.AGENT,
+    data={"stream_id": "EXEC", "task": "Fill predictor enhancement"}
+)
+
+# File operations already supported
+logger.log_file_modified("execution/fill_predictor.py", "Added ML model")
+
+# Conflict detection already supported
+conflicts = logger.check_conflicts_before_change("execution/fill_predictor.py")
+```
+
+**Existing AgentLogger Features (DO NOT DUPLICATE):**
+
+- Session tracking (`log_session_start`, `log_session_end`, `log_session_handoff`)
+- File operations (`log_file_created`, `log_file_modified`, `log_file_deleted`)
+- Task tracking (`log_task_started`, `log_task_completed`, `log_task_failed`)
+- Git operations (`log_git_commit`, `log_git_push`)
+- Conflict checking (`check_conflicts_before_change`)
+- JSONL append-only logging with fcntl locking
+
+### 3.2 Handoff System (Unified Format)
+
+The existing handoff format in `.claude/state/handoff.json` is extended to support multi-agent handoffs:
+
+```json
+{
+  "from_agent": "exec-agent-1",
+  "to_agent": "exec-agent-2",
+  "timestamp": "2025-12-07T10:00:00Z",
+  "session_id": "PUCS-20251207-001",
+  "context": {
+    "completed": [
+      "Fill predictor ML model added",
+      "Unit tests for fill_predictor.py"
+    ],
+    "pending": [
+      "Integration tests needed",
+      "Documentation update"
+    ],
+    "warnings": [
+      "fill_predictor.py has increased complexity"
+    ],
+    "commits": ["abc1234", "def5678"],
+    "branch": "feature/stream-exec-fill-predictor"
+  },
+  "stream_context": {
+    "stream_id": "EXEC",
+    "locked_files": [],
+    "related_files": ["execution/fill_predictor.py", "tests/test_fill_predictor.py"]
+  },
+  "files_to_review": ["execution/fill_predictor.py"]
+}
+```
+
+**Key Changes:**
+
+- Added `stream_context` for PUCS-specific data
+- Kept `to_agent` singular (not plural) for backward compatibility
+- Added `commits` and `branch` fields from existing format
+
+### 3.3 Circuit Breaker Integration
+
+PUCS uses the **existing** `AgentCircuitBreaker`:
+
+```python
+# agent_orchestrator.py:224-333 - EXISTING
+from .claude.hooks.agents.agent_orchestrator import AgentCircuitBreaker
+
+# Stream-level circuit breaker
+class StreamCircuitBreaker:
+    """Extends AgentCircuitBreaker for stream-level failure tracking."""
+
+    def __init__(self, stream_id: str, base_breaker: AgentCircuitBreaker):
+        self.stream_id = stream_id
+        self.base_breaker = base_breaker
+
+    def record_stream_failure(self, agent_id: str, error: str) -> None:
+        """Record failure and potentially open circuit for stream."""
+        self.base_breaker.record_failure(f"{self.stream_id}:{agent_id}")
+
+    def can_spawn_agent(self) -> bool:
+        """Check if stream can accept new agents."""
+        return not self.base_breaker.is_open(self.stream_id)
+```
+
+**Existing AgentCircuitBreaker Features (DO NOT DUPLICATE):**
+
+- Failure tracking per agent type
+- Open/closed circuit state
+- Automatic recovery after cooldown
+- State persistence to `.claude/state/circuit_breaker.json`
+
+### 3.4 Tracing Integration
+
+PUCS uses existing tracing infrastructure:
+
+```python
+# agent_orchestrator.py:1407-1633 - EXISTING Tracer
+# observability/otel_tracer.py - EXISTING LLMTracer
+
+from .claude.hooks.agents.agent_orchestrator import Tracer
+
+# Create stream-correlated trace
+tracer = Tracer()
+with tracer.span("PUCS-EXEC-fill-predictor") as span:
+    span.set_attribute("pucs.stream_id", "EXEC")
+    span.set_attribute("pucs.agent_id", "exec-agent-1")
+    span.set_attribute("pucs.task", "Fill predictor enhancement")
+
+    # ... do work ...
+
+    span.set_attribute("pucs.files_modified", 3)
+    span.set_attribute("pucs.tests_passed", True)
+```
+
+---
+
+## 4. New PUCS Components
+
+These are the **only new components** that PUCS adds (everything else uses existing systems):
+
+### 4.1 Stream Lock Manager
+
+File-level locks for parallel work coordination:
+
+```python
+# scripts/pucs/stream_locks.py - NEW
+
 import json
 import fcntl
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Optional
+from dataclasses import dataclass, asdict
 
-LOCK_FILE = Path(".claude/state/file_locks.json")
-LOCK_DURATION_MINUTES = 60
+@dataclass
+class FileLock:
+    agent_id: str
+    stream_id: str
+    acquired_at: str
+    expires_at: str
+    task: str
 
-def acquire_lock(file_path: str, agent_id: str, stream: str, task: str) -> bool:
-    """Acquire exclusive lock on a file for an agent."""
+LOCK_FILE = Path(".claude/state/pucs_locks.json")
+DEFAULT_LOCK_DURATION_MIN = 30
+
+def acquire_lock(file_path: str, agent_id: str, stream_id: str,
+                 task: str, duration_min: int = DEFAULT_LOCK_DURATION_MIN) -> bool:
+    """Acquire exclusive lock on a file for parallel work coordination."""
+    _ensure_lock_file()
+
     with open(LOCK_FILE, "r+") as f:
         fcntl.flock(f.fileno(), fcntl.LOCK_EX)
         try:
-            locks = json.load(f)
+            data = json.load(f)
 
             # Check if file is already locked
-            if file_path in locks["locks"]:
-                lock = locks["locks"][file_path]
-                expires = datetime.fromisoformat(lock["expires"])
+            if file_path in data["locks"]:
+                lock = data["locks"][file_path]
+                expires = datetime.fromisoformat(lock["expires_at"])
                 if datetime.now() < expires:
                     return False  # Still locked
 
             # Acquire lock
-            locks["locks"][file_path] = {
-                "agent": agent_id,
-                "stream": stream,
-                "acquired": datetime.now().isoformat(),
-                "expires": (datetime.now() + timedelta(minutes=LOCK_DURATION_MINUTES)).isoformat(),
-                "task": task
-            }
+            now = datetime.now()
+            data["locks"][file_path] = asdict(FileLock(
+                agent_id=agent_id,
+                stream_id=stream_id,
+                acquired_at=now.isoformat(),
+                expires_at=(now + timedelta(minutes=duration_min)).isoformat(),
+                task=task
+            ))
 
             f.seek(0)
-            json.dump(locks, f, indent=2)
+            json.dump(data, f, indent=2)
             f.truncate()
             return True
         finally:
@@ -234,859 +827,736 @@ def release_lock(file_path: str, agent_id: str) -> bool:
     with open(LOCK_FILE, "r+") as f:
         fcntl.flock(f.fileno(), fcntl.LOCK_EX)
         try:
-            locks = json.load(f)
-            if file_path in locks["locks"]:
-                if locks["locks"][file_path]["agent"] == agent_id:
-                    del locks["locks"][file_path]
+            data = json.load(f)
+            if file_path in data["locks"]:
+                if data["locks"][file_path]["agent_id"] == agent_id:
+                    del data["locks"][file_path]
                     f.seek(0)
-                    json.dump(locks, f, indent=2)
+                    json.dump(data, f, indent=2)
                     f.truncate()
                     return True
             return False
         finally:
             fcntl.flock(f.fileno(), fcntl.LOCK_UN)
 
-def check_lock(file_path: str) -> dict | None:
+def check_lock(file_path: str) -> Optional[FileLock]:
     """Check if a file is locked."""
+    if not LOCK_FILE.exists():
+        return None
+
     with open(LOCK_FILE, "r") as f:
         fcntl.flock(f.fileno(), fcntl.LOCK_SH)
         try:
-            locks = json.load(f)
-            if file_path in locks["locks"]:
-                lock = locks["locks"][file_path]
-                expires = datetime.fromisoformat(lock["expires"])
+            data = json.load(f)
+            if file_path in data["locks"]:
+                lock = data["locks"][file_path]
+                expires = datetime.fromisoformat(lock["expires_at"])
                 if datetime.now() < expires:
-                    return lock
+                    return FileLock(**lock)
             return None
         finally:
             fcntl.flock(f.fileno(), fcntl.LOCK_UN)
-```
 
-### 3.4 Intent Signal System
+def get_stream_locks(stream_id: str) -> dict[str, FileLock]:
+    """Get all locks held by a stream."""
+    if not LOCK_FILE.exists():
+        return {}
 
-Before starting work, agents signal their intent to avoid conflicts:
-
-```python
-class IntentSignal:
-    """Signals agent's intention to work on specific files/modules."""
-
-    def signal_intent(self, agent_id: str, work_stream: str,
-                      files: list[str], description: str,
-                      estimated_duration_min: int) -> IntentResult:
-        """
-        Signal intent to work on files.
-
-        The system checks for conflicts with:
-        1. Active locks on any of the files
-        2. Other agents' intents overlapping
-        3. Dependency violations
-
-        Returns conflicts to resolve before proceeding.
-        """
-        pass
-
-    def check_conflicts(self, proposed_files: list[str]) -> list[Conflict]:
-        """Check for potential conflicts with proposed work."""
-        pass
-
-    def negotiate_partition(self, agent_a: str, agent_b: str,
-                           shared_module: str) -> PartitionResult:
-        """
-        Negotiate work partition when two agents need same module.
-
-        Strategy:
-        1. Identify specific functions/classes each needs
-        2. Propose non-overlapping scopes
-        3. If impossible, queue second agent
-        """
-        pass
-```
-
-### 3.5 Cross-Logger (JSONL Append-Only)
-
-All agent actions are logged to shared JSONL files (append-only for safe concurrent writes):
-
-**Log Files:**
-
-```text
-.claude/state/
-├── agent_activity.jsonl     # All agent actions (append-only)
-├── conflict_warnings.jsonl  # Conflict alerts (append-only)
-└── handoffs.json           # Handoff context between agents
-```
-
-**Activity Log Format:**
-
-```jsonl
-{"timestamp": "2025-12-06T10:00:00Z", "agent": "exec-agent-1", "stream": "execution", "action": "started", "task": "Fill predictor enhancement"}
-{"timestamp": "2025-12-06T10:01:00Z", "agent": "exec-agent-1", "stream": "execution", "action": "locked", "file": "execution/fill_predictor.py"}
-{"timestamp": "2025-12-06T10:30:00Z", "agent": "exec-agent-1", "stream": "execution", "action": "completed", "files_modified": 3, "tests_passed": true}
-{"timestamp": "2025-12-06T10:31:00Z", "agent": "exec-agent-1", "stream": "execution", "action": "released", "file": "execution/fill_predictor.py"}
-```
-
-**Conflict Warning Log:**
-
-```jsonl
-{"timestamp": "2025-12-06T10:15:00Z", "agent": "llm-agent-2", "warning": "news_analyzer.py imports from sentiment.py - llm-agent-1 has lock", "severity": "medium"}
-{"timestamp": "2025-12-06T10:20:00Z", "agent": "risk-agent-1", "warning": "volatility_surface.py depends on risk_manager.py - change in progress", "severity": "high"}
-```
-
-**Implementation:**
-
-```python
-# scripts/cross_logger.py
-import json
-from datetime import datetime
-from pathlib import Path
-import fcntl
-
-ACTIVITY_LOG = Path(".claude/state/agent_activity.jsonl")
-CONFLICT_LOG = Path(".claude/state/conflict_warnings.jsonl")
-
-def log_activity(agent_id: str, stream: str, action: str, **kwargs) -> None:
-    """Append activity to JSONL log (thread-safe)."""
-    entry = {
-        "timestamp": datetime.now().isoformat(),
-        "agent": agent_id,
-        "stream": stream,
-        "action": action,
-        **kwargs
-    }
-    _append_jsonl(ACTIVITY_LOG, entry)
-
-def log_conflict(agent_id: str, warning: str, severity: str = "medium") -> None:
-    """Log a potential conflict warning."""
-    entry = {
-        "timestamp": datetime.now().isoformat(),
-        "agent": agent_id,
-        "warning": warning,
-        "severity": severity
-    }
-    _append_jsonl(CONFLICT_LOG, entry)
-
-def _append_jsonl(file_path: Path, entry: dict) -> None:
-    """Append entry to JSONL file with file locking."""
-    file_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(file_path, "a") as f:
-        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+    with open(LOCK_FILE, "r") as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_SH)
         try:
-            f.write(json.dumps(entry) + "\n")
+            data = json.load(f)
+            return {
+                path: FileLock(**lock)
+                for path, lock in data["locks"].items()
+                if lock["stream_id"] == stream_id
+            }
         finally:
             fcntl.flock(f.fileno(), fcntl.LOCK_UN)
 
-def get_stream_log(stream: str, since: datetime = None) -> list[dict]:
-    """Get all log entries for a work stream."""
-    entries = []
-    if ACTIVITY_LOG.exists():
-        with open(ACTIVITY_LOG, "r") as f:
-            for line in f:
-                entry = json.loads(line.strip())
-                if entry.get("stream") == stream:
-                    if since is None or datetime.fromisoformat(entry["timestamp"]) >= since:
-                        entries.append(entry)
-    return entries
-```
+def cleanup_expired_locks() -> int:
+    """Remove expired locks. Returns count of locks removed."""
+    if not LOCK_FILE.exists():
+        return 0
 
-### 3.6 Handoff System
-
-For sequential dependencies between streams, handoffs provide context:
-
-**Handoff Format:**
-
-```json
-// .claude/state/handoffs.json
-{
-  "handoffs": [
-    {
-      "from_agent": "risk-agent-1",
-      "to_agents": ["exec-agent-1", "api-agent-1"],
-      "timestamp": "2025-12-06T11:00:00Z",
-      "completed_tasks": ["Risk manager refactoring", "Circuit breaker updates"],
-      "context": {
-        "new_interfaces": ["RiskEnforcementChain"],
-        "breaking_changes": ["RiskManager.validate() signature changed to validate(order, context)"],
-        "test_status": "all 47 tests passing",
-        "notes": "Dependent modules should update imports and call signatures"
-      }
-    }
-  ]
-}
-```
-
-**Usage:**
-
-```python
-def record_handoff(from_agent: str, to_agents: list[str],
-                   completed_tasks: list[str], context: dict) -> None:
-    """Record handoff context for dependent agents."""
-    handoff_file = Path(".claude/state/handoffs.json")
-
-    with open(handoff_file, "r+") as f:
+    with open(LOCK_FILE, "r+") as f:
         fcntl.flock(f.fileno(), fcntl.LOCK_EX)
         try:
             data = json.load(f)
-            data["handoffs"].append({
-                "from_agent": from_agent,
-                "to_agents": to_agents,
-                "timestamp": datetime.now().isoformat(),
-                "completed_tasks": completed_tasks,
-                "context": context
-            })
-            f.seek(0)
-            json.dump(data, f, indent=2)
-            f.truncate()
+            now = datetime.now()
+            expired = [
+                path for path, lock in data["locks"].items()
+                if datetime.fromisoformat(lock["expires_at"]) < now
+            ]
+            for path in expired:
+                del data["locks"][path]
+
+            if expired:
+                f.seek(0)
+                json.dump(data, f, indent=2)
+                f.truncate()
+            return len(expired)
         finally:
             fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+
+def _ensure_lock_file():
+    """Ensure lock file exists."""
+    if not LOCK_FILE.exists():
+        LOCK_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(LOCK_FILE, "w") as f:
+            json.dump({"locks": {}, "version": 2}, f)
+```
+
+### 4.2 Intent Signal System
+
+Proactive conflict prevention:
+
+```python
+# scripts/pucs/intent_signal.py - NEW
+
+import json
+from datetime import datetime
+from pathlib import Path
+from dataclasses import dataclass, field
+from typing import Optional
+from observability.logging.agent import AgentLogger
+
+@dataclass
+class Intent:
+    agent_id: str
+    stream_id: str
+    files: list[str]
+    description: str
+    estimated_duration_min: int
+    signaled_at: str = field(default_factory=lambda: datetime.now().isoformat())
+
+@dataclass
+class ConflictInfo:
+    file_path: str
+    conflict_type: str  # LOCKED, INTENT_OVERLAP, DEPENDENCY
+    holder_agent: str
+    holder_stream: str
+    details: str
+
+@dataclass
+class IntentResult:
+    success: bool
+    conflicts: list[ConflictInfo] = field(default_factory=list)
+    suggestions: list[str] = field(default_factory=list)
+
+INTENT_FILE = Path(".claude/state/pucs_intents.json")
+
+def signal_intent(agent_id: str, stream_id: str, files: list[str],
+                  description: str, estimated_duration_min: int) -> IntentResult:
+    """
+    Signal intent to work on files. Checks for conflicts before proceeding.
+
+    Returns IntentResult with any conflicts found.
+    """
+    from scripts.pucs.stream_locks import check_lock
+
+    conflicts = []
+    suggestions = []
+
+    # Check for locked files
+    for file_path in files:
+        lock = check_lock(file_path)
+        if lock and lock.agent_id != agent_id:
+            conflicts.append(ConflictInfo(
+                file_path=file_path,
+                conflict_type="LOCKED",
+                holder_agent=lock.agent_id,
+                holder_stream=lock.stream_id,
+                details=f"Locked until {lock.expires_at} for: {lock.task}"
+            ))
+            suggestions.append(f"Wait for {lock.agent_id} or work on different files")
+
+    # Check for intent overlaps
+    existing_intents = _get_active_intents()
+    for intent in existing_intents:
+        if intent.agent_id == agent_id:
+            continue
+        overlap = set(files) & set(intent.files)
+        if overlap:
+            conflicts.append(ConflictInfo(
+                file_path=", ".join(overlap),
+                conflict_type="INTENT_OVERLAP",
+                holder_agent=intent.agent_id,
+                holder_stream=intent.stream_id,
+                details=f"Agent intends to work on same files: {intent.description}"
+            ))
+            suggestions.append(f"Coordinate with {intent.agent_id} to partition work")
+
+    # Check for cross-stream dependencies
+    stream_config = _load_stream_config()
+    if stream_id in stream_config:
+        deps = stream_config[stream_id].get("dependencies", [])
+        for file_path in files:
+            for dep_stream in deps:
+                if _file_in_stream(file_path, dep_stream):
+                    conflicts.append(ConflictInfo(
+                        file_path=file_path,
+                        conflict_type="DEPENDENCY",
+                        holder_agent="N/A",
+                        holder_stream=dep_stream,
+                        details=f"File belongs to dependency stream {dep_stream}"
+                    ))
+
+    # Record intent if no conflicts
+    if not conflicts:
+        _record_intent(Intent(
+            agent_id=agent_id,
+            stream_id=stream_id,
+            files=files,
+            description=description,
+            estimated_duration_min=estimated_duration_min
+        ))
+
+    return IntentResult(
+        success=len(conflicts) == 0,
+        conflicts=conflicts,
+        suggestions=suggestions
+    )
+
+def clear_intent(agent_id: str) -> None:
+    """Clear an agent's intent (called when work is done)."""
+    _remove_intent(agent_id)
+
+def _get_active_intents() -> list[Intent]:
+    """Get all active intents."""
+    if not INTENT_FILE.exists():
+        return []
+    with open(INTENT_FILE, "r") as f:
+        data = json.load(f)
+        return [Intent(**i) for i in data.get("intents", [])]
+
+def _record_intent(intent: Intent) -> None:
+    """Record a new intent."""
+    _ensure_intent_file()
+    with open(INTENT_FILE, "r+") as f:
+        data = json.load(f)
+        # Remove any existing intent from same agent
+        data["intents"] = [i for i in data["intents"] if i["agent_id"] != intent.agent_id]
+        data["intents"].append({
+            "agent_id": intent.agent_id,
+            "stream_id": intent.stream_id,
+            "files": intent.files,
+            "description": intent.description,
+            "estimated_duration_min": intent.estimated_duration_min,
+            "signaled_at": intent.signaled_at
+        })
+        f.seek(0)
+        json.dump(data, f, indent=2)
+        f.truncate()
+
+def _remove_intent(agent_id: str) -> None:
+    """Remove an agent's intent."""
+    if not INTENT_FILE.exists():
+        return
+    with open(INTENT_FILE, "r+") as f:
+        data = json.load(f)
+        data["intents"] = [i for i in data["intents"] if i["agent_id"] != agent_id]
+        f.seek(0)
+        json.dump(data, f, indent=2)
+        f.truncate()
+
+def _ensure_intent_file():
+    if not INTENT_FILE.exists():
+        INTENT_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(INTENT_FILE, "w") as f:
+            json.dump({"intents": []}, f)
+
+def _load_stream_config() -> dict:
+    """Load stream configuration."""
+    config_path = Path("config/pucs_streams.yaml")
+    if config_path.exists():
+        import yaml
+        with open(config_path) as f:
+            return yaml.safe_load(f).get("streams", {})
+    return {}
+
+def _file_in_stream(file_path: str, stream_id: str) -> bool:
+    """Check if file belongs to a stream."""
+    from fnmatch import fnmatch
+    config = _load_stream_config()
+    if stream_id in config:
+        patterns = config[stream_id].get("files_pattern", "").split(",")
+        return any(fnmatch(file_path, p.strip()) for p in patterns)
+    return False
+```
+
+### 4.3 PUCS CLI
+
+Command-line interface for PUCS operations:
+
+```python
+# scripts/pucs/cli.py - NEW
+
+import argparse
+import json
+import sys
+from datetime import datetime
+from pathlib import Path
+
+def main():
+    parser = argparse.ArgumentParser(description="PUCS - Parallel Upgrade Coordination System")
+    subparsers = parser.add_subparsers(dest="command", help="Commands")
+
+    # init
+    init_parser = subparsers.add_parser("init", help="Initialize PUCS session")
+    init_parser.add_argument("--session", help="Session ID", default=None)
+
+    # status
+    status_parser = subparsers.add_parser("status", help="Show PUCS status")
+
+    # lock
+    lock_parser = subparsers.add_parser("lock", help="Acquire file lock")
+    lock_parser.add_argument("file", help="File to lock")
+    lock_parser.add_argument("--agent", required=True, help="Agent ID")
+    lock_parser.add_argument("--stream", required=True, help="Stream ID")
+    lock_parser.add_argument("--task", required=True, help="Task description")
+    lock_parser.add_argument("--duration", type=int, default=30, help="Lock duration in minutes")
+
+    # unlock
+    unlock_parser = subparsers.add_parser("unlock", help="Release file lock")
+    unlock_parser.add_argument("file", help="File to unlock")
+    unlock_parser.add_argument("--agent", required=True, help="Agent ID")
+
+    # intent
+    intent_parser = subparsers.add_parser("intent", help="Signal work intent")
+    intent_parser.add_argument("--agent", required=True, help="Agent ID")
+    intent_parser.add_argument("--stream", required=True, help="Stream ID")
+    intent_parser.add_argument("--files", required=True, help="Comma-separated file list")
+    intent_parser.add_argument("--description", required=True, help="Work description")
+    intent_parser.add_argument("--duration", type=int, default=30, help="Estimated duration")
+
+    # cleanup
+    cleanup_parser = subparsers.add_parser("cleanup", help="Cleanup expired locks")
+
+    args = parser.parse_args()
+
+    if args.command == "init":
+        cmd_init(args)
+    elif args.command == "status":
+        cmd_status(args)
+    elif args.command == "lock":
+        cmd_lock(args)
+    elif args.command == "unlock":
+        cmd_unlock(args)
+    elif args.command == "intent":
+        cmd_intent(args)
+    elif args.command == "cleanup":
+        cmd_cleanup(args)
+    else:
+        parser.print_help()
+
+def cmd_init(args):
+    """Initialize PUCS session."""
+    from scripts.pucs.stream_locks import _ensure_lock_file
+    from scripts.pucs.intent_signal import _ensure_intent_file
+
+    session_id = args.session or f"PUCS-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+
+    # Create state files
+    _ensure_lock_file()
+    _ensure_intent_file()
+
+    # Initialize session state (using existing OvernightStateManager pattern)
+    session_file = Path(".claude/state/pucs_session.json")
+    session_file.parent.mkdir(parents=True, exist_ok=True)
+    with open(session_file, "w") as f:
+        json.dump({
+            "session_id": session_id,
+            "started_at": datetime.now().isoformat(),
+            "streams": {},
+            "agents": []
+        }, f, indent=2)
+
+    print(f"PUCS session initialized: {session_id}")
+    print(f"State files created in .claude/state/")
+
+def cmd_status(args):
+    """Show PUCS status."""
+    from scripts.pucs.stream_locks import LOCK_FILE
+    from scripts.pucs.intent_signal import INTENT_FILE
+
+    print("=" * 60)
+    print("PUCS STATUS")
+    print("=" * 60)
+
+    # Session info
+    session_file = Path(".claude/state/pucs_session.json")
+    if session_file.exists():
+        with open(session_file) as f:
+            session = json.load(f)
+        print(f"\nSession: {session['session_id']}")
+        print(f"Started: {session['started_at']}")
+    else:
+        print("\nNo active session. Run 'pucs init' to start.")
+        return
+
+    # Locks
+    print("\n--- Active Locks ---")
+    if LOCK_FILE.exists():
+        with open(LOCK_FILE) as f:
+            locks = json.load(f).get("locks", {})
+        if locks:
+            for path, lock in locks.items():
+                print(f"  {path}")
+                print(f"    Agent: {lock['agent_id']} ({lock['stream_id']})")
+                print(f"    Task: {lock['task']}")
+                print(f"    Expires: {lock['expires_at']}")
+        else:
+            print("  (none)")
+    else:
+        print("  (none)")
+
+    # Intents
+    print("\n--- Active Intents ---")
+    if INTENT_FILE.exists():
+        with open(INTENT_FILE) as f:
+            intents = json.load(f).get("intents", [])
+        if intents:
+            for intent in intents:
+                print(f"  {intent['agent_id']} ({intent['stream_id']})")
+                print(f"    Files: {', '.join(intent['files'][:3])}...")
+                print(f"    Task: {intent['description']}")
+        else:
+            print("  (none)")
+    else:
+        print("  (none)")
+
+def cmd_lock(args):
+    """Acquire file lock."""
+    from scripts.pucs.stream_locks import acquire_lock, check_lock
+
+    # Check existing lock
+    existing = check_lock(args.file)
+    if existing:
+        print(f"ERROR: File already locked by {existing.agent_id}")
+        print(f"  Stream: {existing.stream_id}")
+        print(f"  Task: {existing.task}")
+        print(f"  Expires: {existing.expires_at}")
+        sys.exit(1)
+
+    success = acquire_lock(
+        file_path=args.file,
+        agent_id=args.agent,
+        stream_id=args.stream,
+        task=args.task,
+        duration_min=args.duration
+    )
+
+    if success:
+        print(f"Lock acquired: {args.file}")
+    else:
+        print(f"Failed to acquire lock: {args.file}")
+        sys.exit(1)
+
+def cmd_unlock(args):
+    """Release file lock."""
+    from scripts.pucs.stream_locks import release_lock
+
+    success = release_lock(args.file, args.agent)
+    if success:
+        print(f"Lock released: {args.file}")
+    else:
+        print(f"Failed to release lock (not owner or not locked)")
+        sys.exit(1)
+
+def cmd_intent(args):
+    """Signal work intent."""
+    from scripts.pucs.intent_signal import signal_intent
+
+    files = [f.strip() for f in args.files.split(",")]
+    result = signal_intent(
+        agent_id=args.agent,
+        stream_id=args.stream,
+        files=files,
+        description=args.description,
+        estimated_duration_min=args.duration
+    )
+
+    if result.success:
+        print(f"Intent signaled successfully for {len(files)} files")
+    else:
+        print("CONFLICTS DETECTED:")
+        for conflict in result.conflicts:
+            print(f"  - {conflict.conflict_type}: {conflict.file_path}")
+            print(f"    Holder: {conflict.holder_agent} ({conflict.holder_stream})")
+            print(f"    Details: {conflict.details}")
+        if result.suggestions:
+            print("\nSuggestions:")
+            for suggestion in result.suggestions:
+                print(f"  - {suggestion}")
+        sys.exit(1)
+
+def cmd_cleanup(args):
+    """Cleanup expired locks."""
+    from scripts.pucs.stream_locks import cleanup_expired_locks
+
+    count = cleanup_expired_locks()
+    print(f"Cleaned up {count} expired locks")
+
+if __name__ == "__main__":
+    main()
 ```
 
 ---
 
-## 4. Conflict Detection & Resolution
+## 5. Git Worktree Strategy
 
-### 4.1 Conflict Types
+### 5.1 Setup
 
-| Type | Description | Auto-Resolution |
-|------|-------------|-----------------|
-| FILE_LOCK | Two agents need same file | Queue second agent |
-| DEPENDENCY | Change affects dependent module | Notify dependent agent |
-| SEMANTIC | Same function modified differently | Manual merge required |
-| RESOURCE | Shared resource (DB, API) contention | Rate limiting |
-
-### 4.2 Resolution Strategies
-
-```python
-class ConflictResolver:
-    """Resolves conflicts between parallel agents."""
-
-    STRATEGIES = {
-        "QUEUE": "Second agent waits for first to complete",
-        "PARTITION": "Split work into non-overlapping scopes",
-        "MERGE": "Attempt automatic merge of changes",
-        "ARBITRATE": "Coordinator decides which change wins",
-        "ROLLBACK": "Revert one agent's changes"
-    }
-
-    def resolve(self, conflict: Conflict) -> Resolution:
-        """
-        Resolve a detected conflict.
-
-        Resolution flow:
-        1. Check if auto-resolution possible
-        2. If PARTITION possible, propose split
-        3. If MERGE possible, attempt merge
-        4. Otherwise, QUEUE or ARBITRATE
-        """
-        pass
-
-    def auto_merge(self, file_path: str,
-                   change_a: Change, change_b: Change) -> MergeResult:
-        """
-        Attempt automatic merge of two changes.
-
-        Only works if:
-        - Changes are to different functions/classes
-        - Changes are additive (not modifying same lines)
-        - No semantic conflicts detected
-        """
-        pass
-```
-
-### 4.3 Dependency Violation Detection
-
-```python
-class DependencyChecker:
-    """Detects changes that might break dependent modules."""
-
-    def check_impact(self, changed_file: str,
-                     changes: list[Change]) -> ImpactReport:
-        """
-        Analyze impact of changes on dependent modules.
-
-        Checks:
-        1. Function signature changes
-        2. Removed/renamed exports
-        3. Changed return types
-        4. Modified class hierarchies
-        """
-        pass
-
-    def notify_dependents(self, impact: ImpactReport) -> None:
-        """Notify agents working on dependent modules."""
-        pass
-```
-
----
-
-## 5. Git Integration
-
-### 5.1 Git Worktree Strategy (Preferred)
-
-**Why Worktrees?** Each parallel stream gets its own working directory, providing true isolation with no merge conflicts until explicit merge:
+Each stream gets its own worktree for true isolation:
 
 ```bash
 # Create worktrees for parallel streams (from main repo)
-git worktree add ../trading-bot-stream-exec feature/stream-execution
-git worktree add ../trading-bot-stream-llm feature/stream-llm
-git worktree add ../trading-bot-stream-scan feature/stream-scanners
-git worktree add ../trading-bot-stream-risk feature/stream-risk
-git worktree add ../trading-bot-stream-back feature/stream-backtesting
-git worktree add ../trading-bot-stream-obs feature/stream-observability
-git worktree add ../trading-bot-stream-api feature/stream-api
+git worktree add ../trading-bot-stream-exec feature/stream-EXEC
+git worktree add ../trading-bot-stream-llm feature/stream-LLM
+git worktree add ../trading-bot-stream-scan feature/stream-SCAN
+git worktree add ../trading-bot-stream-risk feature/stream-RISK
+git worktree add ../trading-bot-stream-back feature/stream-BACK
+git worktree add ../trading-bot-stream-obs feature/stream-OBS
+git worktree add ../trading-bot-stream-api feature/stream-API
 ```
 
-**Directory Structure:**
-
-```
-/home/user/projects/
-├── Claude_code_Quantconnect_trading_bot/  (main repo)
-├── trading-bot-stream-exec/               (execution worktree)
-├── trading-bot-stream-llm/                (llm worktree)
-├── trading-bot-stream-scan/               (scanners worktree)
-└── ...
-```
-
-### 5.2 Branch Naming Convention
-
-```
-feature/stream-{NAME}-{description}
-├── feature/stream-execution-fill-predictor
-├── feature/stream-llm-sentiment-analysis
-├── feature/stream-risk-circuit-breaker
-└── ...
-```
-
-### 5.3 Commit Protocol
+### 5.2 Commit Protocol
 
 ```bash
 # Format: [PUCS-<stream>] <type>: <description>
-# Example commits:
-
-[PUCS-execution] feat: Add ML model to fill predictor
-[PUCS-llm] fix: Correct sentiment analysis threshold
-[PUCS-risk] refactor: Simplify circuit breaker logic
-
-# Merge strategy: Each stream merges to develop via PR
-# Use --no-ff to preserve stream history
+[PUCS-EXEC] feat: Add ML model to fill predictor
+[PUCS-LLM] fix: Correct sentiment analysis threshold
+[PUCS-RISK] refactor: Simplify circuit breaker logic
 ```
 
-### 5.4 Merge Order (Dependency-Based)
+### 5.3 Merge Order (Dependency-Based)
 
-```
+```text
 Phase 1 (Parallel - No Dependencies):
-  └── Streams: observability, scanners, backtesting
+  └── Streams: OBS, SCAN, BACK
 
 Phase 2 (After Phase 1):
-  └── Streams: execution, llm, risk
+  └── Streams: EXEC, LLM, RISK
 
 Phase 3 (After Phase 2):
-  └── Streams: api
+  └── Streams: API
 
 Phase 4 (After All):
   └── Applications: algorithms, ui, mcp
 ```
 
-### 5.3 Automated Conflict Prevention
-
-```yaml
-# .github/workflows/pucs-check.yml
-name: PUCS Conflict Check
-
-on:
-  pull_request:
-    branches: ['pucs/*']
-
-jobs:
-  conflict-check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check for file conflicts
-        run: |
-          # Get list of modified files
-          FILES=$(git diff --name-only origin/develop...HEAD)
-
-          # Check against PUCS state store
-          python scripts/pucs_conflict_check.py --files "$FILES"
-
-      - name: Validate stream boundaries
-        run: |
-          # Ensure changes stay within stream boundaries
-          python scripts/pucs_boundary_check.py
-
-      - name: Run stream-specific tests
-        run: |
-          pytest tests/ -m "$STREAM_NAME" -v
-```
-
 ---
 
-## 6. Agent Coordination Protocol
+## 6. Agent Lifecycle
 
-### 6.1 Agent Lifecycle
-
-```
-┌──────────────────────────────────────────────────────────┐
-│                    AGENT LIFECYCLE                        │
-├──────────────────────────────────────────────────────────┤
-│                                                          │
-│  1. REGISTER                                             │
-│     └── Register with coordinator, receive agent_id     │
-│                                                          │
-│  2. CLAIM_STREAM                                         │
-│     └── Request assignment to work stream               │
-│                                                          │
-│  3. SIGNAL_INTENT                                        │
-│     └── Declare files/modules to work on                │
-│                                                          │
-│  4. ACQUIRE_LOCKS                                        │
-│     └── Lock files before modification                  │
-│                                                          │
-│  5. WORK                                                 │
-│     └── Perform development tasks                       │
-│     └── Log all actions to cross-logger                 │
-│                                                          │
-│  6. COMMIT                                               │
-│     └── Commit changes to stream branch                 │
-│                                                          │
-│  7. RELEASE_LOCKS                                        │
-│     └── Release all held locks                          │
-│                                                          │
-│  8. REPORT                                               │
-│     └── Report completion status to coordinator         │
-│                                                          │
-│  9. HANDOFF (optional)                                   │
-│     └── Transfer work to another agent if needed        │
-│                                                          │
-└──────────────────────────────────────────────────────────┘
-```
-
-### 6.2 Communication Protocol
-
-```python
-# Agent-to-Coordinator messages
-
-class AgentMessage:
-    REGISTER = "register"           # Agent starting up
-    CLAIM_STREAM = "claim_stream"   # Request stream assignment
-    SIGNAL_INTENT = "signal_intent" # Declare work scope
-    ACQUIRE_LOCK = "acquire_lock"   # Request file lock
-    RELEASE_LOCK = "release_lock"   # Release file lock
-    LOG_ACTION = "log_action"       # Log to cross-logger
-    REPORT_CONFLICT = "report_conflict"  # Report detected conflict
-    REQUEST_HELP = "request_help"   # Need coordinator intervention
-    COMPLETE_TASK = "complete_task" # Task finished
-    HANDOFF = "handoff"             # Transfer to another agent
-
-# Coordinator-to-Agent messages
-
-class CoordinatorMessage:
-    REGISTERED = "registered"       # Registration confirmed
-    STREAM_ASSIGNED = "stream_assigned"  # Stream assignment
-    LOCK_GRANTED = "lock_granted"   # Lock request approved
-    LOCK_DENIED = "lock_denied"     # Lock request denied (with reason)
-    CONFLICT_ALERT = "conflict_alert"  # Potential conflict detected
-    TASK_ASSIGNED = "task_assigned" # New task to work on
-    PAUSE = "pause"                 # Stop current work (conflict resolution)
-    RESUME = "resume"               # Continue after pause
-    TERMINATE = "terminate"         # Agent should stop
-```
-
----
-
-## 7. Monitoring Dashboard
-
-### 7.1 Real-Time Status Display
-
-```
-╔══════════════════════════════════════════════════════════════════╗
-║              PUCS MONITORING DASHBOARD                           ║
-╠══════════════════════════════════════════════════════════════════╣
-║                                                                  ║
-║  SESSION: PUCS-20251206-001  │  STARTED: 10:00 AM  │  3h 45m    ║
-║                                                                  ║
-║  ┌────────────────────────────────────────────────────────────┐  ║
-║  │  WORK STREAMS STATUS                                        │  ║
-║  ├────────────────────────────────────────────────────────────┤  ║
-║  │  execution     ██████████████░░░░░░  70%  [3 agents]       │  ║
-║  │  llm           █████████░░░░░░░░░░░  45%  [4 agents]       │  ║
-║  │  scanners      ████████████████████  100% [2 agents] ✓     │  ║
-║  │  risk          ███████████████░░░░░  75%  [2 agents]       │  ║
-║  │  backtesting   ██████░░░░░░░░░░░░░░  30%  [2 agents]       │  ║
-║  │  observability ████████████████░░░░  80%  [2 agents]       │  ║
-║  │  api           █████████████░░░░░░░  65%  [3 agents]       │  ║
-║  └────────────────────────────────────────────────────────────┘  ║
-║                                                                  ║
-║  ┌────────────────────────────────────────────────────────────┐  ║
-║  │  ACTIVE LOCKS                                               │  ║
-║  ├────────────────────────────────────────────────────────────┤  ║
-║  │  config/__init__.py     │  risk-agent-1   │  25 min left   │  ║
-║  │  execution/fill_pred.py │  exec-agent-2   │  15 min left   │  ║
-║  │  llm/agents/base.py     │  llm-agent-1    │  40 min left   │  ║
-║  └────────────────────────────────────────────────────────────┘  ║
-║                                                                  ║
-║  ┌────────────────────────────────────────────────────────────┐  ║
-║  │  RECENT ACTIVITY (last 10 entries)                         │  ║
-║  ├────────────────────────────────────────────────────────────┤  ║
-║  │  13:42  exec-agent-1   CHANGE  Modified fill_predictor.py  │  ║
-║  │  13:40  llm-agent-3    INFO    Starting sentiment analysis │  ║
-║  │  13:38  risk-agent-1   CHANGE  Updated circuit_breaker.py  │  ║
-║  │  13:35  obs-agent-2    INFO    Added new metrics endpoint  │  ║
-║  │  ...                                                       │  ║
-║  └────────────────────────────────────────────────────────────┘  ║
-║                                                                  ║
-║  CONFLICTS: 0  │  QUEUED: 2  │  COMMITS: 47  │  TESTS: ✓ ALL   ║
-║                                                                  ║
-╚══════════════════════════════════════════════════════════════════╝
-```
-
----
-
-## 8. Implementation Plan
-
-### Phase 1: Foundation (Week 1)
-- [ ] Implement State Store with file-based persistence
-- [ ] Create Lock Manager with basic EXCLUSIVE locks
-- [ ] Set up Cross-Logger infrastructure
-- [ ] Define stream boundaries in configuration
-
-### Phase 2: Coordination (Week 2)
-- [ ] Implement Intent Signal system
-- [ ] Add conflict detection algorithms
-- [ ] Create basic conflict resolution (QUEUE strategy)
-- [ ] Build agent communication protocol
-
-### Phase 3: Git Integration (Week 3)
-- [ ] Set up branch structure automation
-- [ ] Create PR templates for streams
-- [ ] Implement automated conflict checks
-- [ ] Add stream-specific test runners
-
-### Phase 4: Monitoring (Week 4)
-- [ ] Build monitoring dashboard
-- [ ] Add real-time status updates
-- [ ] Create alerting for conflicts
-- [ ] Implement session reports
-
-### Phase 5: Advanced Features (Week 5+)
-- [ ] Add PARTITION conflict resolution
-- [ ] Implement auto-merge capabilities
-- [ ] Create dependency impact analysis
-- [ ] Build coordinator arbitration logic
-
----
-
-## 9. State Initialization
-
-Before starting a PUCS session, initialize the required state files:
-
-```bash
-#!/bin/bash
-# scripts/init_pucs_state.sh
-
-mkdir -p .claude/state/logs
-
-# Initialize file locks
-echo '{"locks": {}, "version": 1}' > .claude/state/file_locks.json
-
-# Initialize orchestrator state
-echo '{"streams": {}, "started_at": null}' > .claude/state/orchestrator_state.json
-
-# Initialize handoffs
-echo '{"handoffs": []}' > .claude/state/handoffs.json
-
-# Create empty activity logs (JSONL - append-only)
-touch .claude/state/agent_activity.jsonl
-touch .claude/state/conflict_warnings.jsonl
-
-echo "PUCS state initialized!"
-```
-
-**Required State Files:**
+### 6.1 Protocol (Using Existing Systems)
 
 ```text
-.claude/state/
-├── file_locks.json          # Current file locks
-├── agent_activity.jsonl     # Activity log (append-only)
-├── conflict_warnings.jsonl  # Conflict warnings (append-only)
-├── handoffs.json           # Handoff context
-├── orchestrator_state.json # Orchestrator state
-└── logs/
-    ├── exec-agent-1.log
-    ├── llm-agent-1.log
-    └── ...
+┌──────────────────────────────────────────────────────────────────────────┐
+│                         PUCS AGENT LIFECYCLE                              │
+│                    (Integrates with agent_orchestrator.py)                │
+├──────────────────────────────────────────────────────────────────────────┤
+│                                                                           │
+│  1. REGISTER                                                              │
+│     └── Use existing agent_orchestrator.py registration                  │
+│     └── AgentLogger.log_session_start()                                  │
+│                                                                           │
+│  2. CLAIM_STREAM                                                          │
+│     └── Request assignment via PUCS CLI: pucs intent                     │
+│                                                                           │
+│  3. SIGNAL_INTENT                                                         │
+│     └── signal_intent() checks conflicts proactively                     │
+│     └── AgentLogger.log("intent_signaled", ...)                          │
+│                                                                           │
+│  4. ACQUIRE_LOCKS                                                         │
+│     └── acquire_lock() for each file                                     │
+│     └── AgentLogger.log_file_modified() when starting                    │
+│                                                                           │
+│  5. WORK                                                                  │
+│     └── Perform development tasks                                        │
+│     └── Use existing Tracer for execution tracing                        │
+│     └── Log all actions via AgentLogger                                  │
+│                                                                           │
+│  6. COMMIT                                                                │
+│     └── AgentLogger.log_git_commit()                                     │
+│     └── Use [PUCS-<stream>] commit prefix                                │
+│                                                                           │
+│  7. RELEASE_LOCKS                                                         │
+│     └── release_lock() for each file                                     │
+│     └── clear_intent() to remove intent                                  │
+│                                                                           │
+│  8. REPORT                                                                │
+│     └── AgentLogger.log_task_completed()                                 │
+│                                                                           │
+│  9. HANDOFF                                                               │
+│     └── AgentLogger.log_session_handoff()                                │
+│     └── Update .claude/state/handoff.json                                │
+│                                                                           │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 10. Usage Example
+## 7. State Files Summary
 
-### Starting a PUCS Session
+### 7.1 Existing Files (DO NOT DUPLICATE)
 
-```bash
-# 1. Initialize state files
-./scripts/init_pucs_state.sh
+| File | System | Purpose |
+|------|--------|---------|
+| `.claude/state/handoff.json` | AgentLogger | Agent handoff context |
+| `.claude/state/agent_activity.jsonl` | AgentLogger | Activity audit trail |
+| `.claude/state/ric.json` | RIC Loop | Session state |
+| `.claude/state/circuit_breaker.json` | AgentCircuitBreaker | Failure tracking |
+| `logs/overnight_state.json` | OvernightStateManager | Unified session state |
 
-# 2. Initialize a new PUCS session
-python scripts/pucs.py init --session "PUCS-20251206-001"
+### 7.2 New PUCS Files
 
-# 2. Launch parallel agents for each stream
-python scripts/pucs.py launch-stream execution --agents 3
-python scripts/pucs.py launch-stream llm --agents 4
-python scripts/pucs.py launch-stream scanners --agents 2
-# ... etc
+| File | System | Purpose |
+|------|--------|---------|
+| `.claude/state/pucs_locks.json` | Stream Lock Manager | File-level locks |
+| `.claude/state/pucs_intents.json` | Intent Signal | Work intent tracking |
+| `.claude/state/pucs_session.json` | PUCS CLI | Session metadata |
+| `config/pucs_streams.yaml` | Stream Config | Stream definitions |
 
-# 3. Monitor progress
-python scripts/pucs.py dashboard
+---
 
-# 4. View cross-log
-python scripts/pucs.py log --stream all --since "1h"
+## 8. Conflict Resolution
 
-# 5. Check for conflicts
-python scripts/pucs.py conflicts --unresolved
+### 8.1 Resolution Strategies
 
-# 6. Finalize session (merge all streams)
-python scripts/pucs.py finalize
-```
+| Strategy | When Used | Automation |
+|----------|-----------|------------|
+| QUEUE | File locked by another agent | Auto: wait for lock expiry |
+| PARTITION | Multiple agents need same module | Semi-auto: suggest function split |
+| MERGE | Non-overlapping changes to same file | Auto: git merge (if clean) |
+| ARBITRATE | Semantic conflict | Manual: coordinator decides |
+| ROLLBACK | Breaking change detected | Semi-auto: revert + notify |
 
-### Agent Commands (from within an agent)
+### 8.2 Automatic Resolution
 
 ```python
-from pucs import PUCSClient
+# Integrated with existing FallbackRouter pattern
+from .claude.hooks.agents.agent_orchestrator import FallbackRouter
 
-# Initialize client
-pucs = PUCSClient(agent_id="exec-agent-1", stream="execution")
+class PUCSConflictResolver:
+    def __init__(self, fallback_router: FallbackRouter):
+        self.fallback = fallback_router
 
-# Signal intent before starting work
-intent_result = pucs.signal_intent(
-    files=["execution/fill_predictor.py", "execution/fill_ml_model.py"],
-    description="Adding gradient boosting model for fill prediction",
-    estimated_duration_min=45
-)
+    def resolve(self, conflict: ConflictInfo) -> str:
+        if conflict.conflict_type == "LOCKED":
+            # Queue: wait for lock to expire
+            return f"QUEUE: Wait for {conflict.holder_agent}'s lock to expire"
 
-if intent_result.conflicts:
-    # Handle conflicts
-    for conflict in intent_result.conflicts:
-        print(f"Conflict: {conflict.file} - {conflict.holder}")
-else:
-    # Acquire locks and proceed
-    locks = pucs.acquire_locks(intent_result.files)
+        elif conflict.conflict_type == "INTENT_OVERLAP":
+            # Try partition
+            return f"PARTITION: Coordinate with {conflict.holder_agent}"
 
-    # ... do work ...
+        elif conflict.conflict_type == "DEPENDENCY":
+            # Use fallback router
+            return self.fallback.get_fallback_suggestion(conflict.holder_stream)
 
-    # Log changes
-    pucs.log_change(
-        action="Modified fill_predictor.py",
-        files=["execution/fill_predictor.py"],
-        details={"lines_added": 120, "functions_added": 3}
-    )
-
-    # Release locks when done
-    pucs.release_locks()
+        return "MANUAL: Requires coordinator intervention"
 ```
 
 ---
 
-## 10. Configuration
+## 9. Quick Reference
 
-### pucs_config.yaml
+### 9.1 CLI Commands
 
-```yaml
-# PUCS Configuration
+```bash
+# Initialize session
+python -m scripts.pucs.cli init --session "PUCS-20251207-001"
 
-session:
-  max_duration_hours: 8
-  auto_finalize: false
+# Check status
+python -m scripts.pucs.cli status
 
-streams:
-  execution:
-    files_pattern: "execution/**/*.py"
-    max_agents: 4
-    dependencies: ["config", "models"]
-    test_pattern: "tests/test_*execution*.py"
+# Signal intent
+python -m scripts.pucs.cli intent \
+  --agent "exec-agent-1" \
+  --stream "EXEC" \
+  --files "execution/fill_predictor.py,execution/fill_ml_model.py" \
+  --description "Adding ML model" \
+  --duration 45
 
-  llm:
-    files_pattern: "llm/**/*.py"
-    max_agents: 5
-    dependencies: ["config"]
-    test_pattern: "tests/test_*llm*.py"
+# Acquire lock
+python -m scripts.pucs.cli lock execution/fill_predictor.py \
+  --agent "exec-agent-1" \
+  --stream "EXEC" \
+  --task "ML model implementation"
 
-  scanners:
-    files_pattern: "scanners/**/*.py,indicators/**/*.py"
-    max_agents: 3
-    dependencies: ["config", "llm"]
-    test_pattern: "tests/test_*scanner*.py"
+# Release lock
+python -m scripts.pucs.cli unlock execution/fill_predictor.py \
+  --agent "exec-agent-1"
 
-  risk:
-    files_pattern: "models/risk*.py,models/circuit*.py,compliance/**/*.py"
-    max_agents: 2
-    critical: true  # Requires extra review
-    dependencies: ["config"]
-    test_pattern: "tests/test_*risk*.py,tests/test_circuit*.py"
+# Cleanup expired locks
+python -m scripts.pucs.cli cleanup
+```
 
-  backtesting:
-    files_pattern: "backtesting/**/*.py,evaluation/**/*.py"
-    max_agents: 3
-    dependencies: ["models"]
-    test_pattern: "tests/test_*backtest*.py"
+### 9.2 Integration with Existing CLI
 
-  observability:
-    files_pattern: "observability/**/*.py"
-    max_agents: 3
-    dependencies: []
-    test_pattern: "tests/test_*observability*.py"
+PUCS integrates with the existing agent orchestrator CLI:
 
-  api:
-    files_pattern: "api/**/*.py,mcp/**/*.py"
-    max_agents: 3
-    dependencies: ["execution", "models"]
-    test_pattern: "tests/test_*api*.py"
+```bash
+# Existing: agent_orchestrator.py commands
+python .claude/hooks/agents/agent_orchestrator.py status
+python .claude/hooks/agents/agent_orchestrator.py ric-phase
+python .claude/hooks/agents/agent_orchestrator.py trace --recent
 
-critical_files:
-  - path: "config/__init__.py"
-    max_lock_duration_min: 30
-    requires_review: true
-
-  - path: "models/circuit_breaker.py"
-    max_lock_duration_min: 45
-    requires_review: true
-    test_required: true
-
-  - path: "models/risk_manager.py"
-    max_lock_duration_min: 45
-    requires_review: true
-    test_required: true
-
-locks:
-  default_duration_min: 30
-  max_duration_min: 120
-  queue_timeout_min: 60
-
-logging:
-  level: INFO
-  persist_path: ".claude/state/pucs_log.json"
-  max_entries: 10000
-
-conflict_resolution:
-  auto_merge: true
-  partition_enabled: true
-  arbitration_timeout_min: 15
+# New: PUCS commands
+python -m scripts.pucs.cli status
+python -m scripts.pucs.cli intent ...
 ```
 
 ---
 
-## 11. Best Practices
+## 10. References
 
-### For Parallel Agents
+### Existing Systems (Integrate, Don't Duplicate)
 
-1. **Always signal intent before starting work**
-   - Prevents conflicts and enables coordination
+| System | Location | Lines | Purpose |
+|--------|----------|-------|---------|
+| Agent Orchestrator | `.claude/hooks/agents/agent_orchestrator.py` | 2533 | Multi-agent coordination |
+| AgentLogger | `observability/logging/agent.py` | 719 | Activity logging |
+| OvernightStateManager | `utils/overnight_state.py` | 250+ | State persistence |
+| AgentCircuitBreaker | `agent_orchestrator.py:224-333` | 109 | Failure management |
+| Tracer | `agent_orchestrator.py:1407-1633` | 226 | Execution tracing |
+| Multi-Agent Consensus | `llm/agents/multi_agent_consensus.py` | 701 | Trading consensus |
+| Evaluation Orchestrator | `evaluation/orchestration_pipeline.py` | 1230 | Evaluation pipeline |
 
-2. **Acquire minimal locks**
-   - Lock only files you're actively modifying
-   - Release locks as soon as possible
-
-3. **Stay within stream boundaries**
-   - Don't modify files outside your assigned stream
-   - Request cross-stream work through coordinator
-
-4. **Log all significant actions**
-   - Enables debugging and coordination
-   - Helps other agents understand changes
-
-5. **Run tests before releasing locks**
-   - Ensures changes don't break the stream
-   - Catches issues early
-
-### For Session Coordinators
-
-1. **Monitor conflict rates**
-   - High conflict rate indicates poor stream partitioning
-   - Consider adjusting boundaries
-
-2. **Balance agent counts**
-   - More agents ≠ faster completion
-   - Optimal is typically 2-4 per stream
-
-3. **Review critical file changes**
-   - Changes to critical files affect multiple streams
-   - Require human review before merge
-
-4. **Finalize incrementally**
-   - Merge completed streams early
-   - Don't wait for all streams to finish
-
----
-
-## 12. References
-
-### Industry Best Practices
+### External References
 
 - [Microsoft AI Agent Design Patterns](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns)
 - [Anthropic Multi-Agent Research System](https://www.anthropic.com/engineering/multi-agent-research-system)
-- [Google Agent Development Kit](https://developers.googleblog.com/en/agent-development-kit-easy-to-build-multi-agent-applications/)
-- [Agent-MCP Framework](https://github.com/rinadelph/Agent-MCP)
-- [Git Branching Strategies](https://www.abtasty.com/blog/git-branching-strategies/)
-- [Agentic Swarm Coding](https://www.augmentcode.com/guides/what-is-agentic-swarm-coding-definition-architecture-and-use-cases)
-- [Simon Willison: Parallel Coding Agent Lifestyle](https://simonwillison.net/2025/Oct/5/parallel-coding-agents/)
-- [AI Native Dev: Parallelizing AI Coding Agents](https://ainativedev.io/news/how-to-parallelize-ai-coding-agents)
-- [Metacircuits: Managing Parallel Coding Agents](https://metacircuits.substack.com/p/managing-parallel-coding-agents-without)
-- [Parallel AI Development with Git Worktrees](https://medium.com/@ooi_yee_fei/parallel-ai-development-with-git-worktrees-f2524afc3e33)
-- [Solving Parallel Workflow Conflicts](https://raminmammadzada.medium.com/solving-parallel-workflow-conflicts-between-ai-agents-and-developers-in-shared-codebases-286504422125)
+- [Git Worktrees for Parallel Development](https://medium.com/@ooi_yee_fei/parallel-ai-development-with-git-worktrees-f2524afc3e33)
 - [Claude Flow Framework](https://github.com/ruvnet/claude-flow)
-- [Running Claude Agents in Parallel](https://www.curiouslychase.com/ai-development/running-claude-agents-in-parallel-with-git-worktrees)
-
-### Project Documentation
-
-- [docs/ARCHITECTURE.md](ARCHITECTURE.md) - Project architecture
-- [docs/PARALLEL_AGENT_COORDINATION.md](PARALLEL_AGENT_COORDINATION.md) - Original coordination doc (superseded)
-- [.claude/hooks/agents/agent_orchestrator.py](../.claude/hooks/agents/agent_orchestrator.py) - Existing agent orchestration
-- [.claude/RIC_CONTEXT.md](../.claude/RIC_CONTEXT.md) - RIC Loop integration
 
 ---
 
-## Appendix A: Work Stream Task Breakdown
+## Appendix A: Migration from v1.1
 
-### Stream 1: Execution (15 parallelizable tasks)
-1. Fill predictor ML model improvements
-2. Slippage monitoring enhancements
-3. Liquidity scoring algorithm
-4. Smart execution cancel/replace logic
-5. Profit-taking threshold optimization
-6. Spread analysis improvements
-7. Arbitrage executor refinements
-8. Execution quality metrics
-9. Pre-trade validator enhancements
-10. Recurring order manager updates
-11. Bot-managed positions improvements
-12. Option strategies executor
-13. Manual legs executor
-14. Cancel optimizer
-15. Fill ML model training
+### Files Removed (Superseded by Existing Systems)
 
-### Stream 2: LLM Agents (20 parallelizable tasks)
-1. Fine-tune trader persona
-2. Fine-tune analyst persona
-3. Fine-tune risk manager persona
-4. Improve debate mechanism convergence
-5. Add new sentiment signals
-6. Optimize ensemble weights
-7. Add derivatives specialist agent
-8. Improve news analyzer
-9. Enhance emotion detector
-10. Reddit sentiment improvements
-11. Entity extractor updates
-12. Signal aggregator refinements
-13. Cost optimization improvements
-14. Prompt optimizer updates
-15. Model router enhancements
-16. Guardrails improvements
-17. Safe agent wrapper updates
-18. Reasoning logger enhancements
-19. Multi-agent consensus improvements
-20. Supervisor orchestration updates
+| v1.1 Proposed | Now Uses |
+|---------------|----------|
+| `scripts/cross_logger.py` | `AgentLogger` |
+| `scripts/agent_lock.py` | `scripts/pucs/stream_locks.py` |
+| `.claude/state/orchestrator_state.json` | `OvernightStateManager` |
+| `.claude/state/handoffs.json` (plural) | `.claude/state/handoff.json` (singular) |
 
-### (Additional streams have similar breakdowns)
+### New Files Added
+
+| File | Purpose |
+|------|---------|
+| `scripts/pucs/__init__.py` | Package init |
+| `scripts/pucs/stream_locks.py` | File locking for parallel work |
+| `scripts/pucs/intent_signal.py` | Proactive conflict prevention |
+| `scripts/pucs/cli.py` | Command-line interface |
+| `config/pucs_streams.yaml` | Stream configuration |
 
 ---
 
-**Document Status:** Proposal - Awaiting Review
-**Next Steps:** Implement Phase 1 (Foundation)
+**Document Status:** Active
+**Version:** 2.0 (Unified Framework)
+**Last Updated:** December 7, 2025

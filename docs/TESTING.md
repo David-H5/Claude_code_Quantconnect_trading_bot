@@ -971,3 +971,186 @@ Test Suite Statistics (Final):
 | `test_creation` | 28 | Use `assert_factory_creates_valid()` | -28 |
 | Manual mock setup | 100+ | Use builders | Ongoing |
 | **Total** | **140+** | **Helpers available** | **Framework ready** |
+
+---
+
+## Safety vs Bloat Analysis (Compiled Best Practices)
+
+### Classification Framework
+
+Tests are classified into three tiers based on their criticality:
+
+| Tier | Description | Action | Examples |
+|------|-------------|--------|----------|
+| **TIER 1: Safety-Critical** | Prevents financial loss, regulatory violations | NEVER REMOVE | Circuit breakers, risk limits, compliance |
+| **TIER 2: Correctness** | Ensures correct behavior | Consolidate if duplicate | Order lifecycle, calculations, state machines |
+| **TIER 3: Convenience** | Nice-to-have, may duplicate | Remove/consolidate aggressively | test_to_dict, test_creation patterns |
+
+### Current Safety Coverage (TIER 1)
+
+```
+Safety-Critical Test Distribution:
+├── Circuit Breaker Tests:      107 tests (test_circuit_breaker.py)
+├── Risk Management Tests:      102 tests (test_risk_management.py)
+├── Pre-Trade Validation:       28 tests (test_pre_trade_validator.py)
+├── Compliance/Audit:           40+ tests (compliance/)
+├── Safety Gap Regression:      22 tests (regression/test_safety_critical_gaps.py)
+├── Historical Bug Regression:  23 tests (regression/test_historical_bugs.py)
+└── Total Safety-Critical:      ~320 tests (NEVER REMOVE)
+```
+
+### Bloat Candidates (TIER 3)
+
+```
+Consolidation Opportunities:
+├── test_to_dict patterns:      61 instances → 1 parametrized test
+├── test_default_config:        18 instances → 1 parametrized test
+├── test_creation patterns:     28 instances → 1 parametrized test
+├── Duplicate mock classes:     9 classes → import from centralized
+├── Duplicate fixtures:         2 fixtures → move to conftest.py
+└── Total Bloat Reduction:      ~118 individual tests → ~5 parametrized
+```
+
+### Best Practices Hierarchy
+
+#### 1. Safety-Critical Tests (MUST DO)
+
+```python
+# ALWAYS include for trading systems:
+- test_circuit_breaker_halts_on_loss_threshold()
+- test_position_size_cannot_exceed_limit()
+- test_max_daily_loss_enforced()
+- test_unauthorized_trades_rejected()
+- test_audit_log_immutable()
+```
+
+#### 2. Correctness Tests (SHOULD DO)
+
+```python
+# Use SafetyTestCase base class:
+class TestRiskLimits(SafetyTestCase):
+    def test_position_within_limits(self, risk_manager, position):
+        self.assert_position_valid(
+            position.quantity,
+            risk_manager.max_position,
+            symbol=position.symbol
+        )
+```
+
+#### 3. Convenience Tests (CONSOLIDATE)
+
+```python
+# BEFORE (61 separate tests):
+def test_to_dict_order_config():
+    config = OrderConfig()
+    assert "symbol" in config.to_dict()
+
+# AFTER (1 parametrized test):
+@pytest.mark.parametrize("class_type,expected_keys", [
+    (OrderConfig, ["symbol", "quantity"]),
+    (RiskConfig, ["max_position", "max_loss"]),
+    # ... all 61 classes
+])
+def test_dataclass_to_dict(class_type, expected_keys):
+    assert_dataclass_to_dict(class_type(), expected_keys)
+```
+
+### Decision Matrix
+
+Use this matrix to decide what to do with each test:
+
+```
+                    ┌─────────────────────────────────────────┐
+                    │        Is it safety-critical?           │
+                    │         (prevents financial loss,       │
+                    │          regulatory violations)         │
+                    └────────────────┬────────────────────────┘
+                                     │
+                    ┌────────────────┴────────────────┐
+                    ▼                                 ▼
+               YES: TIER 1                        NO
+               NEVER REMOVE                          │
+                                                     ▼
+                              ┌─────────────────────────────────┐
+                              │    Is it testing correctness?   │
+                              │    (validates business logic)   │
+                              └─────────────────┬───────────────┘
+                                                │
+                              ┌─────────────────┴───────────────┐
+                              ▼                                 ▼
+                         YES: TIER 2                         NO: TIER 3
+                         CONSOLIDATE                         REMOVE/CONSOLIDATE
+                         if duplicate                        aggressively
+```
+
+### Top 10 Best Tests Pattern
+
+Based on analysis of 4,535+ tests, these patterns are most effective:
+
+| Rank | Pattern | Description | Implementation |
+|------|---------|-------------|----------------|
+| 1 | **Safety invariant** | Tests critical safety properties | `SafetyTestCase.assert_safety_invariant()` |
+| 2 | **Boundary condition** | Tests at exact limits | `test_position_at_exactly_max_limit()` |
+| 3 | **Error recovery** | Tests system resilience | `FaultInjector` + recovery assertion |
+| 4 | **State machine** | Tests valid transitions | `OrderStateMachine.can_transition_to()` |
+| 5 | **Concurrent access** | Tests thread safety | `ThreadPoolExecutor` + lock assertions |
+| 6 | **Integration flow** | Tests end-to-end | Multi-component scenario |
+| 7 | **Property-based** | Discovers edge cases | `@given(valid_order())` |
+| 8 | **Regression** | Prevents bug recurrence | `@regression_test("BUG-123")` |
+| 9 | **Chaos/fault** | Tests robustness | `FaultInjector.should_fail()` |
+| 10 | **Cross-module** | Tests integration points | `test_circuit_breaker_trip_logged()` |
+
+### Recommended Test Infrastructure
+
+```
+tests/
+├── conftest.py           # Core fixtures, SafetyTestCase, FaultInjector
+├── builders.py           # Fluent test data builders
+├── strategies.py         # Hypothesis property-based strategies
+├── mocks/
+│   ├── __init__.py       # Mock registry
+│   └── quantconnect.py   # Consolidated QC mocks
+├── state_machines/       # State transition tests
+├── performance/          # Performance regression tracking
+├── snapshots/            # Deterministic output comparison
+├── regression/           # Bug regression tests
+├── compliance/           # Regulatory compliance tests
+└── analysis/             # Duplicate detection tools
+```
+
+### Final Recommendations
+
+#### Immediate Actions
+1. **Run duplicate finder** before adding new tests
+2. **Use builders** instead of manual test data setup
+3. **Import mocks** from centralized locations
+4. **Mark safety tests** with `SafetyTestCase` or `@pytest.mark.regression`
+
+#### Weekly Maintenance
+1. Check for new duplicate patterns
+2. Review skipped tests - fix or remove
+3. Update performance baselines
+4. Run mutation testing on critical paths
+
+#### Monthly Review
+1. Analyze test coverage by category
+2. Identify tests that never fail (may be ineffective)
+3. Review compliance test completeness
+4. Update safety gap analysis
+
+### Metrics to Track
+
+```
+Weekly Metrics:
+├── Test count (should stabilize, not grow unbounded)
+├── Skip rate (target: <1%)
+├── Safety test count (should never decrease)
+├── Duplicate pattern count (should decrease)
+└── Coverage (target: >80% on critical paths)
+
+Monthly Metrics:
+├── Mutation score (target: >80% on TIER 1)
+├── Time to run full suite (target: <10 min)
+├── Flaky test count (target: 0)
+└── New regression tests added
+```
