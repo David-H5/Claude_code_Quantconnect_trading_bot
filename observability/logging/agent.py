@@ -535,6 +535,102 @@ class AgentLogger(AbstractLogger):
         )
 
     # =========================================================================
+    # CONFLICT CHECKING METHODS
+    # =========================================================================
+
+    def check_conflicts_before_change(self, proposed_change: str) -> dict[str, Any]:
+        """Check for conflicts before making a change.
+
+        Analyzes the codebase to find existing implementations that might
+        conflict with or duplicate the proposed change.
+
+        Args:
+            proposed_change: Description of the proposed change/feature
+
+        Returns:
+            Dictionary with conflict analysis results.
+        """
+        try:
+            # Import here to avoid circular imports
+            from utils.codebase_analyzer import CodebaseAnalyzer
+
+            analyzer = CodebaseAnalyzer(project_root=self.project_root)
+            result = analyzer.check_planning_conflicts(proposed_change)
+
+            # Log the conflict check
+            self.log_conflict_check(proposed_change, result)
+
+            return result
+
+        except ImportError:
+            # Analyzer not available, return minimal result
+            return {
+                "proposed_feature": proposed_change,
+                "matched_categories": [],
+                "existing_count": 0,
+                "existing_implementations": [],
+                "warnings": ["Codebase analyzer not available"],
+                "recommendations": [],
+                "conflict_risk": "unknown",
+            }
+
+    def log_conflict_check(self, proposed_change: str, result: dict[str, Any]) -> LogEntry:
+        """Log results of a conflict check."""
+        risk_level = result.get("conflict_risk", "unknown")
+        log_level = LogLevel.WARNING if risk_level == "high" else LogLevel.INFO
+
+        return self.log(
+            level=log_level,
+            category=LogCategory.AGENT,
+            event_type="conflict_check",
+            message=f"Conflict check for: {proposed_change[:50]}... - Risk: {risk_level}",
+            data={
+                "proposed_change": proposed_change,
+                "risk_level": risk_level,
+                "existing_count": result.get("existing_count", 0),
+                "matched_categories": result.get("matched_categories", []),
+                "warnings": result.get("warnings", []),
+            },
+        )
+
+    def get_planning_context(self) -> str:
+        """Get codebase analysis context for planning.
+
+        Returns:
+            Markdown-formatted planning context with known duplications
+            and recommendations.
+        """
+        try:
+            from utils.codebase_analyzer import CodebaseAnalyzer
+
+            analyzer = CodebaseAnalyzer(project_root=self.project_root)
+            return analyzer.generate_planning_context()
+
+        except ImportError:
+            return "# Planning Context\n\nCodebase analyzer not available."
+
+    def log_redundancy_avoided(self, intended_action: str, existing_solution: str, file_path: str) -> LogEntry:
+        """Log when a redundancy was avoided by using existing code.
+
+        Args:
+            intended_action: What the agent originally planned to do
+            existing_solution: The existing code that was used instead
+            file_path: Path to the existing solution
+        """
+        return self.log(
+            level=LogLevel.INFO,
+            category=LogCategory.AGENT,
+            event_type="redundancy_avoided",
+            message=f"Used existing: {existing_solution} instead of creating new",
+            data={
+                "intended_action": intended_action,
+                "existing_solution": existing_solution,
+                "file_path": file_path,
+            },
+            files_affected=[file_path],
+        )
+
+    # =========================================================================
     # AUDIT METHOD (Required by AbstractLogger)
     # =========================================================================
 
