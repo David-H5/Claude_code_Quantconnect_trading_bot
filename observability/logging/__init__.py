@@ -1,5 +1,4 @@
-"""
-Unified Logging Infrastructure
+"""Unified Logging Infrastructure.
 
 Provides consolidated logging for the trading bot:
 - Structured JSON logging for trading operations
@@ -29,6 +28,16 @@ Usage:
 
 Refactored: Phase 2 - Consolidated Logging Infrastructure
 """
+
+# Agent logger
+from observability.logging.agent import (
+    AgentEventType,
+    AgentLogEntry,
+    AgentLogger,
+    create_agent_logger,
+    get_current_cwd,
+    is_external_session,
+)
 
 # Base types
 # Audit logger (compliance)
@@ -70,6 +79,13 @@ from observability.logging.structured import (
 
 
 __all__ = [
+    # Agent logger
+    "AgentEventType",
+    "AgentLogEntry",
+    "AgentLogger",
+    "create_agent_logger",
+    "get_current_cwd",
+    "is_external_session",
     # Base types
     "AbstractLogger",
     "LogEntry",

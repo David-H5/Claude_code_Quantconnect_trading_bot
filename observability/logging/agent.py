@@ -1,5 +1,4 @@
-"""
-Agent Activity Logger
+"""Agent Activity Logger.
 
 Provides structured logging for AI agent activities, including:
 - Session tracking (start, end, handoff)
@@ -42,8 +41,6 @@ from __future__ import annotations
 
 import fcntl
 import json
-import os
-import subprocess
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -129,8 +126,7 @@ class AgentLogEntry(LogEntry):
 
 
 class AgentLogger(AbstractLogger):
-    """
-    Logger for AI agent activities.
+    """Logger for AI agent activities.
 
     Writes to multiple destinations:
     - .claude/state/agent_activity.jsonl (append-only activity log)
@@ -144,9 +140,8 @@ class AgentLogger(AbstractLogger):
         agent_id: str,
         stream_id: str | None = None,
         project_root: Path | None = None,
-    ):
-        """
-        Initialize agent logger.
+    ) -> None:
+        """Initialize agent logger.
 
         Args:
             agent_id: Unique identifier for this agent
@@ -245,8 +240,7 @@ class AgentLogger(AbstractLogger):
         data: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> LogEntry:
-        """
-        Log an event.
+        """Log an event.
 
         Args:
             level: Log severity level
@@ -255,6 +249,9 @@ class AgentLogger(AbstractLogger):
             message: Human-readable message
             data: Additional data to log
             **kwargs: Additional fields
+
+        Returns:
+            The created LogEntry.
         """
         entry = AgentLogEntry(
             level=level,
@@ -278,9 +275,7 @@ class AgentLogger(AbstractLogger):
     # SESSION METHODS
     # =========================================================================
 
-    def log_session_start(
-        self, task: str, cwd: str | None = None, context: dict[str, Any] | None = None
-    ) -> LogEntry:
+    def log_session_start(self, task: str, cwd: str | None = None, context: dict[str, Any] | None = None) -> LogEntry:
         """Log session start."""
         entry = self.log(
             level=LogLevel.INFO,
@@ -443,9 +438,7 @@ class AgentLogger(AbstractLogger):
             task_info={"name": task, "status": "in_progress"},
         )
 
-    def log_task_completed(
-        self, task: str, duration_seconds: float | None = None, result: str = ""
-    ) -> LogEntry:
+    def log_task_completed(self, task: str, duration_seconds: float | None = None, result: str = "") -> LogEntry:
         """Log task completion."""
         self.tasks_completed.append(task)
         return self.log(
@@ -475,9 +468,7 @@ class AgentLogger(AbstractLogger):
     # GIT METHODS
     # =========================================================================
 
-    def log_git_commit(
-        self, commit_hash: str, message: str, files: list[str] | None = None
-    ) -> LogEntry:
+    def log_git_commit(self, commit_hash: str, message: str, files: list[str] | None = None) -> LogEntry:
         """Log git commit."""
         self.git_commits.append(commit_hash)
         return self.log(
@@ -490,9 +481,7 @@ class AgentLogger(AbstractLogger):
             files_affected=files or [],
         )
 
-    def log_git_push(
-        self, branch: str, remote: str = "origin", success: bool = True, error: str = ""
-    ) -> LogEntry:
+    def log_git_push(self, branch: str, remote: str = "origin", success: bool = True, error: str = "") -> LogEntry:
         """Log git push."""
         level = LogLevel.INFO if success else LogLevel.ERROR
         return self.log(
@@ -545,14 +534,65 @@ class AgentLogger(AbstractLogger):
             files_affected=[file_path] if file_path else [],
         )
 
+    # =========================================================================
+    # AUDIT METHOD (Required by AbstractLogger)
+    # =========================================================================
+
+    def audit(
+        self,
+        action: str,
+        resource: str,
+        outcome: str,
+        actor: str = "system",
+        details: dict[str, Any] | None = None,
+    ) -> LogEntry:
+        """Log an audit trail entry for compliance.
+
+        Args:
+            action: What action was performed
+            resource: What resource was affected
+            outcome: Result (SUCCESS, FAILED, etc.)
+            actor: Who/what performed the action (defaults to agent_id)
+            details: Additional details
+
+        Returns:
+            The created LogEntry.
+        """
+        entry = self.log(
+            level=LogLevel.AUDIT,
+            category=LogCategory.AUDIT,
+            event_type=action,
+            message=f"{action} on {resource}: {outcome}",
+            data=details or {},
+            actor=actor if actor != "system" else self.agent_id,
+            resource=resource,
+            outcome=outcome,
+        )
+
+        # Also write to decisions log for audit trail
+        self._append_to_jsonl(
+            self._get_decisions_log_path(),
+            {
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "agent_id": self.agent_id,
+                "session_id": self.session_id,
+                "action": action,
+                "resource": resource,
+                "outcome": outcome,
+                "actor": actor if actor != "system" else self.agent_id,
+                "details": details or {},
+            },
+        )
+
+        return entry
+
 
 def create_agent_logger(
     agent_id: str,
     stream_id: str | None = None,
     project_root: Path | str | None = None,
 ) -> AgentLogger:
-    """
-    Create an agent logger instance.
+    """Create an agent logger instance.
 
     Args:
         agent_id: Unique identifier for the agent
@@ -560,7 +600,7 @@ def create_agent_logger(
         project_root: Optional project root path
 
     Returns:
-        Configured AgentLogger instance
+        Configured AgentLogger instance.
     """
     root = Path(project_root) if project_root else None
     return AgentLogger(agent_id=agent_id, stream_id=stream_id, project_root=root)
