@@ -1,0 +1,1 @@
+# Upgrade Guides\n\nThis directory contains upgrade guides created using the consolidation-first template.\n\n## Template\n\nSee: [.claude/templates/upgrade_template.md](../../.claude/templates/upgrade_template.md)\n\n## Guides\n\n| ID | Title | Status | Date |\n|----|-------|--------|------|\n| (none yet) | - | - | - |

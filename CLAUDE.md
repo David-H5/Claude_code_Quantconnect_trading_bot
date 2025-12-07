@@ -140,6 +140,26 @@ See: @.claude/RIC_CONTEXT.md for quick reference
 
 See: @docs/CONSOLIDATION_FIRST_POLICY.md for full policy and templates
 
+### Upgrade Guide Template (REQUIRED)
+
+When proposing ANY upgrade or new feature, you MUST use the upgrade template:
+
+```bash
+# Copy template for new upgrade
+cp .claude/templates/upgrade_template.md docs/upgrades/UPGRADE-XXX-feature-name.md
+```
+
+**Template includes (all MANDATORY):**
+
+- Section 0: Prerequisites - Conflict analysis and consolidation plan
+- Phase 1: Consolidation - Delete/merge existing code FIRST
+- Phase gates - Cannot proceed without passing gates
+- Verification commands - Must run at each phase
+
+**Upgrade guides without Section 0 will be REJECTED.**
+
+See: @.claude/templates/upgrade_template.md for full template
+
 ## Safety Rules
 
 - **NEVER** deploy untested code to live trading
@@ -180,6 +200,10 @@ mypy .            # Type checking
 | QuantConnect | @docs/QUANTCONNECT_GUIDE.md |
 | Research Index | @docs/research/README.md |
 | Development | @docs/development/BEST_PRACTICES.md |
+| **Consolidation Policy** | @docs/CONSOLIDATION_FIRST_POLICY.md |
+| **Upgrade Template** | @.claude/templates/upgrade_template.md |
+| **Parallel Upgrades** | @docs/PARALLEL_UPGRADE_COORDINATION.md |
+| **Codebase Analyzer** | @utils/codebase_analyzer.py |
 
 ## Quick Reference: Charles Schwab
 

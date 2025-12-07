@@ -86,31 +86,46 @@ def format_conflict_warning(result: dict) -> str:
 def get_consolidation_template() -> str:
     """Return the required template for upgrade guides."""
     return """
-## Required Upgrade Guide Format
+================================================================================
+                    USE THE UPGRADE TEMPLATE
+================================================================================
 
-Your upgrade guide MUST include these sections:
+REQUIRED: Copy and use the upgrade template:
 
-### 1. Existing Code Audit
-```
-| File | Class/Function | Action | Reason |
-|------|----------------|--------|--------|
-| path/to/file.py | ClassName | EXTEND | Add new method |
-| path/to/old.py | old_function | DELETE | Replaced by X |
-| path/to/dup.py | DuplicateClass | MERGE | Consolidate with Y |
-```
+  cp .claude/templates/upgrade_template.md docs/upgrades/UPGRADE-XXX-name.md
 
-### 2. Consolidation Plan
-- What gets deleted
-- What gets merged
-- What gets extended
+The template includes all MANDATORY sections:
 
-### 3. Single Canonical Location
-- New code location: `module/submodule/file.py`
-- Reason for this location (fits layer architecture)
+## 0. Prerequisites: Codebase Consolidation (BLOCKING)
 
-### 4. Migration Path
-- How existing callers will be updated
-- Deprecation timeline (max 1 sprint)
+   - 0.1 Conflict Analysis Results
+   - 0.2 Existing Code Audit Table (EXTEND/DELETE/MERGE)
+   - 0.3 Consolidation Plan (deletions, merges, extensions)
+   - 0.4 Canonical Location (justified)
+   - 0.5 Pre-Implementation Verification
+
+## Phase Gates (Cannot proceed without passing)
+
+   - Phase 0 Gate: Prerequisites complete
+   - Phase 1 Gate: Consolidation complete (DELETE old code FIRST)
+
+## Quick Reference - Existing Code Audit Table Format:
+
+| File | Class/Function | Action | Justification |
+|------|----------------|--------|---------------|
+| path/existing.py | ExistingClass | EXTEND | Adding method fits here |
+| path/old.py | OldFunction | DELETE | Replaced by new solution |
+| a.py + b.py | Duplicates | MERGE | Consolidating |
+
+ANTI-PATTERNS THAT WILL BE REJECTED:
+  - Upgrade guide without Section 0
+  - Plans creating parallel implementations (e.g., thing_v2.py)
+  - Proposals without deletion timeline
+  - "We'll consolidate later"
+
+See: .claude/templates/upgrade_template.md for full template
+See: docs/CONSOLIDATION_FIRST_POLICY.md for policy details
+================================================================================
 """
 
 
