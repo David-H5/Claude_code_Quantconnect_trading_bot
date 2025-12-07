@@ -551,7 +551,7 @@ class TestCreateRouter:
         assert "custom/model" in router.models
 
 
-class TestIntegration:
+class TestModelRouterIntegration:
     """Integration tests for router."""
 
     @pytest.mark.unit

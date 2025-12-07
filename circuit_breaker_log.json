@@ -40068,5 +40068,2232 @@
     },
     "resolved": false,
     "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:24.295022",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:26.347330",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:26.497372",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.03,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:26.645523",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:26.791959",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:26.941769",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:27.088406",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:27.232675",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Testing manual halt"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:27.375726",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Emergency stop"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:27.520312",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:27.663490",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:39:27.810141",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:39:27.955472",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:28.105242",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "admin@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:39:28.291604",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:28.442234",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test alert"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:28.594195",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Event 1"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:28.742974",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test"
+  },
+  {
+    "timestamp": "2025-12-06 16:39:28.895286",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Event 2"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:29.047754",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:29.201674",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.035,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:29.355876",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:29.506439",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Broker API connection lost"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:29.656156",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Emergency: Unusual market conditions"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:29.805537",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:29.957615",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:30.105638",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:30.259427",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:30.419789",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:30.566882",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt 1"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:30.709869",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "admin1"
+  },
+  {
+    "timestamp": "2025-12-06 16:39:30.851955",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt 2"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:30.998381",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "admin2"
+  },
+  {
+    "timestamp": "2025-12-06 16:39:28.600037",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.03,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:42.958146",
+    "state": "open",
+    "reason": "negative_sentiment_spike",
+    "details": {
+      "symbol": "AAPL",
+      "sentiment_score": -0.8,
+      "confidence": 0.9,
+      "source": "finbert",
+      "threshold": -0.7
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:43.108785",
+    "state": "open",
+    "reason": "negative_sentiment_spike",
+    "details": {
+      "symbol": "AAPL",
+      "consecutive_negative": 3,
+      "threshold": 3
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:43.264710",
+    "state": "open",
+    "reason": "critical_news_event",
+    "details": {
+      "symbol": "AAPL",
+      "headline": "SEC investigation into Apple fraud",
+      "sentiment_score": -0.9,
+      "impact": "critical",
+      "matched_keywords": [
+        "fraud",
+        "sec investigation"
+      ]
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:43.424247",
+    "state": "open",
+    "reason": "negative_sentiment_spike",
+    "details": {
+      "symbol": "AAPL",
+      "sentiment_score": -0.8,
+      "confidence": 0.9,
+      "source": "finbert",
+      "threshold": -0.7
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:50.194607",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:39:50.376942",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:03.531741",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:17.950968",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:18.106856",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:18.261135",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:18.415013",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.03,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:18.570976",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:19.025300",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:19.177599",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:19.338833",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:40:19.495210",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Market conditions unusual"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:22.889996",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:23.042230",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:23.191218",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:40:23.348143",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.045,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:11.018133",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:13.175442",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:13.329415",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.03,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:13.482183",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:13.634381",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:13.788448",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:13.943277",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:14.096076",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Testing manual halt"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:14.247997",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Emergency stop"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:14.401875",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:14.553877",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:45:14.704339",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:45:14.863122",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:15.016877",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "admin@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:45:15.170225",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:15.323132",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test alert"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:15.482225",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Event 1"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:15.632642",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test"
+  },
+  {
+    "timestamp": "2025-12-06 16:45:15.784407",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Event 2"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:15.946762",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:16.104791",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.035,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:16.260670",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:16.412082",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Broker API connection lost"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:16.563485",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Emergency: Unusual market conditions"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:16.713647",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:16.863153",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:17.012370",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:17.163823",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:17.322745",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:17.473976",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt 1"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:17.624879",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "admin1"
+  },
+  {
+    "timestamp": "2025-12-06 16:45:17.772530",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt 2"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:17.921021",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "admin2"
+  },
+  {
+    "timestamp": "2025-12-06 16:45:18.072710",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.03,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:29.504121",
+    "state": "open",
+    "reason": "negative_sentiment_spike",
+    "details": {
+      "symbol": "AAPL",
+      "sentiment_score": -0.8,
+      "confidence": 0.9,
+      "source": "finbert",
+      "threshold": -0.7
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:29.649996",
+    "state": "open",
+    "reason": "negative_sentiment_spike",
+    "details": {
+      "symbol": "AAPL",
+      "consecutive_negative": 3,
+      "threshold": 3
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:29.796777",
+    "state": "open",
+    "reason": "critical_news_event",
+    "details": {
+      "symbol": "AAPL",
+      "headline": "SEC investigation into Apple fraud",
+      "sentiment_score": -0.9,
+      "impact": "critical",
+      "matched_keywords": [
+        "fraud",
+        "sec investigation"
+      ]
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:29.953788",
+    "state": "open",
+    "reason": "negative_sentiment_spike",
+    "details": {
+      "symbol": "AAPL",
+      "sentiment_score": -0.8,
+      "confidence": 0.9,
+      "source": "finbert",
+      "threshold": -0.7
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:36.458789",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:36.635364",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:45:52.074192",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:46:04.336844",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:46:04.489787",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:46:04.647219",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:46:04.797123",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.03,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:46:04.953045",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:46:05.107537",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:46:05.260530",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:46:05.425928",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:46:05.579812",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Market conditions unusual"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:46:08.945113",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:46:09.100933",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:46:09.255688",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:46:09.417574",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.045,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:00.578678",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:02.411788",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:02.562457",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.03,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:02.714557",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:02.868482",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:03.019717",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:03.168528",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:03.319144",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Testing manual halt"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:03.467084",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Emergency stop"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:03.617311",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:03.765788",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:47:03.920420",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:47:04.075915",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:04.225319",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "admin@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:47:04.380933",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:04.534555",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test alert"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:04.686924",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Event 1"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:04.838976",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test"
+  },
+  {
+    "timestamp": "2025-12-06 16:47:04.988275",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Event 2"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:05.140352",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:05.292706",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.035,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:05.442602",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:05.598699",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Broker API connection lost"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:05.750883",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Emergency: Unusual market conditions"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:05.908289",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:06.064367",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:06.220384",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:06.375004",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:06.527741",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:06.684253",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt 1"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:06.834429",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "admin1"
+  },
+  {
+    "timestamp": "2025-12-06 16:47:06.984416",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt 2"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:07.141016",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "admin2"
+  },
+  {
+    "timestamp": "2025-12-06 16:47:07.300426",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.03,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:24.680368",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:24.861468",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:39.972246",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:53.057614",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:53.213094",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:53.367712",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:53.521463",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.03,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:53.674349",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:53.831583",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:53.980485",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:54.127085",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:47:54.279770",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Market conditions unusual"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:55.177627",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:55.333503",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:55.488641",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:47:55.656906",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.045,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:00.329989",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:02.484296",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:02.638758",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.03,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:02.792567",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:02.946163",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:03.100169",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:03.252095",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:03.403553",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Testing manual halt"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:03.558826",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Emergency stop"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:03.711862",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:03.865288",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:52:04.023371",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:52:04.178047",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:04.327729",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "admin@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:52:04.480719",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:04.630405",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test alert"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:04.787043",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Event 1"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:04.938313",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test"
+  },
+  {
+    "timestamp": "2025-12-06 16:52:05.089006",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Event 2"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:05.242819",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:05.394814",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.035,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:05.552129",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:05.705794",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Broker API connection lost"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:05.857606",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Emergency: Unusual market conditions"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:06.013810",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:06.178451",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:06.338673",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:06.498507",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:06.655485",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:06.812178",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt 1"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:06.970581",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "admin1"
+  },
+  {
+    "timestamp": "2025-12-06 16:52:07.126848",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test halt 2"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:07.281037",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "admin2"
+  },
+  {
+    "timestamp": "2025-12-06 16:52:07.438030",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.03,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:21.465380",
+    "state": "open",
+    "reason": "negative_sentiment_spike",
+    "details": {
+      "symbol": "AAPL",
+      "sentiment_score": -0.8,
+      "confidence": 0.9,
+      "source": "finbert",
+      "threshold": -0.7
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:21.624769",
+    "state": "open",
+    "reason": "negative_sentiment_spike",
+    "details": {
+      "symbol": "AAPL",
+      "consecutive_negative": 3,
+      "threshold": 3
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:21.788025",
+    "state": "open",
+    "reason": "critical_news_event",
+    "details": {
+      "symbol": "AAPL",
+      "headline": "SEC investigation into Apple fraud",
+      "sentiment_score": -0.9,
+      "impact": "critical",
+      "matched_keywords": [
+        "fraud",
+        "sec investigation"
+      ]
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:21.956464",
+    "state": "open",
+    "reason": "negative_sentiment_spike",
+    "details": {
+      "symbol": "AAPL",
+      "sentiment_score": -0.8,
+      "confidence": 0.9,
+      "source": "finbert",
+      "threshold": -0.7
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:26.106756",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:26.291298",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.05,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:41.609963",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Test"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:51.235911",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:51.391598",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.15,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:51.548107",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:51.701384",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.03,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:51.856586",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:52.015017",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:52.172601",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.04,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:52.328535",
+    "state": "closed",
+    "reason": null,
+    "details": {},
+    "resolved": true,
+    "resolved_by": "test@example.com"
+  },
+  {
+    "timestamp": "2025-12-06 16:52:52.482736",
+    "state": "open",
+    "reason": "manual_halt",
+    "details": {
+      "reason": "Market conditions unusual"
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:55.758452",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:55.912654",
+    "state": "open",
+    "reason": "consecutive_losses_exceeded",
+    "details": {
+      "consecutive_losses": 5,
+      "limit": 5
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:56.066525",
+    "state": "open",
+    "reason": "max_drawdown_exceeded",
+    "details": {
+      "drawdown": 0.12,
+      "limit": 0.1
+    },
+    "resolved": false,
+    "resolved_by": null
+  },
+  {
+    "timestamp": "2025-12-06 16:52:56.226234",
+    "state": "open",
+    "reason": "daily_loss_exceeded",
+    "details": {
+      "daily_pnl_pct": -0.045,
+      "limit": 0.03
+    },
+    "resolved": false,
+    "resolved_by": null
   }
 ]

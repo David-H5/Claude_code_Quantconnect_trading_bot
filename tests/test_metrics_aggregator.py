@@ -396,7 +396,6 @@ class TestMetricsAggregator:
 class TestConvenienceFunctions:
     """Tests for convenience functions."""
 
-    @pytest.mark.skip(reason="QUARANTINED: Deadlock in global aggregator lock - see metrics_aggregator.py:280")
     def test_record_metric(self):
         """Test record_metric convenience function."""
         # Clear first
@@ -475,7 +474,7 @@ class TestConvenienceFunctions:
 
 
 @pytest.mark.skip(reason="Threading tests quarantined - cause hangs in CI")
-class TestThreadSafety:
+class TestMetricsAggregatorThreadSafety:
     """Tests for thread safety."""
 
     def test_concurrent_recording(self):

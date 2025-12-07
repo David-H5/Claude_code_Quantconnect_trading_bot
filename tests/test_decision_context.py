@@ -368,7 +368,7 @@ class TestDecisionContextManager:
         assert stats["total_contexts"] == 5
 
 
-class TestFactoryFunctions:
+class TestDecisionContextFactoryFunctions:
     """Tests for factory functions."""
 
     def test_create_decision_context(self):

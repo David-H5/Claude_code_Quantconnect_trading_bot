@@ -610,7 +610,7 @@ class TestAutoRetrain:
             assert len(jobs) >= 1 if result.drift_detected else len(jobs) == 0
 
 
-class TestIntegration:
+class TestRetrainingIntegration:
     """Integration tests for retraining pipeline."""
 
     @pytest.mark.unit

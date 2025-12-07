@@ -430,7 +430,7 @@ class TestTokenUsageSummaryEmpty:
 
 
 @pytest.mark.skip(reason="Threading tests quarantined - cause hangs in CI")
-class TestThreadSafety:
+class TestTokenMetricsThreadSafety:
     """Tests for thread safety."""
 
     def test_concurrent_recording(self):

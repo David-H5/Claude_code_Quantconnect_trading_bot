@@ -403,7 +403,7 @@ class TestTradingToolFilter:
 # =============================================================================
 
 
-class TestIntegration:
+class TestLogTradeIntegration:
     """Integration tests for full logging flow."""
 
     def test_full_order_logging_flow(self, mock_log_file):

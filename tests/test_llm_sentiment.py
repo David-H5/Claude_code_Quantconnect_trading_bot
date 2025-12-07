@@ -675,7 +675,7 @@ class TestCircuitBreakerSentiment:
 # ==============================================================================
 
 
-class TestFactoryFunctions:
+class TestLlmSentimentFactoryFunctions:
     """Tests for factory functions."""
 
     @pytest.mark.unit

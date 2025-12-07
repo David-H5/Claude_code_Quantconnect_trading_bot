@@ -13,21 +13,25 @@ Part of CONSOLIDATE-001 Phase 4: Monitoring Consolidation
 # Re-export everything from new location for backwards compatibility
 from observability.monitoring.trading.slippage import (
     AlertLevel,
+    ExecutionQualityMetrics,
     FillRecord,
     SlippageAlert,
     SlippageDirection,
-    SlippageMetrics,
     SlippageMonitor,
+    SymbolSlippageStats,
     create_slippage_monitor,
+    generate_slippage_report,
 )
 
 
 __all__ = [
     "AlertLevel",
+    "ExecutionQualityMetrics",
     "FillRecord",
     "SlippageAlert",
     "SlippageDirection",
-    "SlippageMetrics",
     "SlippageMonitor",
+    "SymbolSlippageStats",
     "create_slippage_monitor",
+    "generate_slippage_report",
 ]

@@ -422,7 +422,7 @@ class TestUtilityFunctions:
 # ==============================================================================
 
 
-class TestFactoryFunctions:
+class TestErrorHandlingFactoryFunctions:
     """Test factory functions."""
 
     def test_create_error_handler(self):
@@ -444,7 +444,7 @@ class TestFactoryFunctions:
 # ==============================================================================
 
 
-class TestIntegration:
+class TestErrorHandlingIntegration:
     """Test error handler integration with logger."""
 
     def test_logger_integration(self, mock_logger):

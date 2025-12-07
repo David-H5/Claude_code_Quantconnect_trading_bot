@@ -574,7 +574,7 @@ class TestPersistence:
 # ============================================================================
 
 
-class TestFactoryFunctions:
+class TestPerformanceTrackerFactoryFunctions:
     """Tests for factory functions."""
 
     def test_create_performance_tracker(self):

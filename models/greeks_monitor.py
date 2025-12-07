@@ -14,18 +14,29 @@ Part of CONSOLIDATE-001 Phase 4: Monitoring Consolidation
 from observability.monitoring.trading.greeks import (
     GreeksAlert,
     GreeksAlertLevel,
-    GreeksMetrics,
+    GreeksLimits,
     GreeksMonitor,
-    GreeksSnapshot,
+    GreeksType,
+    HedgeRecommendation,
+    PortfolioGreeksExposure,
+    PositionGreeksSnapshot,
+    RiskProfile,
     create_greeks_monitor,
 )
 
+# Backwards compatibility alias
+GreeksSnapshot = PositionGreeksSnapshot
 
 __all__ = [
     "GreeksAlert",
     "GreeksAlertLevel",
-    "GreeksMetrics",
+    "GreeksLimits",
     "GreeksMonitor",
     "GreeksSnapshot",
+    "GreeksType",
+    "HedgeRecommendation",
+    "PortfolioGreeksExposure",
+    "PositionGreeksSnapshot",
+    "RiskProfile",
     "create_greeks_monitor",
 ]

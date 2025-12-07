@@ -541,7 +541,7 @@ class TestRedditSentimentAnalyzer:
         assert data["total_posts_analyzed"] == 100
 
 
-class TestIntegration:
+class TestRedditScannerIntegration:
     """Integration tests for scanner and sentiment analyzer."""
 
     def test_scanner_to_sentiment_flow(self):

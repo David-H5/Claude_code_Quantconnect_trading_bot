@@ -408,7 +408,7 @@ class TestCreateAssetEncoder:
         assert encoder.embed_dim == 32
 
 
-class TestIntegration:
+class TestAttentionLayerIntegration:
     """Integration tests for attention components."""
 
     @pytest.mark.unit

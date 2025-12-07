@@ -354,7 +354,7 @@ class TestCustomThresholds:
                 assert reason == DebateTriggerReason.LOW_CONFIDENCE
 
 
-class TestFactoryFunctions:
+class TestSupervisorDebateFactoryFunctions:
     """Tests for factory functions."""
 
     def test_create_supervisor_agent_without_debate(self, mock_llm_client):

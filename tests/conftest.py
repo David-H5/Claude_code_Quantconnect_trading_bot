@@ -10,6 +10,11 @@ TIMEOUT CONFIGURATION:
 - Override per-class: @pytest.mark.timeout(120)
 - Skip timeout: @pytest.mark.timeout(0)
 
+FIXTURE SCOPES:
+- function (default): New instance per test - use for mutable state
+- class: Shared within test class - use for immutable/read-only data
+- session: Shared across all tests - use sparingly, only for setup
+
 Example usage:
     @pytest.mark.timeout(10)  # 10 second timeout
     def test_fast_operation():
@@ -20,12 +25,18 @@ Example usage:
         ...
 """
 
+from __future__ import annotations
+
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import Mock
 
 import pytest
+
+if TYPE_CHECKING:
+    from typing import Generator
 
 
 # Add project root to path for imports
@@ -185,54 +196,64 @@ class MockSecurities:
         return key in self._securities
 
 
-# Fixtures
+# ============================================================================
+# FIXTURES - Core Mock Objects
+# ============================================================================
+# Scope Guide:
+#   - function: Mutable state, needs isolation (default for safety)
+#   - class: Immutable/read-only, shared within test class for performance
+#   - session: Setup-only, shared across all tests
 
 
-@pytest.fixture
-def mock_symbol():
-    """Create a mock symbol."""
+@pytest.fixture(scope="class")
+def mock_symbol() -> MockSymbol:
+    """Create a mock symbol (class-scoped, immutable)."""
     return MockSymbol("SPY")
 
 
-@pytest.fixture
-def mock_trade_bar():
-    """Create a mock trade bar with default values."""
+@pytest.fixture(scope="class")
+def mock_trade_bar() -> MockTradeBar:
+    """Create a mock trade bar with default values (class-scoped, read-only)."""
     return MockTradeBar()
 
 
 @pytest.fixture
-def mock_slice(mock_symbol, mock_trade_bar):
-    """Create a mock slice with SPY data."""
+def mock_slice(mock_symbol: MockSymbol, mock_trade_bar: MockTradeBar) -> MockSlice:
+    """Create a mock slice with SPY data (function-scoped for isolation)."""
     return MockSlice({mock_symbol.Value: mock_trade_bar})
 
 
-@pytest.fixture
-def empty_slice():
-    """Create an empty mock slice."""
+@pytest.fixture(scope="class")
+def empty_slice() -> MockSlice:
+    """Create an empty mock slice (class-scoped, immutable)."""
     return MockSlice({})
 
 
 @pytest.fixture
-def mock_portfolio():
-    """Create a mock portfolio."""
+def mock_portfolio() -> MockPortfolio:
+    """Create a mock portfolio (function-scoped, mutable state)."""
     return MockPortfolio()
 
 
 @pytest.fixture
-def mock_securities():
-    """Create mock securities."""
+def mock_securities() -> MockSecurities:
+    """Create mock securities (function-scoped, mutable state)."""
     return MockSecurities()
 
 
 @pytest.fixture
-def mock_rsi():
-    """Create a mock RSI indicator."""
+def mock_rsi() -> MockIndicator:
+    """Create a mock RSI indicator (function-scoped, tests may modify)."""
     return MockIndicator(value=50.0, is_ready=True)
 
 
 @pytest.fixture
-def mock_algorithm(mock_symbol, mock_portfolio, mock_securities):
-    """Create a fully mocked algorithm instance."""
+def mock_algorithm(
+    mock_symbol: MockSymbol,
+    mock_portfolio: MockPortfolio,
+    mock_securities: MockSecurities,
+) -> Mock:
+    """Create a fully mocked algorithm instance (function-scoped, complex mutable state)."""
     algo = Mock()
     algo.symbol = mock_symbol
     algo.Portfolio = mock_portfolio
@@ -327,7 +348,7 @@ def pytest_collection_modifyitems(config, items):
 
 
 @pytest.fixture(scope="session", autouse=True)
-def timeout_warning():
+def timeout_warning() -> Generator[None, None, None]:
     """Session-scoped fixture to warn about timeout configuration."""
     # Check if pytest-timeout is installed
     try:
@@ -340,14 +361,37 @@ def timeout_warning():
 
 # Convenience fixtures for tests that need longer timeouts
 @pytest.fixture
-def long_timeout():
+def long_timeout() -> None:
     """Fixture for tests that need longer execution time (120s)."""
     # This is a marker fixture - use @pytest.mark.timeout(120) instead
     pass
 
 
 @pytest.fixture
-def stress_timeout():
+def stress_timeout() -> None:
     """Fixture for stress tests that need extended time (300s)."""
     # This is a marker fixture - use @pytest.mark.timeout(300) instead
     pass
+
+
+# ============================================================================
+# EXPORTED MOCK CLASSES
+# ============================================================================
+# These can be imported in test files for custom mock construction:
+#   from tests.conftest import MockSymbol, MockPortfolio, MockTradeBar
+
+__all__ = [
+    # Mock classes
+    "MockSymbol",
+    "MockTradeBar",
+    "MockSlice",
+    "MockIndicator",
+    "MockIndicatorDataPoint",
+    "MockPortfolio",
+    "MockPortfolioHolding",
+    "MockSecurities",
+    "MockSecurityHolding",
+    # Helper functions
+    "create_price_series",
+    "create_rsi_values",
+]

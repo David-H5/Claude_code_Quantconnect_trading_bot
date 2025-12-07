@@ -634,7 +634,7 @@ class TestBuiltinChecks:
 # ==============================================================================
 
 
-class TestFactoryFunctions:
+class TestAlertingServiceFactoryFunctions:
     """Test factory functions."""
 
     def test_create_alerting_service(self):
@@ -656,7 +656,7 @@ class TestFactoryFunctions:
 # ==============================================================================
 
 
-class TestIntegration:
+class TestAlertingServiceIntegration:
     """Test integration between AlertingService and SystemMonitor."""
 
     def test_monitor_with_alerting(self):

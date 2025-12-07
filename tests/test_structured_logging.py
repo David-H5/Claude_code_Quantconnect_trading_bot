@@ -556,7 +556,7 @@ class TestCallbackHandler:
 # ============================================================================
 
 
-class TestFactoryFunctions:
+class TestStructuredLoggingFactoryFunctions:
     """Tests for factory functions."""
 
     def test_create_structured_logger(self):
@@ -600,7 +600,7 @@ class TestFactoryFunctions:
 # ============================================================================
 
 
-class TestThreadSafety:
+class TestStructuredLoggingThreadSafety:
     """Tests for thread safety."""
 
     def test_concurrent_logging(self):

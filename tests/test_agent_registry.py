@@ -512,7 +512,7 @@ class TestRegisterDecorator:
             assert test_registry.get("decorated_agent") is agent
 
 
-class TestThreadSafety:
+class TestAgentRegistryThreadSafety:
     """Tests for thread safety."""
 
     def test_concurrent_registration(self, registry):
