@@ -192,6 +192,12 @@
             "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/core/ric.py 2>/dev/null || true",
             "statusMessage": "RIC compliance check",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "cd /home/dshooter/projects/Claude_code_Quantconnect_trading_bot && python3 .claude/hooks/validation/pre_planning_check.py 2>/dev/null || true",
+            "statusMessage": "Checking for planning conflicts",
+            "timeout": 15
           }
         ]
       }

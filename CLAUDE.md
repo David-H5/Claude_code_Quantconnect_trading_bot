@@ -101,6 +101,45 @@ See: @.claude/RIC_CONTEXT.md for quick reference
 3. Verify imports work
 4. Commit with clear message
 
+## Consolidation-First Policy (MANDATORY)
+
+**Before ANY upgrade, feature, or new system:**
+
+> **NEVER create new systems when existing ones can be extended.**
+> **ALWAYS consolidate duplicates before adding features.**
+> **DELETE old code, don't just deprecate it.**
+
+### Pre-Planning Checklist
+
+1. **Run Conflict Analysis:**
+
+   ```bash
+   python -m utils.codebase_analyzer --check-conflicts "your proposed feature"
+   ```
+
+2. **Check Known Duplications:**
+
+   | Category | Files | Action |
+   |----------|-------|--------|
+   | Anomaly Detection | `observability/anomaly_detector.py`, `models/anomaly_detector.py` | Consolidate first |
+   | Sentiment Analysis | `llm/sentiment.py`, `llm/emotion_detector.py`, etc. | Extend, don't create new |
+   | Spread Analysis | `execution/spread_analysis.py`, `execution/spread_anomaly.py` | Merge before touching |
+
+3. **Upgrade Guide Requirements:**
+   - Existing Code Audit table (EXTEND/DELETE/MERGE actions)
+   - Consolidation plan (what gets deleted/merged)
+   - Single canonical location for new code
+   - Migration path for existing callers
+
+**Anti-Patterns (PROHIBITED):**
+
+- Creating `something_v2.py` alongside `something.py`
+- Adding deprecation wrappers instead of deleting old code
+- "We'll clean this up later" - clean up NOW
+- New file for one function - extend existing module
+
+See: @docs/CONSOLIDATION_FIRST_POLICY.md for full policy and templates
+
 ## Safety Rules
 
 - **NEVER** deploy untested code to live trading

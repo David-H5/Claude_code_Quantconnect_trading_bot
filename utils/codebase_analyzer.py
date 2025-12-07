@@ -168,6 +168,47 @@ class CodebaseAnalyzer:
             "files": ["execution/spread_analysis.py", "execution/spread_anomaly.py"],
             "reason": "Spread analysis split across files",
         },
+        {
+            "pattern": r"logger",
+            "files": [
+                "llm/reasoning_logger.py",
+                "llm/decision_logger.py",
+                "observability/exception_logger.py",
+                "observability/logging/agent.py",
+            ],
+            "reason": "Multiple specialized loggers - consider unified logging interface",
+        },
+        {
+            "pattern": r"monitor",
+            "files": [
+                "models/correlation_monitor.py",
+                "models/var_monitor.py",
+                "models/greeks_monitor.py",
+                "execution/slippage_monitor.py",
+                "utils/storage_monitor.py",
+                "ui/evolution_monitor.py",
+            ],
+            "reason": "Monitors spread across modules - use observability/monitoring/",
+        },
+        {
+            "pattern": r"validator",
+            "files": [
+                "scripts/qa_validator.py",
+                "scripts/algorithm_validator.py",
+                "execution/pre_trade_validator.py",
+                ".claude/hooks/trading/risk_validator.py",
+            ],
+            "reason": "Validators in multiple locations - consolidate to validation module",
+        },
+        {
+            "pattern": r"monitoring",
+            "files": [
+                "evaluation/sprint1_monitoring.py",
+                "evaluation/continuous_monitoring.py",
+                "observability/monitoring/",
+            ],
+            "reason": "Monitoring code in evaluation/ vs observability/",
+        },
     ]
 
     def __init__(self, project_root: Path | None = None):
