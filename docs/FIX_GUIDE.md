@@ -800,15 +800,15 @@ if disabled:
 ## Checklist
 
 ```
-[ ] P0-1: Fix shared timestamp bug
-[ ] P1-1: Create BaseOptionsBot class
-[ ] P1-2: Split Initialize into focused methods
-[ ] P1-3: Remove/implement dead scheduled methods
-[ ] P2-1: Remove commented butterfly code
-[ ] P2-2: Document QuantConnectOptionsBot alias
-[ ] P2-3: Clarify warmup comments
-[ ] P2-4: Add generic config loader
-[ ] P2-5: Remove unused type imports
+[x] P0-1: Fix shared timestamp bug
+[x] P1-1: Create BaseOptionsBot class
+[x] P1-2: Split Initialize into focused methods
+[x] P1-3: Remove/implement dead scheduled methods
+[x] P2-1: Remove commented butterfly code
+[x] P2-2: Document QuantConnectOptionsBot alias
+[x] P2-3: Clarify warmup comments
+[x] P2-4: Add generic config loader
+[x] P2-5: Remove unused type imports
 [ ] P3-1: Consolidate CLAUDE.md RIC docs
 [ ] P3-2: Standardize debug message format
 [ ] P3-3: Add callback type hints
@@ -826,3 +826,20 @@ if disabled:
 - Run `pytest tests/ -v --cov=. --cov-fail-under=70` after each phase
 - Create feature branch: `fix/code-quality-cleanup`
 - Consider splitting into multiple PRs by phase
+
+---
+
+## Related Documents
+
+| Document | Scope | Relationship |
+|----------|-------|--------------|
+| [MASTER_CONSOLIDATION_PLAN.md](MASTER_CONSOLIDATION_PLAN.md) | Architecture consolidation | **Parallel work** - no conflicts |
+| [CONSOLIDATION_PLAN.md](CONSOLIDATION_PLAN.md) | Completed consolidation phases | Reference for done work |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Project structure | Context for changes |
+
+### Execution Order with MASTER_CONSOLIDATION_PLAN
+
+1. **FIX_GUIDE P0-1** (timestamp bug) - Do FIRST, critical
+2. **FIX_GUIDE P1-*** (algorithm refactoring) - Can parallel with MASTER_PLAN consolidation
+3. **MASTER_PLAN** sentiment/news consolidation - After or parallel with P1
+4. **FIX_GUIDE P2-*/P3-*** (cleanup/polish) - After architecture stabilizes

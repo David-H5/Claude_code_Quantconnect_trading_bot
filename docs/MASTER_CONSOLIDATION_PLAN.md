@@ -6,38 +6,97 @@ A comprehensive plan to deduplicate, consolidate, and enhance the QuantConnect T
 
 ## Executive Summary
 
-### Current State Analysis
+### Current State Analysis (Updated: 2025-12-06)
 
-| Category | Existing Systems | Duplicates Found | Action Required |
-|----------|-----------------|------------------|-----------------|
-| **Agent Framework** | 15+ agents in llm/agents/ | Moderate overlap | Consolidate, add Claude SDK subagents |
-| **Orchestration** | 2 systems (hooks + evaluation) | Low overlap | Merge into unified orchestrator |
-| **Sentiment Analysis** | 5 separate systems | HIGH duplication | Consolidate to single interface |
-| **Risk Management** | 4+ enforcement points | HIGH duplication | Unify enforcement chain |
-| **Metrics** | 3+ systems | HIGH duplication | Consolidate to observability/ |
-| **News Analysis** | 5 modules | HIGH duplication | Centralize |
-| **Anomaly Detection** | 4+ implementations | HIGH duplication | Create unified interface |
-| **Alerts** | 4 systems | Moderate overlap | Consolidate to observability/alerting/ |
+| Category | Existing Systems | Duplicates Found | Action Required | Status |
+|----------|-----------------|------------------|-----------------|--------|
+| **Agent Framework** | 15+ agents in llm/agents/ | Moderate overlap | Consolidate, add Claude SDK subagents | TODO |
+| **Orchestration** | 2 systems (hooks + evaluation) | Low overlap | Merge into unified orchestrator | TODO |
+| **Sentiment Analysis** | 5 separate systems | HIGH duplication | Consolidate to single interface | TODO |
+| **Risk Management** | 4+ enforcement points | HIGH duplication | Unify enforcement chain | TODO |
+| **Trading Monitors** | 4 scattered monitors | HIGH duplication | Consolidate to observability/ | ✅ DONE |
+| **Deprecated Wrappers** | 4 wrapper files | Full duplication | Remove after migration | ✅ DONE |
+| **News Analysis** | 5 modules | HIGH duplication | Centralize | TODO |
+| **Anomaly Detection** | 4+ implementations | HIGH duplication | Create unified interface | TODO |
+| **Config Documentation** | 2 config systems | None (different purposes) | Document boundaries | ✅ DONE |
+| **Execution Module** | 4 overlapping modules | Moderate overlap | Review after patterns stabilize | ⏸️ DEFERRED |
+
+### Recently Completed Work (2025-12-06)
+
+The following items from the original plan have been completed by a parallel consolidation effort:
+
+#### Phase 1-6 Completed Items:
+
+1. **✅ Monitoring Consolidation** → `observability/monitoring/trading/` (VERIFIED 2025-12-06)
+   - `execution/slippage_monitor.py` → `observability/monitoring/trading/slippage.py`
+   - `models/greeks_monitor.py` → `observability/monitoring/trading/greeks.py`
+   - `models/correlation_monitor.py` → `observability/monitoring/trading/correlation.py`
+   - `models/var_monitor.py` → `observability/monitoring/trading/var.py`
+   - Original files converted to deprecation wrappers with re-exports for backwards compatibility
+   - Package `__init__.py` exports all monitors via public API
+
+2. **✅ Deprecated Wrapper Removal** (VERIFIED 2025-12-06)
+   - `utils/structured_logger.py` → REMOVED (canonical: `observability.logging.structured`)
+   - `compliance/audit_logger.py` → REMOVED (canonical: `observability.logging.audit`)
+   - `utils/system_monitor.py` → REMOVED (canonical: `observability.monitoring.system.health`)
+   - `utils/resource_monitor.py` → REMOVED (canonical: `observability.monitoring.system.resource`)
+   - Note: These files were fully deleted, not converted to wrappers (unlike trading monitors)
+
+3. **✅ Config Documentation**
+   - Documented that `config/` = Trading configuration
+   - Documented that `utils/overnight_config.py` = Claude Code session configuration
+   - Added cross-reference documentation
+
+4. **✅ Decision/Reasoning Logger Integration** (VERIFIED 2025-12-06)
+   - Core loggers: `llm/decision_logger.py` and `llm/reasoning_logger.py`
+   - Adapters verified: `observability/logging/adapters/decision.py`, `observability/logging/adapters/reasoning.py`
+   - DecisionLoggerAdapter and ReasoningLoggerAdapter implement AbstractLogger interface
+
+5. **✅ Deprecated Directories Cleanup** (VERIFIED 2025-12-06)
+   - `.claude/hooks/deprecated/` → REMOVED (directory does not exist)
+   - `.claude/deprecated/` → REMOVED (directory does not exist)
+
+6. **⏸️ Execution Module Review** - DEFERRED
+   - Project in early development, execution patterns haven't stabilized
+   - Deferred files: `smart_execution.py`, `spread_analysis.py`, `two_part_spread.py`, `option_strategies_executor.py`
 
 ### Key Findings
 
-1. **Already Exists (No New Code Needed):**
+1. **Already Exists (No New Code Needed):** *(Verified 2025-12-06)*
    - TradingAgent base class with ReAct loop
    - AgentRegistry with capability discovery
    - Supervisor + Risk + Sentiment + Technical agents
    - Circuit breaker with 3-state design
    - Comprehensive orchestration in agent_orchestrator.py
+   - Decision/Reasoning logger integration (adapters in `observability/logging/adapters/`)
+   - Trading monitors → `observability/monitoring/trading/` (slippage, greeks, correlation, var)
+   - Logging infrastructure → `observability/logging/` (structured, audit)
 
-2. **Needs Consolidation (Deduplicate):**
+2. **Still Needs Consolidation (Deduplicate):**
    - Sentiment analysis (5 → 1 system)
    - News analysis (5 → 1 system)
-   - Metrics collection (3 → 1 system)
    - Anomaly detection (4 → 1 interface)
 
 3. **Needs Addition (From Enhancement Plan):**
    - Claude SDK subagent definitions (.claude/agents/*.md)
    - MCP server integration
    - Agent skills system (.claude/skills/*.md)
+   - Risk enforcement chain (models/risk_chain.py)
+
+### Related Documents & Coordination
+
+| Document | Scope | Relationship |
+|----------|-------|--------------|
+| [FIX_GUIDE.md](FIX_GUIDE.md) | Algorithm bug fixes & code quality | **Parallel work** - do P0 first |
+| [CONSOLIDATION_PLAN.md](CONSOLIDATION_PLAN.md) | Completed consolidation phases | ✅ Done - reference only |
+| [CONSOLIDATION_CHANGELOG.md](CONSOLIDATION_CHANGELOG.md) | What was completed | ✅ Done - verified |
+| [MULTI_AGENT_ENHANCEMENT_PLAN.md](MULTI_AGENT_ENHANCEMENT_PLAN.md) | Claude SDK vision | Input for Phase 2 |
+
+**Execution Order with FIX_GUIDE:**
+1. **FIX_GUIDE P0-1** (timestamp bug) → Do FIRST (critical)
+2. **This plan Phase 1** (sentiment/news consolidation) → Can parallel with FIX_GUIDE P1
+3. **FIX_GUIDE P1** (base class) → After or parallel with consolidation
+4. **This plan Phase 2** (Claude SDK) → After consolidation complete
 
 ---
 
@@ -120,7 +179,34 @@ llm/news/
 3. Remove inline news analysis from movement_scanner.py
 4. Create `NewsSignal` dataclass for unified output
 
-### 2.3 Metrics Consolidation
+### 2.3 Metrics & Monitoring Consolidation (PARTIAL)
+
+> **Note:** Trading monitors consolidation is ✅ COMPLETE. See `observability/monitoring/trading/`.
+> Metrics collectors consolidation is still TODO.
+
+#### ✅ COMPLETED: Trading Monitors
+
+**New Canonical Location:** `observability/monitoring/trading/`
+
+```python
+# New canonical imports
+from observability.monitoring.trading import SlippageMonitor, create_slippage_monitor
+from observability.monitoring.trading import GreeksMonitor, create_greeks_monitor
+from observability.monitoring.trading import CorrelationMonitor, create_correlation_monitor
+from observability.monitoring.trading import VaRMonitor, create_var_monitor
+```
+
+**Migration Mapping:**
+| Original | New Location | Status |
+|----------|--------------|--------|
+| `execution/slippage_monitor.py` | `observability/monitoring/trading/slippage.py` | ✅ DONE |
+| `models/greeks_monitor.py` | `observability/monitoring/trading/greeks.py` | ✅ DONE |
+| `models/correlation_monitor.py` | `observability/monitoring/trading/correlation.py` | ✅ DONE |
+| `models/var_monitor.py` | `observability/monitoring/trading/var.py` | ✅ DONE |
+
+Original files are now deprecation wrappers maintaining backwards compatibility.
+
+#### TODO: Metrics Collectors
 
 **Current State (3+ systems):**
 ```
@@ -357,37 +443,58 @@ Uses: evaluation/orchestration_pipeline.py, evaluation/walk_forward_analysis.py
 
 ---
 
-## Part 4: Implementation Roadmap
+## Part 4: Implementation Roadmap (Updated: 2025-12-06)
 
-### Phase 1: Consolidation (Weeks 1-2)
+### ✅ Completed Phases (Pre-requisite Work Done)
 
-| Day | Task | Files Affected |
-|-----|------|----------------|
-| 1-2 | Consolidate sentiment to `llm/sentiment/` | 5 files → 1 package |
-| 3-4 | Consolidate news to `llm/news/` | 5 files → 1 package |
-| 5 | Unify anomaly types in `models/anomaly/` | 4 files → 1 package |
-| 6-7 | Consolidate metrics to `observability/metrics/` | 6 files → canonical |
-| 8 | Create risk enforcement chain | New file |
-| 9-10 | Delete deprecated re-exports | 3 files |
+| Task | Status | Notes |
+|------|--------|-------|
+| Monitoring Consolidation | ✅ DONE | → `observability/monitoring/trading/` |
+| Deprecated Wrapper Removal | ✅ DONE | Utils wrappers now point to observability/ |
+| Config Documentation | ✅ DONE | config/ vs utils/overnight_config.py documented |
+| Decision/Reasoning Logger | ✅ EXISTS | Already integrated in llm/ |
+| Deprecated Directories | ✅ DONE | .claude/hooks/deprecated/ removed |
+| Test Suite Verification | ✅ DONE | 3548 tests passing |
 
-### Phase 2: Claude SDK Integration (Weeks 3-4)
+### Phase 1: Remaining Consolidation (Next Priority)
 
-| Day | Task | Files Affected |
-|-----|------|----------------|
-| 11-12 | Create `.claude/agents/` subagent definitions | 5 new files |
-| 13-14 | Create `.claude/skills/` skill definitions | 5 new files |
-| 15-16 | Setup MCP server configs | .claude/settings.json |
-| 17-18 | Create market data MCP server | New directory |
-| 19-20 | Integration testing | - |
+| Priority | Task | Files Affected | Effort |
+|----------|------|----------------|--------|
+| P0 | Consolidate sentiment to `llm/sentiment/` | 5 files → 1 package | 2 days |
+| P0 | Consolidate news to `llm/news/` | 5 files → 1 package | 2 days |
+| P1 | Unify anomaly types in `models/anomaly/` | 4 files → 1 package | 1 day |
+| P1 | Create risk enforcement chain | New file | 1 day |
+| P2 | Consolidate metrics collectors | 6 files → canonical | 2 days |
 
-### Phase 3: Enhancement (Weeks 5-6)
+### Phase 2: Claude SDK Integration
 
-| Day | Task | Files Affected |
-|-----|------|----------------|
-| 21-23 | Parallel subagent execution | agent_orchestrator.py |
-| 24-26 | Database MCP server setup | New directory |
-| 27-28 | Agent monitoring dashboard | New files |
-| 29-30 | Documentation updates | docs/*.md |
+| Priority | Task | Files Affected | Effort |
+|----------|------|----------------|--------|
+| P1 | Create `.claude/agents/` subagent definitions | 5 new files | 2 days |
+| P1 | Create `.claude/skills/` skill definitions | 5 new files | 2 days |
+| P2 | Setup MCP server configs | .claude/settings.json | 1 day |
+| P2 | Create market data MCP server | New directory | 2 days |
+| P2 | Integration testing | - | 2 days |
+
+### Phase 3: Enhancement (Deferred until Phase 1-2 Complete)
+
+| Priority | Task | Files Affected | Effort |
+|----------|------|----------------|--------|
+| P3 | Parallel subagent execution | agent_orchestrator.py | 3 days |
+| P3 | Database MCP server setup | New directory | 2 days |
+| P3 | Agent monitoring dashboard | New files | 2 days |
+| P3 | Documentation updates | docs/*.md | 2 days |
+
+### ⏸️ Deferred: Execution Module Review
+
+**Reason:** Project in early development, execution patterns haven't stabilized
+
+| Deferred Task | Size | Reason |
+|--------------|------|--------|
+| `smart_execution.py` review | 27KB | Patterns unstable |
+| `spread_analysis.py` review | 18KB | Patterns unstable |
+| `two_part_spread.py` review | 42KB | Patterns unstable |
+| `option_strategies_executor.py` review | 26KB | Patterns unstable |
 
 ---
 
@@ -475,26 +582,35 @@ evaluation/orchestration_pipeline.py  # Use observability.metrics
 
 ---
 
-## Part 6: Success Metrics
+## Part 6: Success Metrics (Updated: 2025-12-06)
 
-### Consolidation Metrics
+### ✅ Completed Metrics
 
-| Metric | Before | Target | Measurement |
-|--------|--------|--------|-------------|
-| Sentiment analysis files | 5 | 1 package | File count |
-| News analysis files | 5 | 1 package | File count |
-| Metrics locations | 6 | 1 canonical | Import paths |
-| Anomaly types | 4 different | 1 unified | Type definitions |
-| Deprecated re-exports | 3 | 0 | File count |
+| Metric | Before | After | Status |
+|--------|--------|-------|--------|
+| Trading monitor locations | 4 scattered | 1 canonical package | ✅ DONE |
+| Deprecated wrappers | 4 | 0 (converted) | ✅ DONE |
+| Config documentation | Undocumented | Fully documented | ✅ DONE |
+| Test pass rate | - | 3548 passing | ✅ DONE |
+
+### Remaining Consolidation Metrics
+
+| Metric | Current | Target | Priority |
+|--------|---------|--------|----------|
+| Sentiment analysis files | 5 | 1 package | P0 |
+| News analysis files | 5 | 1 package | P0 |
+| Anomaly types | 4 different | 1 unified | P1 |
+| Risk enforcement chain | None | 1 unified | P1 |
+| Metrics collectors | 6 scattered | 1 canonical | P2 |
 
 ### Enhancement Metrics
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Claude SDK subagents | 5 defined | .claude/agents/*.md count |
-| Skills defined | 5+ | .claude/skills/*.md count |
-| MCP servers | 3+ configured | .claude/settings.json |
-| Test coverage | >80% | pytest --cov |
+| Metric | Current | Target | Priority |
+|--------|---------|--------|----------|
+| Claude SDK subagents | 0 | 5 defined | P1 |
+| Skills defined | 0 | 5+ | P1 |
+| MCP servers | 0 | 3+ configured | P2 |
+| Test coverage | Unknown | >80% | P2 |
 
 ### Performance Metrics
 
@@ -2787,55 +2903,93 @@ git tag -a v2.0.0-pre-consolidation -m "Before consolidation migration"
 
 ---
 
-## Part 15: Next Steps
+## Part 15: Next Steps (Updated: 2025-12-06)
 
-### Immediate Actions (This Week)
+### ✅ Completed (Pre-requisite Work)
 
-1. **Review this plan** - Ensure all stakeholders understand the consolidation strategy
-2. **Create Phase 1 branch** - `git checkout -b feature/consolidation-phase-1`
-3. **Start sentiment consolidation** - Highest duplication, best ROI
-4. **Set up CI validation** - Add consolidation tests to CI pipeline
+- [x] Monitoring consolidation → `observability/monitoring/trading/`
+- [x] Deprecated wrapper removal
+- [x] Config documentation (config/ vs utils/overnight_config.py)
+- [x] Decision/Reasoning logger verification
+- [x] Deprecated directories cleanup
+- [x] Test suite verification (3548 tests passing)
 
-### Phase 1 Goals (Weeks 1-2)
+### Immediate Actions (Next Priority)
 
-- [ ] Complete sentiment package consolidation
-- [ ] Complete news package consolidation
-- [ ] Create unified anomaly types
-- [ ] Implement risk enforcement chain
-- [ ] Delete deprecated re-exports
+1. **Start sentiment consolidation** - Highest duplication, best ROI
+   ```bash
+   git checkout -b feature/consolidation-sentiment
+   git tag pre-sentiment-consolidation
+   ```
 
-### Phase 2 Goals (Weeks 3-4)
+2. **Start news consolidation** - Can run in parallel with sentiment
+   ```bash
+   git checkout -b feature/consolidation-news
+   git tag pre-news-consolidation
+   ```
 
-- [ ] Create Claude SDK subagent definitions
-- [ ] Create skill definitions
-- [ ] Set up MCP server configs
-- [ ] Build custom market data MCP server
+### Phase 1 Goals (Remaining Consolidation)
 
-### Phase 3 Goals (Weeks 5-6)
+| Task | Priority | Status |
+|------|----------|--------|
+| Complete sentiment package consolidation | P0 | TODO |
+| Complete news package consolidation | P0 | TODO |
+| Create unified anomaly types | P1 | TODO |
+| Implement risk enforcement chain | P1 | TODO |
+| Consolidate metrics collectors | P2 | TODO |
 
-- [ ] Enable parallel subagent execution
-- [ ] Set up database MCP server
-- [ ] Create agent monitoring dashboard
-- [ ] Complete documentation updates
+### Phase 2 Goals (Claude SDK Integration)
+
+| Task | Priority | Status |
+|------|----------|--------|
+| Create Claude SDK subagent definitions | P1 | TODO |
+| Create skill definitions | P1 | TODO |
+| Set up MCP server configs | P2 | TODO |
+| Build custom market data MCP server | P2 | TODO |
+
+### Phase 3 Goals (Enhancement - Deferred)
+
+| Task | Priority | Status |
+|------|----------|--------|
+| Enable parallel subagent execution | P3 | TODO |
+| Set up database MCP server | P3 | TODO |
+| Create agent monitoring dashboard | P3 | TODO |
+| Complete documentation updates | P3 | TODO |
+
+### ⏸️ Deferred Tasks
+
+| Task | Reason |
+|------|--------|
+| Execution module review | Project in early development, patterns unstable |
 
 ### Success Criteria
 
-| Metric | Target | Verification |
-|--------|--------|--------------|
-| Code duplication | <5% | `jscpd` or similar tool |
-| Test coverage | >80% | `pytest --cov` |
-| Import deprecations | 0 | `python scripts/validate_imports.py` |
-| Performance regression | <10% | Benchmark scripts |
-| Documentation coverage | 100% | Manual review |
+| Metric | Target | Current | Verification |
+|--------|--------|---------|--------------|
+| Trading monitors consolidated | 1 package | ✅ DONE | `observability/monitoring/trading/` |
+| Sentiment consolidated | 1 package | TODO | `llm/sentiment/` |
+| News consolidated | 1 package | TODO | `llm/news/` |
+| Test pass rate | 100% | ✅ 3548 passing | `pytest tests/` |
+| Import deprecations | 0 | Partial | `python scripts/validate_imports.py` |
+| Performance regression | <10% | N/A | Benchmark scripts |
 
 ---
 
 ## References
 
+### Internal Documents
+- [PARALLEL_AGENT_COORDINATION.md](./PARALLEL_AGENT_COORDINATION.md) - **Multi-agent parallel execution system**
+- [FIX_GUIDE.md](./FIX_GUIDE.md) - Algorithm bug fixes (P0-1 timestamp bug)
+- [CONSOLIDATION_CHANGELOG.md](./CONSOLIDATION_CHANGELOG.md) - Completed work tracker
+- [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md) - Phase-by-phase execution plan
 - [MULTI_AGENT_ENHANCEMENT_PLAN.md](./MULTI_AGENT_ENHANCEMENT_PLAN.md) - Original enhancement plan
 - [GIT_MULTI_AGENT_WORKFLOW.md](./GIT_MULTI_AGENT_WORKFLOW.md) - Git workflow documentation
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - Current architecture documentation
+
+### External Resources
 - [Anthropic: Building agents with Claude Agent SDK](https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk)
 - [Anthropic: Multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system)
 - [Model Context Protocol Documentation](https://modelcontextprotocol.io/)
 - [Claude Flow Framework](https://github.com/ruvnet/claude-flow)
+- [AI Native Dev: Parallelizing AI Coding Agents](https://ainativedev.io/news/how-to-parallelize-ai-coding-agents)
+- [Simon Willison: Parallel coding agents](https://simonwillison.net/2025/Oct/5/parallel-coding-agents/)
